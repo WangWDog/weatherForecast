@@ -4,8 +4,7 @@
 
 #include "main_gui.h"
 int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-    MainWindow w;
-    w.show();
-    return app.exec();
+    using namespace std;
+    cout << "Hello World!" << endl;
+    return 0;
 }
