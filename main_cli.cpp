@@ -42,11 +42,94 @@ std::string padRight(const std::string& str, size_t targetLen)
     return str + std::string(targetLen - visualLen, ' ');
 }
 
-// 显示当前日期
-void showCurrentDate()
+void updateUserSettings(ConfigUser& configUser)
 {
-    ConfigUser config;
-    config.load();
+    while (true) {
+        clearConsole();
+        std::cout << "🔧 用户设置菜单\n";
+        std::cout << "--------------------------\n";
+        std::cout << "1. 📅 修改日期时间格式（当前：" << configUser.getDateFormateMenu() << "）\n";
+        std::cout << "2. 🧭 设置生活指数缓存时长（当前：" << configUser.getCacheExpiry("life_index") << " 分钟）\n";
+        std::cout << "3. 🌦 设置天气预报缓存时长（当前：" << configUser.getCacheExpiry("daily_forecast") << " 分钟）\n";
+        std::cout << "4. 🈯 设置语言（当前：" << configUser.getLanguage() << "）\n";
+        std::cout << "5. 🔙 返回主菜单\n";
+        std::cout << "请输入选项（1-5）：";
+
+        std::string choice;
+        std::getline(std::cin, choice);
+
+        if (choice == "1") {
+            std::string fmt;
+            std::cout << "📅 请输入新的日期格式（例如 %Y-%m-%d %H:%M:%S，输入 :q 取消）：";
+            std::getline(std::cin, fmt);
+            if (fmt != ":q") {
+                configUser.setDateFormateMenu(fmt);
+                std::cout << "✅ 日期格式已更新。\n";
+            } else {
+                std::cout << "↩️ 修改已取消。\n";
+            }
+
+        } else if (choice == "2") {
+            std::string input;
+            std::cout << "🧭 请输入生活指数缓存时间（分钟，输入 :q 取消）：";
+            std::getline(std::cin, input);
+            if (input != ":q") {
+                try {
+                    int mins = std::stoi(input);
+                    configUser.setCacheExpiry("life_index", mins);
+                    std::cout << "✅ 缓存时间已更新。\n";
+                } catch (...) {
+                    std::cout << "❌ 输入无效。\n";
+                }
+            } else {
+                std::cout << "↩️ 修改已取消。\n";
+            }
+
+        } else if (choice == "3") {
+            std::string input;
+            std::cout << "🌦 请输入天气预报缓存时间（分钟，输入 :q 取消）：";
+            std::getline(std::cin, input);
+            if (input != ":q") {
+                try {
+                    int mins = std::stoi(input);
+                    configUser.setCacheExpiry("daily_forecast", mins);
+                    std::cout << "✅ 缓存时间已更新。\n";
+                } catch (...) {
+                    std::cout << "❌ 输入无效。\n";
+                }
+            } else {
+                std::cout << "↩️ 修改已取消。\n";
+            }
+
+        } else if (choice == "4") {
+            std::string lang;
+            std::cout << "🈯 请输入语言代码（zh / en，输入 :q 取消）：";
+            std::getline(std::cin, lang);
+            if (lang != ":q") {
+                configUser.setLanguage(lang);
+                std::cout << "✅ 语言已更新。\n";
+            } else {
+                std::cout << "↩️ 修改已取消。\n";
+                continue;
+            }
+
+        } else if (choice == "5") {
+            configUser.save();
+            std::cout << "💾 配置已保存，正在返回主菜单...\n";
+            return;
+
+        } else {
+            std::cout << "❌ 无效选项，请重新输入。\n";
+        }
+
+        std::cout << "\n按回车继续...";
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+}
+
+// 显示当前日期
+void showCurrentDate(ConfigUser& config)
+{
     std::string format = config.getDateFormateMenu();
 
     while (!_kbhit()) {  // 如果没有按键按下，就刷新时间
@@ -54,7 +137,7 @@ void showCurrentDate()
         std::time_t now = std::time(nullptr);
         std::cout << "📍 主菜单 > 当前日期时间\n";
         std::cout << "\t 📅:"
-                  << std::put_time(std::localtime(&now), format.c_str()) << std::endl;
+                  << std::put_time(std::localtime(&now), config.getDateFormateMenu().c_str()) << std::endl;
         std::cout << "按任意键返回主菜单……";
         Sleep(1000);  // 每秒刷新一次（Windows）
     }
@@ -293,6 +376,7 @@ int main()
         std::cout << "3.📋 查看生活指数\n";
         std::cout << "4.🚩 设置城市（当前：" << configUser.getDefaultCity() << "）\n";
         std::cout << "5.❌ 退出程序\n";
+        std::cout << "6.🔧 用户设置\n";  // ✅ 添加这一项
         std::cout << "--------------------------\n";
         std::cout << "请输入选项（1-5）：";
 
@@ -302,7 +386,7 @@ int main()
 
         if (choice == "1")
         {
-            showCurrentDate();
+            showCurrentDate(configUser);
             continue;
         }
         else if (choice == "2")
@@ -325,6 +409,11 @@ int main()
         {
             std::cout << "👋 再见！感谢使用天气CLI系统。" << std::endl;
             break;
+        }
+        else if (choice == "6") {
+        updateUserSettings(configUser);
+        delay_ms(2000);
+        continue;
         }
         else
         {
