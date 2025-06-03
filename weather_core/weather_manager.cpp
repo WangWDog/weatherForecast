@@ -7,7 +7,8 @@
 
 using json = nlohmann::json;
 
-WeatherManager::WeatherManager(std::string key,std::string host) : apiKey(std::move(key)),host(std::move(host)) {}
+WeatherManager::WeatherManager(std::string key, std::string host, std::string lang)
+    : apiKey(std::move(key)), host(std::move(host)), lang(std::move(lang)) {}
 
 static size_t writeCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
     size_t totalSize = size * nmemb;
@@ -47,7 +48,7 @@ std::vector<CityResult> WeatherManager::searchCity(const std::string& keyword) {
         if (res != CURLE_OK) {
             std::cerr << "请求失败: " << curl_easy_strerror(res) << std::endl;
         }
-        std::cout << response << std::endl;
+        // std::cout << response << std::endl;
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
     }
@@ -70,4 +71,48 @@ std::vector<CityResult> WeatherManager::searchCity(const std::string& keyword) {
     }
 
     return results;
+}
+std::vector<DailyForecast> WeatherManager::get7DayForecast(const std::string& locationId) {
+    std::vector<DailyForecast> forecast;
+
+    std::string url = "https://"+ host + "/v7/weather/7d?location=" + locationId;
+
+    CURL* curl = curl_easy_init();
+    std::string response;
+
+    if (curl) {
+        struct curl_slist* headers = nullptr;
+        headers = curl_slist_append(headers, ("X-QW-Api-Key: " + apiKey).c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
+
+        CURLcode res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+        if (res != CURLE_OK) return forecast;
+
+        auto j = json::parse(response, nullptr, false);
+        if (j.is_discarded() || j["code"] != "200") return forecast;
+
+        for (const auto& day : j["daily"]) {
+            DailyForecast df;
+            df.date = day["fxDate"];
+            df.textDay = day["textDay"];
+            df.textNight = day["textNight"];
+            df.tempMax = day["tempMax"];
+            df.tempMin = day["tempMin"];
+            df.windDirDay = day["windDirDay"];
+            df.windScaleDay = day["windScaleDay"];
+            df.precip = day["precip"];
+            df.humidity = day["humidity"];
+            forecast.push_back(df);
+        }
+    }
+
+    return forecast;
 }

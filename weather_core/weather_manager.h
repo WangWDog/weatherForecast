@@ -2,11 +2,16 @@
 #include <string>
 #include <vector>
 
-struct Forecast {
+struct DailyForecast {
     std::string date;
-    std::string text;
-    std::string tempMax;
+    std::string textDay;
+    std::string textNight;
     std::string tempMin;
+    std::string tempMax;
+    std::string windDirDay;
+    std::string windScaleDay;
+    std::string precip;
+    std::string humidity;
 };
 
 struct CityResult {
@@ -19,10 +24,11 @@ struct CityResult {
 
 class WeatherManager {
 public:
-    explicit WeatherManager(std::string apiKey,std::string host);
-    std::vector<Forecast> get7DayForecast(const std::string& locationId);
+    explicit WeatherManager(std::string key, std::string host, std::string lang = "zh");
+    std::vector<DailyForecast> get7DayForecast(const std::string& locationId);
     std::vector<CityResult> searchCity(const std::string& keyword);  // <-- 新增
 private:
     std::string apiKey;
     std::string host;
+    std::string lang;
 };
