@@ -20,6 +20,9 @@ public:
     int getCacheExpiry(const std::string& key) const;
     void setCacheExpiry(const std::string& key, int minutes);
 
+    std::string getDateFormateMenu() const;
+    void setDateFormateMenu(const std::string& dateFormate);
+
     std::string getCityId() const;
     void setCityId(const std::string& id);
 };

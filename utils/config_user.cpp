@@ -33,6 +33,13 @@ std::string ConfigUser::getLanguage() const {
 void ConfigUser::setLanguage(const std::string& lang) {
     configJson["language"] = lang;
 }
+std::string ConfigUser::getDateFormateMenu() const {
+    return configJson.value("date_formate_menu", "%Y-%m-%d %H:%M:%S");
+}
+
+void ConfigUser::setDateFormateMenu(const std::string& dateFormate) {
+    configJson["date_formate_menu"] = dateFormate;
+}
 
 int ConfigUser::getCacheExpiry(const std::string& key) const {
     if (configJson.contains("cache_expiry_minutes") && configJson["cache_expiry_minutes"].contains(key)) {

@@ -1,4 +1,5 @@
 #pragma once
+#include <ctime>
 #include <string>
 #include <vector>
 
@@ -22,11 +23,31 @@ struct CityResult {
     std::string adm2;
 };
 
+struct LifeIndex {
+    std::string date;
+    std::string name;
+    std::string level;
+    std::string category;
+    std::string text;
+};
+
+struct LifeIndexWithMeta {
+    std::vector<LifeIndex> indices;
+    bool fromCache = false;
+    std::time_t timestamp = 0;
+};
+struct ForecastResult {
+    std::vector<DailyForecast> forecasts;
+    bool fromCache = false;
+    std::time_t timestamp = 0;
+};
 class WeatherManager {
 public:
     explicit WeatherManager(std::string key, std::string host, std::string lang = "zh");
-    std::vector<DailyForecast> get7DayForecast(const std::string& locationId);
-    std::vector<CityResult> searchCity(const std::string& keyword);  // <-- 新增
+    std::vector<DailyForecast> forecasts;
+    std::vector<CityResult> searchCity(const std::string& keyword);
+    LifeIndexWithMeta getLifeIndices(const std::string& locationId, int expiryMinutes);
+    ForecastResult get7DayForecast(const std::string& locationId, int expiryMinutes);
 private:
     std::string apiKey;
     std::string host;

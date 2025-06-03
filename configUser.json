@@ -1,9 +1,9 @@
 {
-  "default_city": "Pingyang",
+  "default_city": "温州",
   "use_ip_location": true,
   "units": "metric",
   "language": "zh",
-    "cache_expiry_minutes": {
+  "cache_expiry_minutes": {
       "realtime_weather": 20,
       "hourly_forecast": 45,
       "daily_forecast": 120,
@@ -15,5 +15,7 @@
       "tide_and_current": 600,
       "typhoon": 30,
       "solar_radiation": 360
-    }
+  },
+  "date_formate_menu": "%Y-%m-%d %H:%M:%S",
+  "city_id": "101210701"
 }
