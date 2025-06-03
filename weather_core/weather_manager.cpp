@@ -22,7 +22,6 @@ std::vector<CityResult> WeatherManager::searchCity(const std::string& keyword) {
     CURL* curl = curl_easy_init();
     if (curl) {
         char* encodedKeyword = curl_easy_escape(curl, keyword.c_str(), keyword.length());
-        // std::cout << encodedKeyword << std::endl;
         if (!encodedKeyword) {
             std::cerr << "URL 编码失败" << std::endl;
             curl_easy_cleanup(curl);
@@ -30,7 +29,6 @@ std::vector<CityResult> WeatherManager::searchCity(const std::string& keyword) {
         }
 
         std::string fullUrl = url + encodedKeyword;
-        std::cout << fullUrl << std::endl;
         curl_free(encodedKeyword);
         curl_easy_setopt(curl, CURLOPT_URL, fullUrl.c_str());
 
