@@ -1,2 +1,4 @@
 .idea/
 cmake-build-debug/
+CRULTest/http-client.private.env.json
+configKey.json

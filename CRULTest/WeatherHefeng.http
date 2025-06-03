@@ -1,0 +1,11 @@
+### 第一步：查询地理位置，提取 ID
+GET https://{{host}}/geo/v2/city/lookup?location=nangang
+X-QW-Api-Key: {{key}}
+Accept-Encoding: gzip
+
+> {%
+    client.log("原始 body:\n" + response.body.toString());
+%}
+### 第二步：根据 ID 查询实时天气
+GET https://{{host}}/v7/weather/now?location={{location_id}}
+X-QW-Api-Key: {{key}}
