@@ -1,0 +1,7 @@
+GET https://httpbin.org/gzip
+Accept-Encoding: gzip
+
+> {%
+    const json = JSON.parse(response.bodyAsString);
+    client.log(json);
+%}

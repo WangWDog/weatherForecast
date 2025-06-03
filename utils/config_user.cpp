@@ -1,0 +1,54 @@
+#include "config_user.h"
+
+ConfigUser::ConfigUser(const std::string& path) : BaseConfig(path) {}
+
+std::string ConfigUser::getDefaultCity() const {
+    return configJson.value("default_city", "beijing");
+}
+
+void ConfigUser::setDefaultCity(const std::string& city) {
+    configJson["default_city"] = city;
+}
+
+bool ConfigUser::getUseIPLocation() const {
+    return configJson.value("use_ip_location", false);
+}
+
+void ConfigUser::setUseIPLocation(bool useIP) {
+    configJson["use_ip_location"] = useIP;
+}
+
+std::string ConfigUser::getUnits() const {
+    return configJson.value("units", "metric");
+}
+
+void ConfigUser::setUnits(const std::string& units) {
+    configJson["units"] = units;
+}
+
+std::string ConfigUser::getLanguage() const {
+    return configJson.value("language", "en");
+}
+
+void ConfigUser::setLanguage(const std::string& lang) {
+    configJson["language"] = lang;
+}
+
+int ConfigUser::getCacheExpiry(const std::string& key) const {
+    if (configJson.contains("cache_expiry_minutes") && configJson["cache_expiry_minutes"].contains(key)) {
+        return configJson["cache_expiry_minutes"][key].get<int>();
+    }
+    return 60;
+}
+
+void ConfigUser::setCacheExpiry(const std::string& key, int minutes) {
+    configJson["cache_expiry_minutes"][key] = minutes;
+}
+
+std::string ConfigUser::getCityId() const {
+    return configJson.value("city_id", "");
+}
+
+void ConfigUser::setCityId(const std::string& id) {
+    configJson["city_id"] = id;
+}

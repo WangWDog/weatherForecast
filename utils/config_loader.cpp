@@ -3,7 +3,13 @@
 #include <iostream>
 
 ConfigLoader::ConfigLoader(const std::string& path) : configPath(path) {}
+std::string ConfigLoader::getCityId() const {
+    return configJson.value("city_id", "");
+}
 
+void ConfigLoader::setCityId(const std::string& id) {
+    configJson["city_id"] = id;
+}
 bool ConfigLoader::load() {
     std::ifstream file(configPath);
     if (!file.is_open()) {

@@ -38,12 +38,24 @@
             cli/delay.cpp
             cli/cli_animation_loader.cpp
             cli/cli_clear_console.cpp
-            main_cli.cpp                              # 命令行主入口
+            main_cli.cpp
+            utils/config_user.cpp
+            utils/config_user.h
+            utils/config_key.cpp
+            utils/config_key.h
+            utils/base_config.cpp
+            utils/base_config.h                              # 命令行主入口
     )
     set(WEATHER_GLOBAL
             weather_core/weather_manager.cpp          # 天气核心实现
             utils/config_loader.cpp
             utils/ip_locator.cpp
+            utils/config_user.cpp
+            utils/config_user.h
+            utils/config_key.cpp
+            utils/config_key.h
+            utils/base_config.cpp
+            utils/base_config.h
     )
 
     # 源码文件（GUI 用）
@@ -101,7 +113,7 @@
         )
     endif()
     #用户配置文件
-    file(COPY ${CMAKE_SOURCE_DIR}/config.json
+    file(COPY ${CMAKE_SOURCE_DIR}/configUser.json
             DESTINATION ${CMAKE_BINARY_DIR})
     #apiKey文件
     file(COPY ${CMAKE_SOURCE_DIR}/cache.json
