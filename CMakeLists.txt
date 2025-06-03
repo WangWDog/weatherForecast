@@ -35,6 +35,9 @@
 
     # 源码文件（CLI 用）
     set(CLI_SOURCES
+            cli/delay.cpp
+            cli/cli_animation_loader.cpp
+            cli/cli_clear_console.cpp
             main_cli.cpp                              # 命令行主入口
     )
     set(WEATHER_GLOBAL
