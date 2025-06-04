@@ -42,7 +42,7 @@ std::string callLunarApi(ConfigKey& config_key) {
     curl_global_init(CURL_GLOBAL_DEFAULT);
     curl = curl_easy_init();
 
-    std::string host = "https://api.shwgij.com/doc/6?date=20240601";
+    std::string host = "https://api.shwgij.com/doc/6?date=20240601 ";
     std::string key = "&key="+config_key.getFreeApiKey();
     std::string final_url = host+key;
     if (curl) {
@@ -51,7 +51,6 @@ std::string callLunarApi(ConfigKey& config_key) {
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-
         // 执行请求
         res = curl_easy_perform(curl);
 
