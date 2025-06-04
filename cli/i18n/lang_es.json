@@ -1,0 +1,9 @@
+{
+  "menu_title": "🏠 Menú del sistema del clima CLI",
+  "menu_options": ["🗓️ Mostrar fecha actual", "☁️ Mostrar pronóstico del tiempo", "📋 Ver índices de vida", "🚩 Establecer ciudad", "❌ Salir del programa", "🔧 Configuración del usuario"],
+  "prompt_input": "Por favor ingrese una opción (1-6):",
+  "invalid_option": "❌ Opción no válida, inténtelo de nuevo.",
+  "goodbye": "👋 ¡Adiós! Gracias por usar el CLI del clima.",
+  "back_to_menu": "Presione Enter para volver al menú...",
+  "setting_saved": "💾 Configuración guardada."
+}

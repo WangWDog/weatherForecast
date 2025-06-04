@@ -1,0 +1,68 @@
+{
+  "main_cli": {
+    "menu_title": "🏠 Weather CLI System Menu",
+    "menu_options": [
+      "🗓️ Show Current Date",
+      "☁️ Show Weather Forecast",
+      "📋 View Life Indices",
+      "🚩 Set City",
+      "🔧 User Settings",
+      "❌ Exit Program"
+    ],
+    "prompt_input": "Please enter an option (1-6):",
+    "invalid_option": "❌ Invalid option, please try again.",
+    "goodbye": "👋 Goodbye! Thanks for using the Weather CLI system.",
+    "back_to_menu": "Press Enter to return to the menu..."
+  },
+  "searchCity": {
+    "title": "📍 Main Menu > Set City",
+    "searching": "Search Results",
+    "not_found": "❌ No matching cities found",
+    "select_prompt": "👉 Enter a number to select a city, or keep typing to search...",
+    "input_hint": "🔍 Enter city keyword (type : to return to menu)",
+    "cancelled": "↩️ Setting cancelled. Returning to main menu.",
+    "success": "✅ City set successfully"
+  },
+  "settings": {
+    "menu_title": "User Settings Menu",
+    "date_format": "Change date-time format",
+    "cache_life_index": "Set life index cache duration",
+    "cache_forecast": "Set forecast cache duration",
+    "language": "Change language",
+    "back": "Return to main menu",
+    "prompt_input": "Please enter your choice (1-5): ",
+    "input_date_format": "📅 Enter new date format (e.g. %Y-%m-%d %H:%M:%S, enter :q to cancel): ",
+    "input_cache_life": "🧭 Enter life index cache time (minutes, :q to cancel): ",
+    "input_cache_forecast": "🌦 Enter forecast cache time (minutes, :q to cancel): ",
+    "input_language": "🈯 Enter language code (zh / en, :q to cancel): ",
+    "updated": "✅ Settings updated.",
+    "cancelled": "↩️ Change cancelled.",
+    "invalid_input": "❌ Invalid input.",
+    "language_load_fail": "❌ Failed to load language file. Using previous language.",
+    "language_load_success": "🌐 Switched to new language:",
+    "saved_and_exit": "💾 Settings saved. Returning to main menu...",
+    "invalid_option": "❌ Invalid option. Please try again.",
+    "press_enter_continue": "Press Enter to continue..."
+  },
+  "forecast": {
+    "from_cache": "📦 Data from cache.",
+    "from_network": "🌐 Data from the internet.",
+    "updated_time": "🕒 Data updated at: ",
+    "city": "📡 City: ",
+    "forecast_title": "📆 7-Day Weather Forecast:",
+    "date": "📅 Date",
+    "text_day": "☀️ Daytime",
+    "text_night": "🌙 Nighttime",
+    "temperature": "🌡 Temp (°C)",
+    "wind_dir": "🍃 Wind Dir",
+    "wind_scale": "💨 Wind",
+    "precip": "🌧 Precip (mm)",
+    "humidity": "💧 Humidity (%)",
+    "prompt_refresh": "🔁 Press R to refresh, any other key to return...",
+    "fetch_failed": "❌ Failed to fetch weather data. Check network or API."
+  },
+  "date": {
+    "menu_path": "Main Menu > Current Date & Time",
+    "prompt_back": "Press any key to return to main menu..."
+  }
+}

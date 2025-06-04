@@ -27,6 +27,7 @@
             ${CMAKE_CURRENT_SOURCE_DIR}/gui           # GUI 模块路径
             ${CMAKE_CURRENT_SOURCE_DIR}/utils         # 工具模块路径
             ${CMAKE_CURRENT_SOURCE_DIR}/cli           # 命令行模块路径
+            ${CMAKE_CURRENT_SOURCE_DIR}/cli/i18n       # 命令行模块路径
     )
     #引入CurlLib和bin
 
@@ -35,17 +36,34 @@
 
     # 源码文件（CLI 用）
     set(CLI_SOURCES
-            main_cli.cpp                              # 命令行主入口
+            cli/delay.cpp
+            cli/cli_animation_loader.cpp
+            cli/cli_clear_console.cpp
+            main_cli.cpp
+            utils/config_user.cpp
+            utils/config_key.cpp
+            utils/base_config.cpp
+            cli/i18n/i18n_loader.cpp
+            cli/i18n/i18n_loader.h
+            cli/updateCity.cpp
+            cli/updateCity.h
+    )
+    set(WEATHER_GLOBAL
             weather_core/weather_manager.cpp          # 天气核心实现
-            utils/config_loader.cpp                   # 配置文件加载实现（如读取 JSON）
+            utils/config_loader.cpp
+            utils/ip_locator.cpp
+            utils/config_user.cpp
+            utils/config_user.h
+            utils/config_key.cpp
+            utils/config_key.h
+            utils/base_config.cpp
+            utils/base_config.h
     )
 
     # 源码文件（GUI 用）
     set(GUI_SOURCES
             main_gui.cpp                              # GUI 主入口
             gui/mainwindow.cpp                        # 主窗口实现
-            weather_core/weather_manager.cpp          # 天气核心实现
-            utils/config_loader.cpp                   # 配置文件加载实现
     )
 
     # GUI 头文件（用于自动处理 MOC）
@@ -56,7 +74,7 @@
     )
 
     # CLI 可执行文件
-    add_executable(weather_cli ${CLI_SOURCES})
+    add_executable(weather_cli ${WEATHER_GLOBAL} ${CLI_SOURCES})
     # 创建 CLI 可执行程序 weather_cli，包含上面定义的 CLI_SOURCES
     #将curl 连接到可执行文件
     target_link_libraries(weather_cli curl)
@@ -65,6 +83,7 @@
     add_executable(weather_gui
             ${GUI_SOURCES}                            # 源码文件
             ${GUI_HEADERS}                            # 头文件（用于 moc）
+            ${WEATHER_GLOBAL}                         # 核心库的头文件
             gui/mainwindow.ui                         # Qt Designer 的 UI 文件
     )
     target_link_libraries(weather_gui curl)
@@ -95,3 +114,19 @@
                 COMMENT "Copying libcurl.dll to output directory..."
         )
     endif()
+    #用户配置文件
+    file(COPY ${CMAKE_SOURCE_DIR}/configUser.json
+            DESTINATION ${CMAKE_BINARY_DIR})
+    #apiKey文件
+    file(COPY ${CMAKE_SOURCE_DIR}/cache.json
+            DESTINATION ${CMAKE_BINARY_DIR})
+    #缓存文件
+    file(COPY ${CMAKE_SOURCE_DIR}/configKey.json
+            DESTINATION ${CMAKE_BINARY_DIR})
+
+    #语言文件
+    file(COPY ${CMAKE_SOURCE_DIR}/cli/i18n/lang_zh.json
+            DESTINATION ${CMAKE_BINARY_DIR}/i18n)
+    #语言文件
+    file(COPY ${CMAKE_SOURCE_DIR}/cli/i18n/lang_en.json
+            DESTINATION ${CMAKE_BINARY_DIR}/i18n)
