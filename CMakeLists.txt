@@ -47,6 +47,8 @@
             cli/i18n/i18n_loader.h
             cli/updateCity.cpp
             cli/updateCity.h
+            utils/lunar_api.h
+            utils/lunar_api.cpp
     )
     set(WEATHER_GLOBAL
             weather_core/weather_manager.cpp          # 天气核心实现

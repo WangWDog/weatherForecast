@@ -20,6 +20,8 @@
 #include "updateCity.h"
 #include "weather_manager.h"
 #include "i18n/i18n_loader.h"
+#include "lunar_api.h"
+#include "config_key.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -34,49 +36,27 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
 }
 
 // 用于调用 API 获取农历、节气和黄历等信息
-std::string callLunarApi(ConfigKey& config_key) {
-    CURL* curl;
-    CURLcode res;
-    std::string readBuffer;
+std::string getLunarInfo(ConfigKey& config_key) {
+    std::string response = callLunarApi(config_key);  // 请求 API
 
-    curl_global_init(CURL_GLOBAL_DEFAULT);
-    curl = curl_easy_init();
-
-    std::string host = "https://api.shwgij.com/doc/6?date=20240601";
-    std::string key = "&key ="+config_key.getFreeApiKey();
-    std::string final_url = host+key;
-    if (curl) {
-        // 设置请求 URL 和参数（替换为你的实际 API URL 和密钥）
-        curl_easy_setopt(curl, CURLOPT_URL, final_url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-
-        // 执行请求
-        res = curl_easy_perform(curl);
-
-        if (res != CURLE_OK) {
-            std::cerr << "cURL 请求失败：" << curl_easy_strerror(res) << std::endl;
-        }
-
-        curl_easy_cleanup(curl);
+    if (response.empty()) {
+        return "❌ 未获取到农历信息";
     }
 
-    curl_global_cleanup();
-    return readBuffer;  // 返回 API 返回的原始数据
-}
-std::string getLunarInfo(ConfigKey& config_key) {
-    // 调用 API 获取农历、节气、黄历等信息
-    // 假设 callLunarApi() 是你调用 API 的函数
-    std::string response = callLunarApi(config_key);  // 获取 API 返回的数据
-    json j = json::parse(response);  // 解析 JSON 数据
+    try {
+        auto j = nlohmann::json::parse(response);
 
-    std::string lunar = j["Lunar"];  // 获取农历
-    std::string jieqi = j["JieQi"]; // 获取节气
-    std::string huangli = j["HuangLi"]; // 获取黄历信息
+        std::string lunar = j["data"].value("Lunar", "未知");
+        std::string jieqi = j["data"].value("JieQi1", "无节气");
+        std::string huangli = j["data"].value("YiDay", "暂无宜信息");
 
-    return "农历：" + lunar + " | 节气：" + jieqi + " | 黄历：" + huangli;  // 返回一个格式化的字符串
+        return "🌙 农历：" + lunar + " | 🌾 节气：" + jieqi + " | 📜 宜：" + huangli;
+
+    } catch (const std::exception& e) {
+        return std::string("❌ JSON 解析失败：") + e.what();
+    }
 }
+
 
 
 // 宽字符对齐工具函数（仅估算宽度）
@@ -185,26 +165,24 @@ void updateUserSettings(ConfigUser& configUser, I18n& i18n)
     }
 }
 // 显示当前日期
-void showCurrentDate(ConfigUser& configUser,ConfigKey& configKey, I18n& i18n)
+void showCurrentDate(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n)
+
 {
-    std::string format = configUser.getDateFormateMenu();
+    clearConsole();
 
-    while (!_kbhit()) {
-        clearConsole();
-        std::time_t now = std::time(nullptr);
-        std::cout << "📍 " << i18n.tr("date", "menu_path") << "\n";
-        std::cout << "\t 📅:" << std::put_time(std::localtime(&now), format.c_str()) << std::endl;
+    std::time_t now = std::time(nullptr);
+    std::cout << "📍 主菜单 > 当前日期时间\n";
+    std::cout << "\t 📅: "
+              << std::put_time(std::localtime(&now), configUser.getDateFormateMenu().c_str()) << std::endl;
 
-        // 获取农历、节气、黄历等信息
-        std::string lunarInfo = getLunarInfo(configKey);  // 获取农历、节气、黄历信息
-        std::cout << "🌙 " << lunarInfo << std::endl;
+    // ✅ 加入农历黄历显示
+    std::string lunarInfo = getLunarInfo(configKey);
+    std::cout << lunarInfo << std::endl;
 
-        std::cout << i18n.tr("date", "prompt_back");
-        Sleep(1000);
-    }
-
-    _getch();
+    std::cout << "\n按任意键返回主菜单……";
+    _getch();  // 等待用户按键
 }
+
 
 
 
@@ -370,7 +348,7 @@ int main()
         clearConsole();
 
         if (choice == "1") {
-            showCurrentDate(configUser,configKey, i18n);
+            showCurrentDate(configUser,configKey,i18n);
         } else if (choice == "2") {
             showWeatherForecast(configUser, configKey, i18n);
         } else if (choice == "3") {
