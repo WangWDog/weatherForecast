@@ -43,7 +43,7 @@ std::string callLunarApi(ConfigKey& config_key) {
     curl = curl_easy_init();
 
     std::string host = "https://api.shwgij.com/doc/6?date=20240601";
-    std::string key = "&key="+config_key.getFreeApiKey();
+    std::string key = "&key ="+config_key.getFreeApiKey();
     std::string final_url = host+key;
     if (curl) {
         // 设置请求 URL 和参数（替换为你的实际 API URL 和密钥）
