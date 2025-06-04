@@ -1,0 +1,9 @@
+{
+  "menu_title": "🏠 Menu du système météo CLI",
+  "menu_options": ["🗓️ Afficher la date actuelle", "☁️ Afficher les prévisions météo", "📋 Voir les indices de vie", "🚩 Définir la ville", "❌ Quitter le programme", "🔧 Paramètres utilisateur"],
+  "prompt_input": "Veuillez entrer une option (1-6) :",
+  "invalid_option": "❌ Option invalide, veuillez réessayer.",
+  "goodbye": "👋 Au revoir ! Merci d'avoir utilisé la météo CLI.",
+  "back_to_menu": "Appuyez sur Entrée pour revenir au menu...",
+  "setting_saved": "💾 Paramètres enregistrés."
+}

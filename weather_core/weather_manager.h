@@ -45,9 +45,9 @@ class WeatherManager {
 public:
     explicit WeatherManager(std::string key, std::string host, std::string lang = "zh");
     std::vector<DailyForecast> forecasts;
-    std::vector<CityResult> searchCity(const std::string& keyword);
+    std::vector<CityResult> searchCity(const std::string& keyword,const std::string& lang);
     LifeIndexWithMeta getLifeIndices(const std::string& locationId, int expiryMinutes);
-    ForecastResult get7DayForecast(const std::string& locationId, int expiryMinutes);
+    ForecastResult get7DayForecast(const std::string& locationId,const std::string& language,int cacheExpiryMinutes);
 private:
     std::string apiKey;
     std::string host;

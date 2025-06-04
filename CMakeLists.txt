@@ -27,6 +27,7 @@
             ${CMAKE_CURRENT_SOURCE_DIR}/gui           # GUI 模块路径
             ${CMAKE_CURRENT_SOURCE_DIR}/utils         # 工具模块路径
             ${CMAKE_CURRENT_SOURCE_DIR}/cli           # 命令行模块路径
+            ${CMAKE_CURRENT_SOURCE_DIR}/cli/i18n       # 命令行模块路径
     )
     #引入CurlLib和bin
 
@@ -40,11 +41,12 @@
             cli/cli_clear_console.cpp
             main_cli.cpp
             utils/config_user.cpp
-            utils/config_user.h
             utils/config_key.cpp
-            utils/config_key.h
             utils/base_config.cpp
-            utils/base_config.h                              # 命令行主入口
+            cli/i18n/i18n_loader.cpp
+            cli/i18n/i18n_loader.h
+            cli/updateCity.cpp
+            cli/updateCity.h
     )
     set(WEATHER_GLOBAL
             weather_core/weather_manager.cpp          # 天气核心实现
@@ -121,3 +123,10 @@
     #缓存文件
     file(COPY ${CMAKE_SOURCE_DIR}/configKey.json
             DESTINATION ${CMAKE_BINARY_DIR})
+
+    #语言文件
+    file(COPY ${CMAKE_SOURCE_DIR}/cli/i18n/lang_zh.json
+            DESTINATION ${CMAKE_BINARY_DIR}/i18n)
+    #语言文件
+    file(COPY ${CMAKE_SOURCE_DIR}/cli/i18n/lang_en.json
+            DESTINATION ${CMAKE_BINARY_DIR}/i18n)

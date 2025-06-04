@@ -18,7 +18,7 @@ static size_t writeCallback(void* contents, size_t size, size_t nmemb, std::stri
     return totalSize;
 }
 
-std::vector<CityResult> WeatherManager::searchCity(const std::string& keyword) {
+std::vector<CityResult> WeatherManager::searchCity(const std::string& keyword,const std::string& lang) {
     std::vector<CityResult> results;
     std::string response;
     std::string url = "https://" + host + "/geo/v2/city/lookup?location=";
@@ -32,7 +32,7 @@ std::vector<CityResult> WeatherManager::searchCity(const std::string& keyword) {
             return results;
         }
 
-        std::string fullUrl = url + encodedKeyword;
+        std::string fullUrl = url + encodedKeyword +"&lang="+ lang;
         curl_free(encodedKeyword);
         curl_easy_setopt(curl, CURLOPT_URL, fullUrl.c_str());
 
@@ -73,7 +73,7 @@ std::vector<CityResult> WeatherManager::searchCity(const std::string& keyword) {
     return results;
 }
 
-ForecastResult WeatherManager::get7DayForecast(const std::string& locationId, int cacheExpiryMinutes) {
+ForecastResult WeatherManager::get7DayForecast(const std::string& locationId,const std::string& language,int cacheExpiryMinutes) {
     ForecastResult result;
     const std::string cacheFile = "cache.json";
     json cache;
@@ -112,10 +112,9 @@ ForecastResult WeatherManager::get7DayForecast(const std::string& locationId, in
         }
     }
 
-    std::string url = "https://" + host + "/v7/weather/7d?location=" + locationId;
+    std::string url = "https://" + host + "/v7/weather/7d?location=" + locationId+"&lang="+language;
     std::string response;
     CURL* curl = curl_easy_init();
-
     if (curl) {
         struct curl_slist* headers = nullptr;
         headers = curl_slist_append(headers, ("X-QW-Api-Key: " + apiKey).c_str());

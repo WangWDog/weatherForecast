@@ -27,7 +27,7 @@ void ConfigUser::setUnits(const std::string& units) {
 }
 
 std::string ConfigUser::getLanguage() const {
-    return configJson.value("language", "en");
+    return configJson.value("language", "zh");
 }
 
 void ConfigUser::setLanguage(const std::string& lang) {

@@ -9,6 +9,7 @@
 #include <io.h>
 #include <conio.h>
 #include <windows.h>
+#include <curl/curl.h>
 
 #include "cli_animation_loader.h"
 #include "cli_clear_console.h"
@@ -16,13 +17,67 @@
 #include "config_loader.h"
 #include "config_user.h"
 #include "delay.h"
+#include "updateCity.h"
 #include "weather_manager.h"
+#include "i18n/i18n_loader.h"
 
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
 using json = nlohmann::json;
+
+// 回调函数：将 HTTP 响应的内容写入到字符串中
+size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
+}
+
+// 用于调用 API 获取农历、节气和黄历等信息
+std::string callLunarApi(ConfigKey& config_key) {
+    CURL* curl;
+    CURLcode res;
+    std::string readBuffer;
+
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+    curl = curl_easy_init();
+
+    std::string host = "https://api.shwgij.com/doc/6?date=20240601";
+    std::string key = "&key="+config_key.getFreeApiKey();
+    std::string final_url = host+key;
+    if (curl) {
+        // 设置请求 URL 和参数（替换为你的实际 API URL 和密钥）
+        curl_easy_setopt(curl, CURLOPT_URL, final_url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+        // 执行请求
+        res = curl_easy_perform(curl);
+
+        if (res != CURLE_OK) {
+            std::cerr << "cURL 请求失败：" << curl_easy_strerror(res) << std::endl;
+        }
+
+        curl_easy_cleanup(curl);
+    }
+
+    curl_global_cleanup();
+    return readBuffer;  // 返回 API 返回的原始数据
+}
+std::string getLunarInfo(ConfigKey& config_key) {
+    // 调用 API 获取农历、节气、黄历等信息
+    // 假设 callLunarApi() 是你调用 API 的函数
+    std::string response = callLunarApi(config_key);  // 获取 API 返回的数据
+    json j = json::parse(response);  // 解析 JSON 数据
+
+    std::string lunar = j["Lunar"];  // 获取农历
+    std::string jieqi = j["JieQi"]; // 获取节气
+    std::string huangli = j["HuangLi"]; // 获取黄历信息
+
+    return "农历：" + lunar + " | 节气：" + jieqi + " | 黄历：" + huangli;  // 返回一个格式化的字符串
+}
+
 
 // 宽字符对齐工具函数（仅估算宽度）
 size_t visualLength(const std::string& str)
@@ -42,162 +97,179 @@ std::string padRight(const std::string& str, size_t targetLen)
     return str + std::string(targetLen - visualLen, ' ');
 }
 
-void updateUserSettings(ConfigUser& configUser)
+
+void updateUserSettings(ConfigUser& configUser, I18n& i18n)
 {
     while (true) {
         clearConsole();
-        std::cout << "🔧 用户设置菜单\n";
+        std::cout << "🔧 " << i18n.tr("settings", "menu_title") << "\n";
         std::cout << "--------------------------\n";
-        std::cout << "1. 📅 修改日期时间格式（当前：" << configUser.getDateFormateMenu() << "）\n";
-        std::cout << "2. 🧭 设置生活指数缓存时长（当前：" << configUser.getCacheExpiry("life_index") << " 分钟）\n";
-        std::cout << "3. 🌦 设置天气预报缓存时长（当前：" << configUser.getCacheExpiry("daily_forecast") << " 分钟）\n";
-        std::cout << "4. 🈯 设置语言（当前：" << configUser.getLanguage() << "）\n";
-        std::cout << "5. 🔙 返回主菜单\n";
-        std::cout << "请输入选项（1-5）：";
+        std::cout << "1. 📅 " << i18n.tr("settings", "date_format") << "（" << configUser.getDateFormateMenu() << "）\n";
+        std::cout << "2. 🧭 " << i18n.tr("settings", "cache_life_index") << "（" << configUser.getCacheExpiry("life_index") << " 分钟）\n";
+        std::cout << "3. 🌦 " << i18n.tr("settings", "cache_forecast") << "（" << configUser.getCacheExpiry("daily_forecast") << " 分钟）\n";
+        std::cout << "4. 🈯 " << i18n.tr("settings", "language") << "（" << configUser.getLanguage() << "） \n";
+        std::cout << "5. 🔙 " << i18n.tr("settings", "back") << "\n";
+        std::cout << i18n.tr("settings", "prompt_input");
 
         std::string choice;
         std::getline(std::cin, choice);
 
         if (choice == "1") {
             std::string fmt;
-            std::cout << "📅 请输入新的日期格式（例如 %Y-%m-%d %H:%M:%S，输入 :q 取消）：";
+            std::cout << i18n.tr("settings", "input_date_format");
             std::getline(std::cin, fmt);
             if (fmt != ":q") {
                 configUser.setDateFormateMenu(fmt);
-                std::cout << "✅ 日期格式已更新。\n";
+                std::cout << i18n.tr("settings", "updated") << "\n";
             } else {
-                std::cout << "↩️ 修改已取消。\n";
+                std::cout << i18n.tr("settings", "cancelled") << "\n";
             }
 
         } else if (choice == "2") {
             std::string input;
-            std::cout << "🧭 请输入生活指数缓存时间（分钟，输入 :q 取消）：";
+            std::cout << i18n.tr("settings", "input_cache_life");
             std::getline(std::cin, input);
             if (input != ":q") {
                 try {
                     int mins = std::stoi(input);
                     configUser.setCacheExpiry("life_index", mins);
-                    std::cout << "✅ 缓存时间已更新。\n";
+                    std::cout << i18n.tr("settings", "updated") << "\n";
                 } catch (...) {
-                    std::cout << "❌ 输入无效。\n";
+                    std::cout << i18n.tr("settings", "invalid_input") << "\n";
                 }
             } else {
-                std::cout << "↩️ 修改已取消。\n";
+                std::cout << i18n.tr("settings", "cancelled") << "\n";
             }
 
         } else if (choice == "3") {
             std::string input;
-            std::cout << "🌦 请输入天气预报缓存时间（分钟，输入 :q 取消）：";
+            std::cout << i18n.tr("settings", "input_cache_forecast");
             std::getline(std::cin, input);
             if (input != ":q") {
                 try {
                     int mins = std::stoi(input);
                     configUser.setCacheExpiry("daily_forecast", mins);
-                    std::cout << "✅ 缓存时间已更新。\n";
+                    std::cout << i18n.tr("settings", "updated") << "\n";
                 } catch (...) {
-                    std::cout << "❌ 输入无效。\n";
+                    std::cout << i18n.tr("settings", "invalid_input") << "\n";
                 }
             } else {
-                std::cout << "↩️ 修改已取消。\n";
+                std::cout << i18n.tr("settings", "cancelled") << "\n";
             }
 
         } else if (choice == "4") {
             std::string lang;
-            std::cout << "🈯 请输入语言代码（zh / en，输入 :q 取消）：";
+            std::cout << i18n.tr("settings", "input_language");
             std::getline(std::cin, lang);
             if (lang != ":q") {
                 configUser.setLanguage(lang);
-                std::cout << "✅ 语言已更新。\n";
+                std::cout << i18n.tr("settings", "updated") << "\n";
+                if (!i18n.load(lang)) {
+                    std::cout << i18n.tr("settings", "language_load_fail") << "\n";
+                } else {
+                    std::cout << i18n.tr("settings", "language_load_success") << " " << lang << "\n";
+                }
             } else {
-                std::cout << "↩️ 修改已取消。\n";
-                continue;
+                std::cout << i18n.tr("settings", "cancelled") << "\n";
             }
-
+            continue;
         } else if (choice == "5") {
             configUser.save();
-            std::cout << "💾 配置已保存，正在返回主菜单...\n";
+            std::cout << i18n.tr("settings", "saved_and_exit") << "\n";
             return;
 
         } else {
-            std::cout << "❌ 无效选项，请重新输入。\n";
+            std::cout << i18n.tr("settings", "invalid_option") << "\n";
         }
-
-        std::cout << "\n按回车继续...";
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 }
-
 // 显示当前日期
-void showCurrentDate(ConfigUser& config)
+void showCurrentDate(ConfigUser& configUser,ConfigKey& configKey, I18n& i18n)
 {
-    std::string format = config.getDateFormateMenu();
+    std::string format = configUser.getDateFormateMenu();
 
-    while (!_kbhit()) {  // 如果没有按键按下，就刷新时间
-        clearConsole();  // 你已有的函数，用于清屏
+    while (!_kbhit()) {
+        clearConsole();
         std::time_t now = std::time(nullptr);
-        std::cout << "📍 主菜单 > 当前日期时间\n";
-        std::cout << "\t 📅:"
-                  << std::put_time(std::localtime(&now), config.getDateFormateMenu().c_str()) << std::endl;
-        std::cout << "按任意键返回主菜单……";
-        Sleep(1000);  // 每秒刷新一次（Windows）
+        std::cout << "📍 " << i18n.tr("date", "menu_path") << "\n";
+        std::cout << "\t 📅:" << std::put_time(std::localtime(&now), format.c_str()) << std::endl;
+
+        // 获取农历、节气、黄历等信息
+        std::string lunarInfo = getLunarInfo(configKey);  // 获取农历、节气、黄历信息
+        std::cout << "🌙 " << lunarInfo << std::endl;
+
+        std::cout << i18n.tr("date", "prompt_back");
+        Sleep(1000);
     }
 
-    _getch(); // 清除按下的键
+    _getch();
 }
 
-void showWeatherForecast(ConfigUser& configUser, ConfigKey& configKey)
-{
-    WeatherManager manager(configKey.getApiKey(), configKey.getHost(), configUser.getLanguage());
 
-    auto result = manager.get7DayForecast(configUser.getCityId(), configUser.getCacheExpiry("daily_forecast"));
+
+void showWeatherForecast(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n)
+{
+    WeatherManager manager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
+
+    auto result = manager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(),configUser.getCacheExpiry("daily_forecast"));
 
     if (result.forecasts.empty()) {
-        std::cout << "❌ 未能获取天气数据，请检查网络或 API 设置。" << std::endl;
+        std::cout << i18n.tr("forecast", "fetch_failed") << std::endl;
         return;
     }
 
     while (true) {
         clearConsole();
 
-        std::cout << (result.fromCache ? "📦 当前数据来自缓存。\n" : "🌐 当前数据来自网络。\n");
+        std::cout << (result.fromCache
+                      ? i18n.tr("forecast", "from_cache")
+                      : i18n.tr("forecast", "from_network"))
+                  << "\n";
+
         if (result.timestamp > 0) {
             char buf[64];
             std::tm* local = std::localtime(&result.timestamp);
             std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", local);
-            std::cout << "🕒 数据更新时间：" << buf << "\n";
+            std::cout << i18n.tr("forecast", "updated_time") << buf << "\n";
         }
 
-        std::cout << "\n📡 城市：" << configUser.getDefaultCity()
+        std::cout << "\n" << i18n.tr("forecast", "city") << configUser.getDefaultCity()
                   << "（ID: " << configUser.getCityId() << "）\n\n";
-        std::cout << "📆 未来 7 天预报：\n\n";
+        std::cout << i18n.tr("forecast", "forecast_title") << "\n\n";
 
         std::cout << "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
-        std::cout << "| 📅 日期     | ☀️ 白天天气    | 🌙 夜间天气    | 🌡 温度(℃)     | 🍃 风向    | 💨 风力  | 🌧 降水(mm)   | 💧 湿度(%) |\n";
+        std::cout << "| " << padRight(i18n.tr("forecast", "date"), 10)
+                  << " | " << padRight(i18n.tr("forecast", "text_day"), 12)
+                  << " | " << padRight(i18n.tr("forecast", "text_night"), 12)
+                  << " | " << padRight(i18n.tr("forecast", "temperature"), 11)
+                  << " | " << padRight(i18n.tr("forecast", "wind_dir"), 8)
+                  << " | " << padRight(i18n.tr("forecast", "wind_scale"), 6)
+                  << " | " << padRight(i18n.tr("forecast", "precip"), 10)
+                  << " | " << padRight(i18n.tr("forecast", "humidity"), 8) << " |\n";
         std::cout << "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
 
         for (const auto& f : result.forecasts) {
             std::ostringstream temp;
             temp << f.tempMin << "~" << f.tempMax;
 
-            std::cout << "| " << padRight(f.date, 10) << " "
-                      << "| " << padRight(f.textDay, 12) << " "
-                      << "| " << padRight(f.textNight, 12) << " "
-                      << "| " << padRight(temp.str(), 11) << " "
-                      << "| " << padRight(f.windDirDay, 8) << " "
-                      << "| " << padRight(f.windScaleDay, 6) << " "
-                      << "| " << padRight(f.precip, 10) << " "
-                      << "| " << padRight(f.humidity, 8) << "|\n";
+            std::cout << "| " << padRight(f.date, 10)
+                      << " | " << padRight(f.textDay, 12)
+                      << " | " << padRight(f.textNight, 12)
+                      << " | " << padRight(temp.str(), 11)
+                      << " | " << padRight(f.windDirDay, 8)
+                      << " | " << padRight(f.windScaleDay, 6)
+                      << " | " << padRight(f.precip, 10)
+                      << " | " << padRight(f.humidity, 8) << " |\n";
         }
 
         std::cout << "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
-        std::cout << "\n🔁 按 R 刷新数据，任意其他键返回主菜单...\n";
+        std::cout << "\n" << i18n.tr("forecast", "prompt_refresh") << "\n";
 
         char ch = _getch();
-        if (ch == 'R' || ch == 'r')
-        {
-            result = manager.get7DayForecast(configUser.getCityId(), 0); // 设置过期时间为 0 强制刷新
-        }else
-        {
+        if (ch == 'R' || ch == 'r') {
+            result = manager.get7DayForecast(configUser.getCityId(),configUser.getLanguage(), 0);  // 强制刷新
+        } else {
             break;
         }
     }
@@ -205,9 +277,10 @@ void showWeatherForecast(ConfigUser& configUser, ConfigKey& configKey)
 
 
 
+
 void showLifeIndices(ConfigUser& configUser, ConfigKey& configKey)
 {
-    WeatherManager manager(configKey.getApiKey(), configKey.getHost(), configUser.getLanguage());
+    WeatherManager manager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
 
     // 初次加载（尝试用缓存）
     auto result = manager.getLifeIndices(configUser.getCityId(), configUser.getCacheExpiry("weather_index"));
@@ -263,85 +336,6 @@ void showLifeIndices(ConfigUser& configUser, ConfigKey& configKey)
         }
     }
 }
-
-
-void updateCity(ConfigUser& configUser, ConfigKey& configKey)
-{
-    SetConsoleOutputCP(CP_UTF8);
-
-    WeatherManager wm(configKey.getApiKey(), configKey.getHost(), configUser.getLanguage());
-
-    std::string keyword;
-    std::vector<CityResult> matches;
-
-    while (true)
-    {
-        clearConsole();
-
-        std::cout << "📍 主菜单 > 设置城市\n";
-
-        if (!keyword.empty())
-        {
-            matches = wm.searchCity(keyword);
-            std::cout << " 🔎 " << keyword << "搜索结果\n";
-            if (matches.empty())
-            {
-                std::cout << " \t ❌ 未找到匹配城市\n";
-            }
-            else
-            {
-                int size = matches.size();
-                if (size > 9) size = 9;
-                for (size_t i = 0; i < size; ++i)
-                {
-                    const auto& c = matches[i];
-                    std::cout << " \t";
-                    std::cout << i + 1 << ". " << c.name
-                        << " | " << c.adm1 << " · " << c.adm2 << " · " << c.country
-                        << " [ID: " << c.id << "]\n";
-                }
-                std::cout << "👉 输入编号选择城市，或继续输入关键字...\n";
-            }
-        }
-
-        std::cout << "🔍 输入城市关键字（输入 : 返回主菜单）" << keyword;
-
-        char ch = _getch();
-        if (ch == ':' || keyword == ":")
-        {
-            std::cout << "\n↩️ 已取消设置，返回主菜单。" << std::endl;
-            delay_ms(2000);
-            return;
-        }
-        else if (ch == '\n')
-        {
-            return;
-        }
-        else if (ch == '\b' && !keyword.empty())
-        {
-            keyword.pop_back();
-        }
-        else if (ch >= '0' && ch <= '9' && !matches.empty())
-        {
-            int index = ch - '0';
-            if (index >= 1 && index <= matches.size())
-            {
-                const auto& selected = matches[index - 1];
-                configUser.setDefaultCity(selected.name);
-                configUser.setCityId(selected.id);
-                configUser.save();
-                std::cout << "\n✅ 城市设置成功：" << selected.name
-                    << "（" << selected.adm1 << " · " << selected.country << "）" << std::endl;
-                return;
-            }
-        }
-        else
-        {
-            keyword += ch;
-        }
-    }
-}
-
 int main()
 {
 #ifdef _WIN32
@@ -349,79 +343,52 @@ int main()
     SetConsoleCP(CP_UTF8);
 #endif
 
-    showLoadingBar("⚙️加载预设配置", 8, 4, "\033[38;5;117m");
-
     ConfigUser configUser("configUser.json");
     ConfigKey configKey("configKey.json");
+    I18n i18n;
 
-    if (!configUser.load())
-    {
-        std::cerr << "configUser.json 配置加载失败，程序退出。" << std::endl;
+    if (!configUser.load() || !configKey.load() || !i18n.load(configUser.getLanguage())) {
+        std::cerr << "❌ 初始化失败，程序退出。\n";
         return 1;
     }
-    if (!configKey.load())
-    {
-        std::cerr << "configKey.json 配置加载失败，程序退出。" << std::endl;
-        return 1;
-    }
-
+    showLoadingBar("⚙️加载预设配置", 8, 40, "\033[38;5;117m");
     while (true)
     {
         clearConsole();
 
-        std::cout << "\n🏠 天气 CLI 系统菜单\n";
+        std::cout << "\n" << i18n.tr("main_cli","menu_title") << "\n";
         std::cout << "--------------------------\n";
-        std::cout << "1.🗓️ 显示当前日期\n";
-        std::cout << "2.☁️ 显示天气预报\n";
-        std::cout << "3.📋 查看生活指数\n";
-        std::cout << "4.🚩 设置城市（当前：" << configUser.getDefaultCity() << "）\n";
-        std::cout << "5.❌ 退出程序\n";
-        std::cout << "6.🔧 用户设置\n";  // ✅ 添加这一项
+        auto options = i18n.trList("main_cli","menu_options");
+        for (size_t i = 0; i < options.size(); ++i) {
+            std::cout << i + 1 << ". " << options[i] << "\n";
+        }
         std::cout << "--------------------------\n";
-        std::cout << "请输入选项（1-5）：";
+        std::cout << i18n.tr("main_cli","prompt_input") << std::flush;
 
         std::string choice;
         std::getline(std::cin, choice);
         clearConsole();
 
-        if (choice == "1")
-        {
-            showCurrentDate(configUser);
-            continue;
-        }
-        else if (choice == "2")
-        {
-            showWeatherForecast(configUser, configKey);
-            continue;
-        }
-        else if (choice == "3")
-        {
+        if (choice == "1") {
+            showCurrentDate(configUser,configKey, i18n);
+        } else if (choice == "2") {
+            showWeatherForecast(configUser, configKey, i18n);
+        } else if (choice == "3") {
             showLifeIndices(configUser, configKey);
-            continue;
-        }
-        else if (choice == "4")
-        {
+        } else if (choice == "4") {
             updateCity(configUser, configKey);
             delay_ms(2000);
-            continue;
-        }
-        else if (choice == "5")
-        {
-            std::cout << "👋 再见！感谢使用天气CLI系统。" << std::endl;
+        } else if (choice == "5") {
+            updateUserSettings(configUser,i18n);
+        } else if (choice == "6") {
+            std::cout << i18n.tr("main_cli","goodbye") << std::endl;
+            delay_ms(2000);
             break;
+        } else {
+            std::cout << i18n.tr("main_cli","invalid_option") << std::endl;
         }
-        else if (choice == "6") {
-        updateUserSettings(configUser);
-        delay_ms(2000);
-        continue;
-        }
-        else
-        {
-            std::cout << "❌ 无效选项，请输入 1 - 5。" << std::endl;
-        }
-
-        std::cout << "\n按 Enter 返回菜单...";
+        std::cout << "\n" << i18n.tr("main_cli","back_to_menu");
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
     return 0;
-}
+}3
