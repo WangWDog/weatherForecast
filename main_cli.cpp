@@ -45,17 +45,38 @@ std::string getLunarInfo(ConfigKey& config_key) {
 
     try {
         auto j = nlohmann::json::parse(response);
+        if (!j.contains("data")) return "❌ 响应数据无效";
 
-        std::string lunar = j["data"].value("Lunar", "未知");
-        std::string jieqi = j["data"].value("JieQi1", "无节气");
-        std::string huangli = j["data"].value("YiDay", "暂无宜信息");
+        const auto& d = j["data"];
+        std::ostringstream oss;
 
-        return "🌙 农历：" + lunar + " | 🌾 节气：" + jieqi + " | 📜 宜：" + huangli;
+        auto printIfNotEmpty = [&](const std::string& emoji, const std::string& label, const std::string& key) {
+            if (d.contains(key) && !d[key].get<std::string>().empty()) {
+                oss << emoji << " " << label << "：" << d[key].get<std::string>() << "\n";
+            }
+        };
+
+        // 信息输出
+        printIfNotEmpty("📅", "公历", "Solar");
+        printIfNotEmpty("📆", "星期", "Week");
+        printIfNotEmpty("🌙", "农历", "Lunar");
+        printIfNotEmpty("🧧", "农历年份", "LunarYear");
+        printIfNotEmpty("🐉", "属相", "ThisYear");
+        printIfNotEmpty("📜", "干支年", "GanZhiYear");
+        printIfNotEmpty("🎈", "节日", "Festivals");
+        printIfNotEmpty("🌾", "节气", "JieQi1");
+        printIfNotEmpty("✅", "宜", "YiDay");
+        printIfNotEmpty("⚠️", "忌", "JiDay");
+        printIfNotEmpty("💬", "微语·短", "WeiYu_s");
+        printIfNotEmpty("📖", "微语·长", "WeiYu_l");
+
+        return oss.str();
 
     } catch (const std::exception& e) {
         return std::string("❌ JSON 解析失败：") + e.what();
     }
 }
+
 
 
 
