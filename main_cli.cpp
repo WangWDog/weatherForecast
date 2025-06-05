@@ -57,18 +57,19 @@ std::string getLunarInfo(ConfigKey& config_key) {
         };
 
         // 信息输出
-        printIfNotEmpty("📅", "公历", "Solar");
-        printIfNotEmpty("📆", "星期", "Week");
-        printIfNotEmpty("🌙", "农历", "Lunar");
-        printIfNotEmpty("🧧", "农历年份", "LunarYear");
-        printIfNotEmpty("🐉", "属相", "ThisYear");
-        printIfNotEmpty("📜", "干支年", "GanZhiYear");
-        printIfNotEmpty("🎈", "节日", "Festivals");
-        printIfNotEmpty("🌾", "节气", "JieQi1");
-        printIfNotEmpty("✅", "宜", "YiDay");
-        printIfNotEmpty("⚠️", "忌", "JiDay");
-        printIfNotEmpty("💬", "微语·短", "WeiYu_s");
-        printIfNotEmpty("📖", "微语·长", "WeiYu_l");
+        printIfNotEmpty("\t📅", "公历", "Solar");
+        printIfNotEmpty("\t📆", "星期", "Week");
+        printIfNotEmpty("\t🌙", "农历", "Lunar");
+        printIfNotEmpty("\t🧧", "农历年份", "LunarYear");
+        printIfNotEmpty("\t🐉", "属相", "ThisYear");
+        printIfNotEmpty("\t📜", "干支年", "GanZhiYear");
+        printIfNotEmpty("\t🎈", "节日", "Festivals");
+        printIfNotEmpty("\t🌾", "节气", "JieQi1");
+        printIfNotEmpty("\t✅", "宜", "YiDay");
+        printIfNotEmpty("\t⚠️", "忌", "JiDay");
+        printIfNotEmpty("\t💬", "微语·短", "WeiYu_s");
+        printIfNotEmpty("\t📖", "微语·长", "WeiYu_l");
+
 
         return oss.str();
 
