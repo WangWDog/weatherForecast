@@ -380,6 +380,7 @@ void handleCommand(int argc,char* argv[], ConfigUser& configUser, ConfigKey& con
         // 判断是否传入 --all 参数
         showCurrentDate(configUser, configKey, i18n, showAll);  // 传递 showAll 参数
     } else if (command == "show_forecast") {
+        std::string command2 = argv[1];
         showWeatherForecast(configUser, configKey, i18n);
     } else if (command == "show_life") {
         showLifeIndices(configUser, configKey);
