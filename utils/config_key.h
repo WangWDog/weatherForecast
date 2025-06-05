@@ -10,5 +10,7 @@ public:
 
     std::string getFreeApiKey() const;
     std::string getHFHost() const;
+    std::string getDoubaoEndpoint() const;
+    std::string getDoubaoKey() const;
     void setHost(const std::string& host);
 };

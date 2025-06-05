@@ -90,8 +90,10 @@
     "weiyu_long": "Long Quote"
   },
   "date_view": {
-    "title": "📍 Main Menu > Current Date & Time",
+    "title": "📍 Main Menu > Current Date and Time",
     "solar": "📅 Solar Date",
     "return_hint": "Press any key to return to the main menu..."
   }
+
+
 }

@@ -17,6 +17,16 @@ std::string ConfigKey::getHFHost() const {
     return configJson.value("host_hf", "");
 }
 
+std::string ConfigKey::getDoubaoEndpoint() const {
+
+        return configJson.value("doubao_endpoint_id", "");
+}
+
+std::string ConfigKey::getDoubaoKey() const {
+    return configJson.value("doubao_key", "");
+}
+
+
 void ConfigKey::setHost(const std::string& host) {
     configJson["host"] = host;
 }

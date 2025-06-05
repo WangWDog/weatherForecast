@@ -5,6 +5,7 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+#include "doubao_translator.h"
 
 using json = nlohmann::json;
 
@@ -116,14 +117,24 @@ LunarData parseLunarJson(const std::string& jsonStr) {
     return data;
 }
 
-void printLunarData(const LunarData& d) {
-    std::cout << "📅 公历日期：" << d.solarDate << "（" << d.week << "）\n";
-    std::cout << "🌙 农历：" << d.lunarYear << " " << d.lunar << "（" << d.thisYear << "）\n";
-    std::cout << "📖 干支年：" << d.ganzhiYear << " | 星座：" << d.constellation << "\n";
-    std::cout << "🎉 节日：" << d.festivals << "\n";
-    std::cout << "🌾 节气：" << d.jieqi << "\n";
-    std::cout << "✅ 宜：" << d.yi << "\n";
-    std::cout << "⚠️ 忌：" << d.ji << "\n";
-    std::cout << "💬 微语短句：" << d.weiyuShort << "\n";
-    std::cout << "💬 微语长句：" << d.weiyuLong << "\n";
+void printLunarData(const LunarData& d, const std::string& lang, const ConfigKey& configKey, const I18n& i18n) {
+    LunarData data = d;
+
+    if (lang == "en") {
+        translateLunarDataIfEnglish(data, lang, configKey);
+    }
+
+    // 所有标签文本通过 i18n 获取（从 lang_en.json 中定义）
+    std::cout << i18n.tr("lunar", "solar_date") << ": " << data.solarDate << " (" << data.week << ")\n";
+    std::cout << i18n.tr("lunar", "lunar_date") << ": " << data.lunarYear << " " << data.lunar
+              << " (" << data.thisYear << ")\n";
+    std::cout << i18n.tr("lunar", "ganzhi_year") << ": " << data.ganzhiYear
+              << " | " << i18n.tr("lunar", "constellation") << ": " << data.constellation << "\n";
+    std::cout << i18n.tr("lunar", "festivals") << ": " << data.festivals << "\n";
+    std::cout << i18n.tr("lunar", "jieqi") << ": " << data.jieqi << "\n";
+    std::cout << i18n.tr("lunar", "yi") << ": " << data.yi << "\n";
+    std::cout << i18n.tr("lunar", "ji") << ": " << data.ji << "\n";
+    std::cout << i18n.tr("lunar", "weiyu_short") << ": " << data.weiyuShort << "\n";
+    std::cout << i18n.tr("lunar", "weiyu_long") << ": " << data.weiyuLong << "\n";
 }
+

@@ -22,6 +22,8 @@
 #include "i18n/i18n_loader.h"
 #include "lunar_api.h"
 #include "config_key.h"
+#include "doubao_translator.h"
+
 
 #ifdef _WIN32
 #include <windows.h>
@@ -70,8 +72,14 @@ std::string getLunarInfo(ConfigKey& config_key, const std::string& lang, I18n& i
         printIfNotEmpty("\t💬", "微语·短", "WeiYu_s");
         printIfNotEmpty("\t📖", "微语·长", "WeiYu_l");
 
+        std::string lunarInfo = oss.str();
 
-        return oss.str();
+        if (lang == "en") {
+            lunarInfo = translateWithDoubao(lunarInfo, "英文", config_key);
+
+        }
+
+        return lunarInfo;
 
     } catch (const std::exception& e) {
         return std::string("❌ JSON 解析失败：") + e.what();

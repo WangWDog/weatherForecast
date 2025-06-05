@@ -48,12 +48,12 @@ bool I18n::load(const std::string& language) {
     return true;
 }
 
-std::string I18n::tr(const std::string& key) {
+std::string I18n::tr(const std::string& key) const{
     auto it = translations.find(key);
     return it != translations.end() ? it->second : "[missing: " + key + "]";
 }
 
-std::string I18n::tr(const std::string& section, const std::string& key) {
+std::string I18n::tr(const std::string& section, const std::string& key) const {
     std::string fullKey = section + "." + key;
     return tr(fullKey);
 }
