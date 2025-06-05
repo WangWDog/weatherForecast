@@ -1,0 +1,91 @@
+{
+  "main_cli": {
+    "menu_title": "🏠 天气 CLI 系统菜单",
+    "menu_options": [
+      "🗓️ 显示当前日期",
+      "☁️ 显示天气预报",
+      "📋 查看生活指数",
+      "🚩 设置城市",
+      "🔧 用户设置",
+      "❌ 退出程序"
+    ],
+    "prompt_input": "请输入选项（1-6）：",
+    "invalid_option": "❌ 无效选项，请重新输入。",
+    "goodbye": "👋 再见！感谢使用天气CLI系统。",
+    "back_to_menu": "按 Enter 返回菜单..."
+  },
+  "searchCity": {
+    "title": "📍 主菜单 > 设置城市",
+    "searching": "搜索结果",
+    "not_found": "❌ 未找到匹配城市",
+    "select_prompt": "👉 输入编号选择城市，或继续输入关键字...",
+    "input_hint": "🔍 输入城市关键字（输入 : 返回主菜单）",
+    "cancelled": "↩️ 已取消设置，返回主菜单。",
+    "success": "✅ 城市设置成功"
+  },
+  "settings": {
+    "menu_title": "用户设置菜单",
+    "date_format": "修改日期时间格式",
+    "cache_life_index": "设置生活指数缓存时长",
+    "cache_forecast": "设置天气预报缓存时长",
+    "language": "设置语言",
+    "back": "返回主菜单",
+    "prompt_input": "请输入选项（1-5）：",
+    "input_date_format": "📅 请输入新的日期格式（例如 %Y-%m-%d %H:%M:%S，输入 :q 取消）：",
+    "input_cache_life": "🧭 请输入生活指数缓存时间（分钟，输入 :q 取消）：",
+    "input_cache_forecast": "🌦 请输入天气预报缓存时间（分钟，输入 :q 取消）：",
+    "input_language": "🈯 请输入语言代码（zh / en，输入 :q 取消）：",
+    "updated": "✅ 设置已更新。",
+    "cancelled": "↩️ 修改已取消。",
+    "invalid_input": "❌ 输入无效。",
+    "language_load_fail": "❌ 语言文件加载失败，将继续使用旧语言。",
+    "language_load_success": "🌐 已切换至新语言：",
+    "saved_and_exit": "💾 配置已保存，正在返回主菜单...",
+    "invalid_option": "❌ 无效选项，请重新输入。",
+    "press_enter_continue": "按回车继续..."
+  },
+  "forecast": {
+    "from_cache": "📦 当前数据来自缓存。",
+    "from_network": "🌐 当前数据来自网络。",
+    "updated_time": "🕒 数据更新时间：",
+    "city": "📡 城市：",
+    "forecast_title": "📆 未来 7 天预报：",
+    "date": "📅 日期",
+    "text_day": "☀️ 白天天气",
+    "text_night": "🌙 夜间天气",
+    "temperature": "🌡 温度(℃)",
+    "wind_dir": "🍃 风向",
+    "wind_scale": "💨 风力",
+    "precip": "🌧 降水(mm)",
+    "humidity": "💧 湿度(%)",
+    "prompt_refresh": "🔁 按 R 刷新数据，任意其他键返回主菜单...",
+    "fetch_failed": "❌ 未能获取天气数据，请检查网络或 API 设置。"
+  },
+  "date": {
+    "menu_path": "主菜单 > 当前日期时间",
+    "prompt_back": "按任意键返回主菜单……"
+  },
+  "lunar": {
+
+  "solar": "公历",
+  "week": "星期",
+  "lunar": "农历",
+  "lunar_year": "农历年份",
+  "zodiac": "属相",
+  "ganzhi_year": "干支年",
+  "constellation": "星座",
+  "festival": "节日",
+  "jieqi": "节气",
+  "yi": "宜",
+  "ji": "忌",
+  "weiyu_short": "微语短句",
+  "weiyu_long": "微语长句"
+  },
+
+  "date_view": {
+    "title": "📍 主菜单 > 当前日期时间",
+    "solar": "📅 公历",
+    "return_hint": "按任意键返回主菜单……"
+  }
+}
+
