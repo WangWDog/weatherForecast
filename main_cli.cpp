@@ -23,6 +23,8 @@
 #include "lunar_api.h"
 #include "config_key.h"
 #include "doubao_translator.h"
+#include "date_utils.h"  // 包含辅助函数头文件
+
 
 
 #ifdef _WIN32
@@ -30,12 +32,6 @@
 #endif
 
 using json = nlohmann::json;
-
-// 回调函数：将 HTTP 响应的内容写入到字符串中
-size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
-    ((std::string*)userp)->append((char*)contents, size * nmemb);
-    return size * nmemb;
-}
 
 // 用于调用 API 获取农历、节气和黄历等信息
 std::string getLunarInfo(ConfigKey& config_key, const std::string& lang, I18n& i18n) {
@@ -195,19 +191,37 @@ void updateUserSettings(ConfigUser& configUser, I18n& i18n)
     }
 }
 // 显示当前日期
-void showCurrentDate(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n)
-{
-    clearConsole();
+void showCurrentDate(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n, bool showAll) {
+    clearConsole();  // 清空控制台
 
+    // 获取当前时间
     std::time_t now = std::time(nullptr);
+    std::tm* currentTime = std::localtime(&now);
 
+    // 显示公历时间
     std::cout << "\t" << i18n.tr("date_view", "solar") << ": "
               << std::put_time(std::localtime(&now), configUser.getDateFormateMenu().c_str()) << std::endl;
 
-    // ✅ 加入农历黄历显示（已国际化）
-    std::string lunarInfo = getLunarInfo(configKey, configUser.getLanguage(), i18n);
-    std::cout << lunarInfo << std::endl;
+    // 输出调试信息，确保我们进入了 `showAll` 的判断部分
+    if (showAll) {
+        std::cout << "显示所有内容（农历、节气、生肖）..." << std::endl;  // 调试输出，确保进入了 showAll 的判断
+
+        // 获取农历信息
+        std::string lunarInfo = getLunarInfo(configKey, configUser.getLanguage(), i18n);
+        std::cout << i18n.tr("date_view", "lunar") << ": " << lunarInfo << std::endl;
+
+        // 获取节气信息
+        std::string solarTerm = getSolarTerm(i18n);
+        std::cout << i18n.tr("date_view", "solar_term") << ": " << solarTerm << std::endl;
+
+        // 获取生肖信息
+        std::string zodiacInfo = getZodiacInfo(i18n);
+        std::cout << i18n.tr("date_view", "zodiac") << ": " << zodiacInfo << std::endl;
+    }
+    std::cout << std::flush;  // 强制刷新输出
 }
+
+
 
 
 
@@ -351,9 +365,20 @@ void showCommandHelp() {
     std::cout << "  exit             - Exit the application\n";
 }
 
-void handleCommand(const std::string& command, ConfigUser& configUser, ConfigKey& configKey, I18n& i18n) {
+void handleCommand(int argc,char* argv[], ConfigUser& configUser, ConfigKey& configKey, I18n& i18n) {
+    // 判断是否为 "show_date" 命令
+    std::string command = argv[1];
+
     if (command == "show_date") {
-        showCurrentDate(configUser, configKey, i18n);
+        bool showAll = false;
+        if (argc>2) {
+            std::string type = argv[2];
+            if (type.find("--all") != std::string::npos) {
+                showAll = true;  // 如果包含 --all，设置为 true
+            }
+        }
+        // 判断是否传入 --all 参数
+        showCurrentDate(configUser, configKey, i18n, showAll);  // 传递 showAll 参数
     } else if (command == "show_forecast") {
         showWeatherForecast(configUser, configKey, i18n);
     } else if (command == "show_life") {
@@ -390,13 +415,18 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    showLoadingBar("⚙️加载预设配置", 8, 40, "\033[38;5;117m");
+    std::cout << "Number of arguments: " << argc << std::endl;
+
+    // 输出每个参数
+    for (int i = 0; i < argc; ++i) {
+        std::cout << "Argument " << i << ": " << argv[i] << std::endl;
+    }
 
     // 如果有命令行参数，则根据命令行参数执行相应操作
     if (argc > 1) {
-        std::string command = argv[1];
-        handleCommand(command, configUser, configKey, i18n);
+        handleCommand(argc,argv, configUser, configKey, i18n);
     } else {  // 没有命令行参数，则进入交互式菜单
+        showLoadingBar("⚙️加载预设配置", 8, 40, "\033[38;5;117m");
         while (true)
         {
             clearConsole();
@@ -409,14 +439,13 @@ int main(int argc, char* argv[])
             }
             std::cout << "--------------------------\n";
             std::cout << i18n.tr("main_cli", "prompt_input") << std::flush;
-
             std::string choice;
             std::getline(std::cin, choice);
             clearConsole();
-
+            // 处理不同的 choice 选项
             if (choice == "1") {
                 std::cout << i18n.tr("date_view", "title") << "\n";  // 📍 主菜单 > 当前日期时间
-                showCurrentDate(configUser, configKey, i18n);
+                showCurrentDate(configUser, configKey, i18n, true);  // 传入 showAll 来控制显示内容
                 std::cout << "\n" << i18n.tr("date_view", "return_hint");  // 按任意键返回主菜单……
                 _getch();  // 等待用户按键
             } else if (choice == "2") {

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.21)
 project(weatherForecast)
 # 设置当前项目的名称为 WeatherApp
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 # 设置 C++ 标准为 C++17
 
 set(CMAKE_AUTOMOC ON)
@@ -51,6 +51,7 @@ set(CLI_SOURCES
         utils/lunar_api.h
         utils/lunar_api.cpp
         utils/doubao_translator.cpp
+        utils/date_utils.cpp
 )
 set(WEATHER_GLOBAL
         weather_core/weather_manager.cpp          # 天气核心实现
