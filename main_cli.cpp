@@ -201,16 +201,12 @@ void showCurrentDate(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n)
 
     std::time_t now = std::time(nullptr);
 
-    std::cout << i18n.tr("date_view", "title") << "\n";  // 📍 主菜单 > 当前日期时间
     std::cout << "\t" << i18n.tr("date_view", "solar") << ": "
               << std::put_time(std::localtime(&now), configUser.getDateFormateMenu().c_str()) << std::endl;
 
     // ✅ 加入农历黄历显示（已国际化）
     std::string lunarInfo = getLunarInfo(configKey, configUser.getLanguage(), i18n);
     std::cout << lunarInfo << std::endl;
-
-    std::cout << "\n" << i18n.tr("date_view", "return_hint");  // 按任意键返回主菜单……
-    _getch();  // 等待用户按键
 }
 
 
@@ -344,7 +340,41 @@ void showLifeIndices(ConfigUser& configUser, ConfigKey& configKey)
         }
     }
 }
-int main()
+
+void showCommandHelp() {
+    std::cout << "Available commands:\n";
+    std::cout << "  show_date        - Show current date and time\n";
+    std::cout << "  show_forecast    - Show 7-day weather forecast\n";
+    std::cout << "  show_life        - Show life indices for the city\n";
+    std::cout << "  update_city      - Update the city setting\n";
+    std::cout << "  update_settings  - Update user settings\n";
+    std::cout << "  exit             - Exit the application\n";
+}
+
+void handleCommand(const std::string& command, ConfigUser& configUser, ConfigKey& configKey, I18n& i18n) {
+    if (command == "show_date") {
+        showCurrentDate(configUser, configKey, i18n);
+    } else if (command == "show_forecast") {
+        showWeatherForecast(configUser, configKey, i18n);
+    } else if (command == "show_life") {
+        showLifeIndices(configUser, configKey);
+    } else if (command == "update_city") {
+        updateCity(configUser, configKey);
+    } else if (command == "update_settings") {
+        updateUserSettings(configUser, i18n);
+    } else if (command == "exit") {
+        std::cout << i18n.tr("main_cli", "goodbye") << std::endl;
+        delay_ms(2000);
+        exit(0);  // Exits the program
+    } else {
+        showCommandHelp();
+        std::cout << "❌ Invalid command! Type 'help' for a list of commands." << std::endl;
+    }
+}
+
+
+
+int main(int argc, char* argv[])
 {
 #ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
@@ -359,44 +389,56 @@ int main()
         std::cerr << "❌ 初始化失败，程序退出。\n";
         return 1;
     }
+
     showLoadingBar("⚙️加载预设配置", 8, 40, "\033[38;5;117m");
-    while (true)
-    {
-        clearConsole();
 
-        std::cout << "\n" << i18n.tr("main_cli","menu_title") << "\n";
-        std::cout << "--------------------------\n";
-        auto options = i18n.trList("main_cli","menu_options");
-        for (size_t i = 0; i < options.size(); ++i) {
-            std::cout << i + 1 << ". " << options[i] << "\n";
+    // 如果有命令行参数，则根据命令行参数执行相应操作
+    if (argc > 1) {
+        std::string command = argv[1];
+        handleCommand(command, configUser, configKey, i18n);
+    } else {  // 没有命令行参数，则进入交互式菜单
+        while (true)
+        {
+            clearConsole();
+
+            std::cout << "\n" << i18n.tr("main_cli", "menu_title") << "\n";
+            std::cout << "--------------------------\n";
+            auto options = i18n.trList("main_cli", "menu_options");
+            for (size_t i = 0; i < options.size(); ++i) {
+                std::cout << i + 1 << ". " << options[i] << "\n";
+            }
+            std::cout << "--------------------------\n";
+            std::cout << i18n.tr("main_cli", "prompt_input") << std::flush;
+
+            std::string choice;
+            std::getline(std::cin, choice);
+            clearConsole();
+
+            if (choice == "1") {
+                std::cout << i18n.tr("date_view", "title") << "\n";  // 📍 主菜单 > 当前日期时间
+                showCurrentDate(configUser, configKey, i18n);
+                std::cout << "\n" << i18n.tr("date_view", "return_hint");  // 按任意键返回主菜单……
+                _getch();  // 等待用户按键
+            } else if (choice == "2") {
+                showWeatherForecast(configUser, configKey, i18n);
+            } else if (choice == "3") {
+                showLifeIndices(configUser, configKey);
+            } else if (choice == "4") {
+                updateCity(configUser, configKey);
+                delay_ms(2000);
+            } else if (choice == "5") {
+                updateUserSettings(configUser, i18n);
+            } else if (choice == "6") {
+                std::cout << i18n.tr("main_cli", "goodbye") << std::endl;
+                delay_ms(2000);
+                break;
+            } else {
+                std::cout << i18n.tr("main_cli", "invalid_option") << std::endl;
+            }
+            std::cout << "\n" << i18n.tr("main_cli", "back_to_menu");
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
-        std::cout << "--------------------------\n";
-        std::cout << i18n.tr("main_cli","prompt_input") << std::flush;
-
-        std::string choice;
-        std::getline(std::cin, choice);
-        clearConsole();
-
-        if (choice == "1") {
-            showCurrentDate(configUser,configKey,i18n);
-        } else if (choice == "2") {
-            showWeatherForecast(configUser, configKey, i18n);
-        } else if (choice == "3") {
-            showLifeIndices(configUser, configKey);
-        } else if (choice == "4") {
-            updateCity(configUser, configKey);
-            delay_ms(2000);
-        } else if (choice == "5") {
-            updateUserSettings(configUser,i18n);
-        } else if (choice == "6") {
-            std::cout << i18n.tr("main_cli","goodbye") << std::endl;
-            delay_ms(2000);
-            break;
-        } else {
-            std::cout << i18n.tr("main_cli","invalid_option") << std::endl;
-        }
-        std::cout << "\n" << i18n.tr("main_cli","back_to_menu");
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
+
     return 0;
 }
