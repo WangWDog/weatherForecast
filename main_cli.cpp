@@ -26,7 +26,6 @@
 #include "date_utils.h"  // 包含辅助函数头文件
 
 
-
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -34,8 +33,8 @@
 using json = nlohmann::json;
 
 // 用于调用 API 获取农历、节气和黄历等信息
-std::string getLunarInfo(ConfigKey& config_key, const std::string& lang, I18n& i18n) {
-     std::string response = callLunarApi(config_key, lang);  // 请求 API
+std::string getLunarInfo(ConfigKey &config_key, const std::string &lang, I18n &i18n) {
+    std::string response = callLunarApi(config_key, lang); // 请求 API
 
     if (response.empty()) {
         return "❌ 未获取到农历信息";
@@ -45,10 +44,10 @@ std::string getLunarInfo(ConfigKey& config_key, const std::string& lang, I18n& i
         auto j = nlohmann::json::parse(response);
         if (!j.contains("data")) return "❌ 响应数据无效";
 
-        const auto& d = j["data"];
+        const auto &d = j["data"];
         std::ostringstream oss;
 
-        auto printIfNotEmpty = [&](const std::string& emoji, const std::string& label, const std::string& key) {
+        auto printIfNotEmpty = [&](const std::string &emoji, const std::string &label, const std::string &key) {
             if (d.contains(key) && !d[key].get<std::string>().empty()) {
                 oss << emoji << " " << label << "：" << d[key].get<std::string>() << "\n";
             }
@@ -72,47 +71,41 @@ std::string getLunarInfo(ConfigKey& config_key, const std::string& lang, I18n& i
 
         if (lang == "en") {
             lunarInfo = translateWithDoubao(lunarInfo, "英文", config_key);
-
         }
 
         return lunarInfo;
-
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         return std::string("❌ JSON 解析失败：") + e.what();
     }
 }
 
 
-
-
 // 宽字符对齐工具函数（仅估算宽度）
-size_t visualLength(const std::string& str)
-{
+size_t visualLength(const std::string &str) {
     size_t len = 0;
-    for (unsigned char ch : str)
-    {
+    for (unsigned char ch: str) {
         len += (ch >= 0x80) ? 2 : 1;
     }
     return len;
 }
 
-std::string padRight(const std::string& str, size_t targetLen)
-{
+std::string padRight(const std::string &str, size_t targetLen) {
     size_t visualLen = visualLength(str);
     if (visualLen >= targetLen) return str;
     return str + std::string(targetLen - visualLen, ' ');
 }
 
 
-void updateUserSettings(ConfigUser& configUser, I18n& i18n)
-{
+void updateUserSettings(ConfigUser &configUser, I18n &i18n) {
     while (true) {
         clearConsole();
         std::cout << "🔧 " << i18n.tr("settings", "menu_title") << "\n";
         std::cout << "--------------------------\n";
         std::cout << "1. 📅 " << i18n.tr("settings", "date_format") << "（" << configUser.getDateFormateMenu() << "）\n";
-        std::cout << "2. 🧭 " << i18n.tr("settings", "cache_life_index") << "（" << configUser.getCacheExpiry("life_index") << " 分钟）\n";
-        std::cout << "3. 🌦 " << i18n.tr("settings", "cache_forecast") << "（" << configUser.getCacheExpiry("daily_forecast") << " 分钟）\n";
+        std::cout << "2. 🧭 " << i18n.tr("settings", "cache_life_index") << "（" << configUser.
+                getCacheExpiry("life_index") << " 分钟）\n";
+        std::cout << "3. 🌦 " << i18n.tr("settings", "cache_forecast") << "（" << configUser.
+                getCacheExpiry("daily_forecast") << " 分钟）\n";
         std::cout << "4. 🈯 " << i18n.tr("settings", "language") << "（" << configUser.getLanguage() << "） \n";
         std::cout << "5. 🔙 " << i18n.tr("settings", "back") << "\n";
         std::cout << i18n.tr("settings", "prompt_input");
@@ -130,7 +123,6 @@ void updateUserSettings(ConfigUser& configUser, I18n& i18n)
             } else {
                 std::cout << i18n.tr("settings", "cancelled") << "\n";
             }
-
         } else if (choice == "2") {
             std::string input;
             std::cout << i18n.tr("settings", "input_cache_life");
@@ -146,7 +138,6 @@ void updateUserSettings(ConfigUser& configUser, I18n& i18n)
             } else {
                 std::cout << i18n.tr("settings", "cancelled") << "\n";
             }
-
         } else if (choice == "3") {
             std::string input;
             std::cout << i18n.tr("settings", "input_cache_forecast");
@@ -162,7 +153,6 @@ void updateUserSettings(ConfigUser& configUser, I18n& i18n)
             } else {
                 std::cout << i18n.tr("settings", "cancelled") << "\n";
             }
-
         } else if (choice == "4") {
             std::string lang;
             std::cout << i18n.tr("settings", "input_language");
@@ -183,54 +173,121 @@ void updateUserSettings(ConfigUser& configUser, I18n& i18n)
             configUser.save();
             std::cout << i18n.tr("settings", "saved_and_exit") << "\n";
             return;
-
         } else {
             std::cout << i18n.tr("settings", "invalid_option") << "\n";
         }
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 }
+
 // 显示当前日期
-void showCurrentDate(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n, bool showAll) {
-    clearConsole();  // 清空控制台
+void showCurrentDate(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, bool showAll) {
+    clearConsole(); // 清空控制台
 
     // 获取当前时间
     std::time_t now = std::time(nullptr);
-    std::tm* currentTime = std::localtime(&now);
+    std::tm *currentTime = std::localtime(&now);
 
     // 显示公历时间
     std::cout << "\t" << i18n.tr("date_view", "solar") << ": "
-              << std::put_time(std::localtime(&now), configUser.getDateFormateMenu().c_str()) << std::endl;
+            << std::put_time(std::localtime(&now), configUser.getDateFormateMenu().c_str()) << std::endl;
 
     // 输出调试信息，确保我们进入了 `showAll` 的判断部分
     if (showAll) {
-        std::cout << "显示所有内容（农历、节气、生肖）..." << std::endl;  // 调试输出，确保进入了 showAll 的判断
-
+       // 调试输出，确保进入了 showAll 的判断
         // 获取农历信息
         std::string lunarInfo = getLunarInfo(configKey, configUser.getLanguage(), i18n);
+        std::cout << "Translation for 'lunar': " << i18n.tr("date_view", "lunar") << std::endl;
         std::cout << i18n.tr("date_view", "lunar") << ": " << lunarInfo << std::endl;
 
         // 获取节气信息
         std::string solarTerm = getSolarTerm(i18n);
+        std::cout << "Translation for 'solar_term': " << i18n.tr("date_view", "solar_term") << std::endl;
         std::cout << i18n.tr("date_view", "solar_term") << ": " << solarTerm << std::endl;
 
         // 获取生肖信息
         std::string zodiacInfo = getZodiacInfo(i18n);
+        std::cout << "Translation for 'zodiac': " << i18n.tr("date_view", "zodiac") << std::endl;
         std::cout << i18n.tr("date_view", "zodiac") << ": " << zodiacInfo << std::endl;
     }
-    std::cout << std::flush;  // 强制刷新输出
+    std::cout << std::flush; // 强制刷新输出
 }
 
 
+void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser) {
+    clearConsole();
+    std::cout << (result.fromCache
+                      ? i18n.tr("forecast", "from_cache")
+                      : i18n.tr("forecast", "from_network"))
+            << "\n";
+
+    if (result.timestamp > 0) {
+        char buf[64];
+        std::tm *local = std::localtime(&result.timestamp);
+        std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", local);
+        std::cout << i18n.tr("forecast", "updated_time") << buf << "\n";
+    }
+
+    std::cout << "\n" << i18n.tr("forecast", "city") << configUser.getDefaultCity()
+            << "（ID: " << configUser.getCityId() << "）\n\n";
+    std::cout << i18n.tr("forecast", "forecast_title") << "\n\n";
+
+    std::cout <<
+            "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
+    std::cout << "| " << padRight(i18n.tr("forecast", "date"), 10)
+            << " | " << padRight(i18n.tr("forecast", "text_day"), 12)
+            << " | " << padRight(i18n.tr("forecast", "text_night"), 12)
+            << " | " << padRight(i18n.tr("forecast", "temperature"), 11)
+            << " | " << padRight(i18n.tr("forecast", "wind_dir"), 8)
+            << " | " << padRight(i18n.tr("forecast", "wind_scale"), 6)
+            << " | " << padRight(i18n.tr("forecast", "precip"), 10)
+            << " | " << padRight(i18n.tr("forecast", "humidity"), 8) << " |\n";
+    std::cout <<
+            "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
+
+    for (const auto &f: result.forecasts) {
+        std::ostringstream temp;
+        temp << f.tempMin << "~" << f.tempMax;
+
+        std::cout << "| " << padRight(f.date, 10)
+                << " | " << padRight(f.textDay, 12)
+                << " | " << padRight(f.textNight, 12)
+                << " | " << padRight(temp.str(), 11)
+                << " | " << padRight(f.windDirDay, 8)
+                << " | " << padRight(f.windScaleDay, 6)
+                << " | " << padRight(f.precip, 10)
+                << " | " << padRight(f.humidity, 8) << " |\n";
+    }
+
+    std::cout <<
+            "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
+}
+
+void displayWeatherCommander(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, boolean forceRefresh) {
+    WeatherManager manager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
+    ForecastResult result;
+    if (forceRefresh) {
+        result = manager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(), 0);
+    } else {
+        result = manager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(),
+                                         configUser.getCacheExpiry("daily_forecast"));
+    }
 
 
+    if (result.forecasts.empty()) {
+        std::cout << i18n.tr("forecast", "fetch_failed") << std::endl;
+        return;
+    }
 
+    displayWeather(result, i18n, configUser);
+    std::cout << "\n" << i18n.tr("forecast", "commander_prompt_refresh") << "\n";
+}
 
-void showWeatherForecast(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n)
-{
+void showWeatherForecast(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n) {
     WeatherManager manager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
 
-    auto result = manager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(),configUser.getCacheExpiry("daily_forecast"));
+    auto result = manager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(),
+                                          configUser.getCacheExpiry("daily_forecast"));
 
     if (result.forecasts.empty()) {
         std::cout << i18n.tr("forecast", "fetch_failed") << std::endl;
@@ -238,55 +295,11 @@ void showWeatherForecast(ConfigUser& configUser, ConfigKey& configKey, I18n& i18
     }
 
     while (true) {
-        clearConsole();
-
-        std::cout << (result.fromCache
-                      ? i18n.tr("forecast", "from_cache")
-                      : i18n.tr("forecast", "from_network"))
-                  << "\n";
-
-        if (result.timestamp > 0) {
-            char buf[64];
-            std::tm* local = std::localtime(&result.timestamp);
-            std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", local);
-            std::cout << i18n.tr("forecast", "updated_time") << buf << "\n";
-        }
-
-        std::cout << "\n" << i18n.tr("forecast", "city") << configUser.getDefaultCity()
-                  << "（ID: " << configUser.getCityId() << "）\n\n";
-        std::cout << i18n.tr("forecast", "forecast_title") << "\n\n";
-
-        std::cout << "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
-        std::cout << "| " << padRight(i18n.tr("forecast", "date"), 10)
-                  << " | " << padRight(i18n.tr("forecast", "text_day"), 12)
-                  << " | " << padRight(i18n.tr("forecast", "text_night"), 12)
-                  << " | " << padRight(i18n.tr("forecast", "temperature"), 11)
-                  << " | " << padRight(i18n.tr("forecast", "wind_dir"), 8)
-                  << " | " << padRight(i18n.tr("forecast", "wind_scale"), 6)
-                  << " | " << padRight(i18n.tr("forecast", "precip"), 10)
-                  << " | " << padRight(i18n.tr("forecast", "humidity"), 8) << " |\n";
-        std::cout << "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
-
-        for (const auto& f : result.forecasts) {
-            std::ostringstream temp;
-            temp << f.tempMin << "~" << f.tempMax;
-
-            std::cout << "| " << padRight(f.date, 10)
-                      << " | " << padRight(f.textDay, 12)
-                      << " | " << padRight(f.textNight, 12)
-                      << " | " << padRight(temp.str(), 11)
-                      << " | " << padRight(f.windDirDay, 8)
-                      << " | " << padRight(f.windScaleDay, 6)
-                      << " | " << padRight(f.precip, 10)
-                      << " | " << padRight(f.humidity, 8) << " |\n";
-        }
-
-        std::cout << "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
+        displayWeather(result, i18n, configUser);
         std::cout << "\n" << i18n.tr("forecast", "prompt_refresh") << "\n";
-
         char ch = _getch();
         if (ch == 'R' || ch == 'r') {
-            result = manager.get7DayForecast(configUser.getCityId(),configUser.getLanguage(), 0);  // 强制刷新
+            result = manager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(), 0); // 强制刷新
         } else {
             break;
         }
@@ -294,62 +307,49 @@ void showWeatherForecast(ConfigUser& configUser, ConfigKey& configKey, I18n& i18
 }
 
 
-
-
-void showLifeIndices(ConfigUser& configUser, ConfigKey& configKey)
-{
+void showLifeIndices(ConfigUser &configUser, ConfigKey &configKey) {
     WeatherManager manager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
 
     // 初次加载（尝试用缓存）
     auto result = manager.getLifeIndices(configUser.getCityId(), configUser.getCacheExpiry("weather_index"));
 
-    if (result.indices.empty())
-    {
+    if (result.indices.empty()) {
         std::cout << "❌ 无法获取生活指数数据。\n";
         return;
     }
 
-    while (true)
-    {
+    while (true) {
         clearConsole();
 
         // 缓存信息展示
-        if (result.fromCache)
-        {
+        if (result.fromCache) {
             std::cout << "📦 当前数据来自缓存。\n";
-        }
-        else
-        {
+        } else {
             std::cout << "🌐 当前数据来自网络。\n";
         }
 
-        if (result.timestamp > 0)
-        {
+        if (result.timestamp > 0) {
             char buf[64];
-            std::tm* local = std::localtime(&result.timestamp);
+            std::tm *local = std::localtime(&result.timestamp);
             std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", local);
             std::cout << "🕒 数据更新时间：" << buf << "\n";
         }
 
         // 生活指数展示
         std::cout << "📌 城市：" << configUser.getDefaultCity() << " 的生活指数如下：\n\n";
-        for (const auto& idx : result.indices)
-        {
+        for (const auto &idx: result.indices) {
             std::cout << "📅 日期：" << idx.date << "\n"
-                << "📌 类型：" << idx.name << "\n"
-                << "📈 等级：" << idx.level << "（" << idx.category << "）\n"
-                << "📖 建议：" << idx.text << "\n"
-                << "--------------------------\n";
+                    << "📌 类型：" << idx.name << "\n"
+                    << "📈 等级：" << idx.level << "（" << idx.category << "）\n"
+                    << "📖 建议：" << idx.text << "\n"
+                    << "--------------------------\n";
         }
 
         std::cout << "\n🔁 按 R 刷新数据，任意其他键返回主菜单...\n";
         char ch = _getch();
-        if (ch == 'R' || ch == 'r')
-        {
+        if (ch == 'R' || ch == 'r') {
             result = manager.getLifeIndices(configUser.getCityId(), 0); // 设置过期时间为 0 强制刷新
-        }
-        else
-        {
+        } else {
             break;
         }
     }
@@ -365,23 +365,29 @@ void showCommandHelp() {
     std::cout << "  exit             - Exit the application\n";
 }
 
-void handleCommand(int argc,char* argv[], ConfigUser& configUser, ConfigKey& configKey, I18n& i18n) {
+void handleCommand(int argc, char *argv[], ConfigUser &configUser, ConfigKey &configKey, I18n &i18n) {
     // 判断是否为 "show_date" 命令
     std::string command = argv[1];
 
     if (command == "show_date") {
         bool showAll = false;
-        if (argc>2) {
+        if (argc > 2) {
             std::string type = argv[2];
             if (type.find("--all") != std::string::npos) {
-                showAll = true;  // 如果包含 --all，设置为 true
+                showAll = true; // 如果包含 --all，设置为 true
             }
         }
         // 判断是否传入 --all 参数
-        showCurrentDate(configUser, configKey, i18n, showAll);  // 传递 showAll 参数
+        showCurrentDate(configUser, configKey, i18n, showAll); // 传递 showAll 参数
     } else if (command == "show_forecast") {
-        std::string command2 = argv[1];
-        showWeatherForecast(configUser, configKey, i18n);
+        bool forceRefresh = false;
+        if (argc > 2) {
+            std::string type = argv[2];
+            if (type.find("-R") != std::string::npos) {
+                forceRefresh = true; // 如果包含 --all，设置为 true
+            }
+        }
+        displayWeatherCommander(configUser, configKey, i18n, forceRefresh);
     } else if (command == "show_life") {
         showLifeIndices(configUser, configKey);
     } else if (command == "update_city") {
@@ -391,7 +397,7 @@ void handleCommand(int argc,char* argv[], ConfigUser& configUser, ConfigKey& con
     } else if (command == "exit") {
         std::cout << i18n.tr("main_cli", "goodbye") << std::endl;
         delay_ms(2000);
-        exit(0);  // Exits the program
+        exit(0); // Exits the program
     } else {
         showCommandHelp();
         std::cout << "❌ Invalid command! Type 'help' for a list of commands." << std::endl;
@@ -399,9 +405,7 @@ void handleCommand(int argc,char* argv[], ConfigUser& configUser, ConfigKey& con
 }
 
 
-
-int main(int argc, char* argv[])
-{
+int main(int argc, char *argv[]) {
 #ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
@@ -425,11 +429,11 @@ int main(int argc, char* argv[])
 
     // 如果有命令行参数，则根据命令行参数执行相应操作
     if (argc > 1) {
-        handleCommand(argc,argv, configUser, configKey, i18n);
-    } else {  // 没有命令行参数，则进入交互式菜单
+        handleCommand(argc, argv, configUser, configKey, i18n);
+    } else {
+        // 没有命令行参数，则进入交互式菜单
         showLoadingBar("⚙️加载预设配置", 8, 40, "\033[38;5;117m");
-        while (true)
-        {
+        while (true) {
             clearConsole();
 
             std::cout << "\n" << i18n.tr("main_cli", "menu_title") << "\n";
@@ -445,10 +449,10 @@ int main(int argc, char* argv[])
             clearConsole();
             // 处理不同的 choice 选项
             if (choice == "1") {
-                std::cout << i18n.tr("date_view", "title") << "\n";  // 📍 主菜单 > 当前日期时间
-                showCurrentDate(configUser, configKey, i18n, true);  // 传入 showAll 来控制显示内容
-                std::cout << "\n" << i18n.tr("date_view", "return_hint");  // 按任意键返回主菜单……
-                _getch();  // 等待用户按键
+                std::cout << i18n.tr("date_view", "title") << "\n"; // 📍 主菜单 > 当前日期时间
+                showCurrentDate(configUser, configKey, i18n, true); // 传入 showAll 来控制显示内容
+                std::cout << "\n" << i18n.tr("date_view", "return_hint"); // 按任意键返回主菜单……
+                _getch(); // 等待用户按键
             } else if (choice == "2") {
                 showWeatherForecast(configUser, configKey, i18n);
             } else if (choice == "3") {

@@ -59,6 +59,7 @@
     "precip": "🌧 Precip (mm)",
     "humidity": "💧 Humidity (%)",
     "prompt_refresh": "🔁 Press R to refresh, any other key to return...",
+    "commander_prompt_refresh": "\uD83D\uDD01 -R force refresh",
     "fetch_failed": "❌ Failed to fetch weather data. Check network or API."
   },
   "date": {
