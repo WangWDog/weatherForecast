@@ -36,8 +36,8 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
 }
 
 // 用于调用 API 获取农历、节气和黄历等信息
-std::string getLunarInfo(ConfigKey& config_key) {
-    std::string response = callLunarApi(config_key);  // 请求 API
+std::string getLunarInfo(ConfigKey& config_key, const std::string& lang, I18n& i18n) {
+     std::string response = callLunarApi(config_key, lang);  // 请求 API
 
     if (response.empty()) {
         return "❌ 未获取到农历信息";
@@ -188,20 +188,20 @@ void updateUserSettings(ConfigUser& configUser, I18n& i18n)
 }
 // 显示当前日期
 void showCurrentDate(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n)
-
 {
     clearConsole();
 
     std::time_t now = std::time(nullptr);
-    std::cout << "📍 主菜单 > 当前日期时间\n";
-    std::cout << "\t 📅: "
+
+    std::cout << i18n.tr("date_view", "title") << "\n";  // 📍 主菜单 > 当前日期时间
+    std::cout << "\t" << i18n.tr("date_view", "solar") << ": "
               << std::put_time(std::localtime(&now), configUser.getDateFormateMenu().c_str()) << std::endl;
 
-    // ✅ 加入农历黄历显示
-    std::string lunarInfo = getLunarInfo(configKey);
+    // ✅ 加入农历黄历显示（已国际化）
+    std::string lunarInfo = getLunarInfo(configKey, configUser.getLanguage(), i18n);
     std::cout << lunarInfo << std::endl;
 
-    std::cout << "\n按任意键返回主菜单……";
+    std::cout << "\n" << i18n.tr("date_view", "return_hint");  // 按任意键返回主菜单……
     _getch();  // 等待用户按键
 }
 

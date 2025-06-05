@@ -2,6 +2,9 @@
 #include <iostream>
 #include <json.hpp>
 #include <curl/curl.h>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
 
 using json = nlohmann::json;
 
@@ -9,8 +12,48 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* use
     ((std::string*)userp)->append((char*)contents, size * nmemb);
     return size * nmemb;
 }
+std::string getTodayDateYYYYMMDD() {
+    std::time_t now = std::time(nullptr);
+    std::tm* local = std::localtime(&now);
+    std::ostringstream oss;
+    oss << std::put_time(local, "%Y%m%d");  // 输出格式如 20240605
+    return oss.str();
+}
 
-std::string callLunarApi(ConfigKey& config_key) {
+std::string formatLunarInfo(const LunarData& d, I18n& i18n)
+{
+    std::ostringstream oss;
+
+    auto label = [&](const std::string& key) {
+        return i18n.tr("lunar", key);
+    };
+
+    if (!d.solarDate.empty())
+        oss << "\t📅 " << label("solar") << "：" << d.solarDate << "（" << d.week << "）\n";
+    if (!d.lunarYear.empty() || !d.lunar.empty())
+        oss << "\t🌙 " << label("lunar_year") << "：" << d.lunarYear << " "
+            << d.lunar << "（" << d.thisYear << "）\n";
+    if (!d.ganzhiYear.empty() || !d.constellation.empty())
+        oss << "\t📖 " << label("ganzhi_year") << "：" << d.ganzhiYear << " | "
+            << label("constellation") << "：" << d.constellation << "\n";
+    if (!d.festivals.empty())
+        oss << "\t🎉 " << label("festival") << "：" << d.festivals << "\n";
+    if (!d.jieqi.empty())
+        oss << "\t🌾 " << label("jieqi") << "：" << d.jieqi << "\n";
+    if (!d.yi.empty())
+        oss << "\t✅ " << label("yi") << "：" << d.yi << "\n";
+    if (!d.ji.empty())
+        oss << "\t⚠️ " << label("ji") << "：" << d.ji << "\n";
+    if (!d.weiyuShort.empty())
+        oss << "\t💬 " << label("weiyu_short") << "：" << d.weiyuShort << "\n";
+    if (!d.weiyuLong.empty())
+        oss << "\t📖 " << label("weiyu_long") << "：" << d.weiyuLong << "\n";
+
+    return oss.str();
+}
+
+std::string callLunarApi(ConfigKey& config_key, const std::string& lang)
+{
     CURL* curl;
     CURLcode res;
     std::string readBuffer;
@@ -19,10 +62,13 @@ std::string callLunarApi(ConfigKey& config_key) {
     curl = curl_easy_init();
 
     std::string apiKey = config_key.getFreeApiKey();
-    std::string date = "20240601";  // 可改为动态
-    std::string final_url = "https://api.shwgij.com/api/lunars/lunar?date=" + date + "&key=" + apiKey;
+   std::string date = getTodayDateYYYYMMDD();
+    // ✅ 加入语言参数 lang
+    std::string final_url = "https://api.shwgij.com/api/lunars/lunar?date=" + date +
+                            "&key=" + apiKey +
+                            "&lang=" + lang;  // 👈 就是这部分
 
-   // std::cout << "🌐 请求 URL: " << final_url << std::endl;
+    // std::cout << "🌐 请求 URL: " << final_url << std::endl;
 
     if (curl) {
         curl_easy_setopt(curl, CURLOPT_URL, final_url.c_str());
@@ -42,6 +88,7 @@ std::string callLunarApi(ConfigKey& config_key) {
 
     return readBuffer;
 }
+
 
 LunarData parseLunarJson(const std::string& jsonStr) {
     LunarData data;
