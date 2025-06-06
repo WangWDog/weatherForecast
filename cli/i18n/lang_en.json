@@ -66,11 +66,6 @@
     "menu_path": "Main Menu > Current Date & Time",
     "prompt_back": "Press any key to return to main menu..."
   },
-  "date_view": {
-    "title": "📍 Main Menu > Current Date & Time",
-    "solar": "📅 Solar Date",
-    "return_hint": "Press any key to return to the main menu..."
-  },
   "lunar": {
     "fetch_failed": "❌ Failed to retrieve lunar info",
     "invalid_response": "❌ Invalid response data",
@@ -88,5 +83,22 @@
     "ji": "Avoid",
     "weiyu_short": "Short Quote",
     "weiyu_long": "Long Quote"
+  },
+
+  "date_view": {
+    "title": "📍 Main Menu > Current Date and Time",
+    "solar": "📅 Solar Calendar",
+    "lunar": "🌙 Lunar Calendar",
+    "solar_term": "🌾 Solar Term",
+    "zodiac": "🐉 Zodiac Sign",
+    "return_hint": "Press any key to return to the main menu..."
+  },
+
+  "solar_term": {
+    "current_term": "Current Solar Term"
+  },
+
+  "zodiac": {
+    "current_zodiac": "Current Zodiac Sign"
   }
 }

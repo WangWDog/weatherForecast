@@ -26,6 +26,7 @@
 #include "date_utils.h"  // 包含辅助函数头文件
 
 
+
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -34,27 +35,26 @@ using json = nlohmann::json;
 
 // 用于调用 API 获取农历、节气和黄历等信息
 std::string getLunarInfo(ConfigKey &config_key, const std::string &lang, I18n &i18n) {
-    std::string response = callLunarApi(config_key, lang); // 请求 API
+    std::string response = callLunarApi(config_key, lang); // 请求 API(Key and 语言，返回json
 
     if (response.empty()) {
-        return "❌ 未获取到农历信息";
+        return "❌ 未获取到农历信息";//提示错误信息
     }
 
     try {
         auto j = nlohmann::json::parse(response);
         if (!j.contains("data")) return "❌ 响应数据无效";
-
-        const auto &d = j["data"];
+        const auto &d = j["data"];//解析json
         std::ostringstream oss;
 
         auto printIfNotEmpty = [&](const std::string &emoji, const std::string &label, const std::string &key) {
             if (d.contains(key) && !d[key].get<std::string>().empty()) {
                 oss << emoji << " " << label << "：" << d[key].get<std::string>() << "\n";
             }
-        };
+        };//输出函数
 
         // 信息输出
-        printIfNotEmpty("\t📅", "公历", "Solar");
+        //printIfNotEmpty("\t📅", "公历", "Solar");
         printIfNotEmpty("\t📆", "星期", "Week");
         printIfNotEmpty("\t🌙", "农历", "Lunar");
         printIfNotEmpty("\t🧧", "农历年份", "LunarYear");
@@ -71,7 +71,7 @@ std::string getLunarInfo(ConfigKey &config_key, const std::string &lang, I18n &i
 
         if (lang == "en") {
             lunarInfo = translateWithDoubao(lunarInfo, "英文", config_key);
-        }
+        }//调用豆包翻译语言
 
         return lunarInfo;
     } catch (const std::exception &e) {
@@ -81,22 +81,10 @@ std::string getLunarInfo(ConfigKey &config_key, const std::string &lang, I18n &i
 
 
 // 宽字符对齐工具函数（仅估算宽度）
-size_t visualLength(const std::string &str) {
-    size_t len = 0;
-    for (unsigned char ch: str) {
-        len += (ch >= 0x80) ? 2 : 1;
-    }
-    return len;
-}
-
-std::string padRight(const std::string &str, size_t targetLen) {
-    size_t visualLen = visualLength(str);
-    if (visualLen >= targetLen) return str;
-    return str + std::string(targetLen - visualLen, ' ');
-}
 
 
-void updateUserSettings(ConfigUser &configUser, I18n &i18n) {
+
+void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装用户设置。il8n:国际化翻译
     while (true) {
         clearConsole();
         std::cout << "🔧 " << i18n.tr("settings", "menu_title") << "\n";
@@ -107,11 +95,11 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {
         std::cout << "3. 🌦 " << i18n.tr("settings", "cache_forecast") << "（" << configUser.
                 getCacheExpiry("daily_forecast") << " 分钟）\n";
         std::cout << "4. 🈯 " << i18n.tr("settings", "language") << "（" << configUser.getLanguage() << "） \n";
-        std::cout << "5. 🔙 " << i18n.tr("settings", "back") << "\n";
-        std::cout << i18n.tr("settings", "prompt_input");
+        std::cout << "5. 🔙 " << i18n.tr("settings", "back") << "\n";//输出五个菜单选项
 
+        std::cout << i18n.tr("settings", "prompt_input");
         std::string choice;
-        std::getline(std::cin, choice);
+        std::getline(std::cin, choice);//获取用户输入
 
         if (choice == "1") {
             std::string fmt;
@@ -123,7 +111,8 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {
             } else {
                 std::cout << i18n.tr("settings", "cancelled") << "\n";
             }
-        } else if (choice == "2") {
+        }//修改日期格式
+        else if (choice == "2") {
             std::string input;
             std::cout << i18n.tr("settings", "input_cache_life");
             std::getline(std::cin, input);
@@ -138,7 +127,8 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {
             } else {
                 std::cout << i18n.tr("settings", "cancelled") << "\n";
             }
-        } else if (choice == "3") {
+        }//修改生活指数缓存时间
+        else if (choice == "3") {
             std::string input;
             std::cout << i18n.tr("settings", "input_cache_forecast");
             std::getline(std::cin, input);
@@ -153,7 +143,8 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {
             } else {
                 std::cout << i18n.tr("settings", "cancelled") << "\n";
             }
-        } else if (choice == "4") {
+        }//修改天气预报缓存时间
+        else if (choice == "4") {
             std::string lang;
             std::cout << i18n.tr("settings", "input_language");
             std::getline(std::cin, lang);
@@ -169,7 +160,8 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {
                 std::cout << i18n.tr("settings", "cancelled") << "\n";
             }
             continue;
-        } else if (choice == "5") {
+        }//修改语言
+        else if (choice == "5") {
             configUser.save();
             std::cout << i18n.tr("settings", "saved_and_exit") << "\n";
             return;
@@ -181,7 +173,7 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {
 }
 
 // 显示当前日期
-void showCurrentDate(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, bool showAll) {
+void showCurrentDate(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, bool showAll) {//showAll是否显示全部信息
     clearConsole(); // 清空控制台
 
     // 获取当前时间
@@ -196,19 +188,10 @@ void showCurrentDate(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, b
     if (showAll) {
        // 调试输出，确保进入了 showAll 的判断
         // 获取农历信息
-        std::string lunarInfo = getLunarInfo(configKey, configUser.getLanguage(), i18n);
-        std::cout << "Translation for 'lunar': " << i18n.tr("date_view", "lunar") << std::endl;
-        std::cout << i18n.tr("date_view", "lunar") << ": " << lunarInfo << std::endl;
+        std::string lunarInfo = getLunarInfo(configKey, configUser.getLanguage(), i18n);//获取农历 + 节气 + 宜忌
+        std::cout << lunarInfo;  // 直接输出多行内容，不加“🌙 农历：”
 
-        // 获取节气信息
-        std::string solarTerm = getSolarTerm(i18n);
-        std::cout << "Translation for 'solar_term': " << i18n.tr("date_view", "solar_term") << std::endl;
-        std::cout << i18n.tr("date_view", "solar_term") << ": " << solarTerm << std::endl;
 
-        // 获取生肖信息
-        std::string zodiacInfo = getZodiacInfo(i18n);
-        std::cout << "Translation for 'zodiac': " << i18n.tr("date_view", "zodiac") << std::endl;
-        std::cout << i18n.tr("date_view", "zodiac") << ": " << zodiacInfo << std::endl;
     }
     std::cout << std::flush; // 强制刷新输出
 }
@@ -216,10 +199,11 @@ void showCurrentDate(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, b
 
 void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser) {
     clearConsole();
+
     std::cout << (result.fromCache
                       ? i18n.tr("forecast", "from_cache")
                       : i18n.tr("forecast", "from_network"))
-            << "\n";
+              << "\n";
 
     if (result.timestamp > 0) {
         char buf[64];
@@ -229,41 +213,60 @@ void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser) 
     }
 
     std::cout << "\n" << i18n.tr("forecast", "city") << configUser.getDefaultCity()
-            << "（ID: " << configUser.getCityId() << "）\n\n";
+              << "（ID: " << configUser.getCityId() << "）\n\n";
     std::cout << i18n.tr("forecast", "forecast_title") << "\n\n";
 
     std::cout <<
             "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
-    std::cout << "| " << padRight(i18n.tr("forecast", "date"), 10)
-            << " | " << padRight(i18n.tr("forecast", "text_day"), 12)
-            << " | " << padRight(i18n.tr("forecast", "text_night"), 12)
-            << " | " << padRight(i18n.tr("forecast", "temperature"), 11)
-            << " | " << padRight(i18n.tr("forecast", "wind_dir"), 8)
-            << " | " << padRight(i18n.tr("forecast", "wind_scale"), 6)
-            << " | " << padRight(i18n.tr("forecast", "precip"), 10)
-            << " | " << padRight(i18n.tr("forecast", "humidity"), 8) << " |\n";
+    std::cout << "| " <<centerText(i18n.tr("forecast", "date"), 10)
+            << " | " <<centerText(i18n.tr("forecast", "text_day"), 12)
+            << " | " <<centerText(i18n.tr("forecast", "text_night"), 12)
+            << " | " <<centerText(i18n.tr("forecast", "temperature"), 11)
+            << " | " <<centerText(i18n.tr("forecast", "wind_dir"), 8)
+            << " | " <<centerText(i18n.tr("forecast", "wind_scale"), 6)
+            << " | " <<centerText(i18n.tr("forecast", "precip"), 10)
+            << " | " <<centerText(i18n.tr("forecast", "humidity"), 8) << " |\n";
     std::cout <<
             "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
 
-    for (const auto &f: result.forecasts) {
+    for (const auto &f : result.forecasts) {
+        // 拼接温度范围
         std::ostringstream temp;
         temp << f.tempMin << "~" << f.tempMax;
 
-        std::cout << "| " << padRight(f.date, 10)
-                << " | " << padRight(f.textDay, 12)
-                << " | " << padRight(f.textNight, 12)
-                << " | " << padRight(temp.str(), 11)
-                << " | " << padRight(f.windDirDay, 8)
-                << " | " << padRight(f.windScaleDay, 6)
-                << " | " << padRight(f.precip, 10)
-                << " | " << padRight(f.humidity, 8) << " |\n";
+        std::ostringstream precipStr;
+        precipStr << std::fixed << std::setprecision(1) << f.precip;
+
+        // 安全转换湿度为整数字符串
+        std::string humidityStr;
+        try {
+            humidityStr = std::to_string(std::stoi(f.humidity));  // "86.0" -> 86 -> "86"
+        } catch (...) {
+            humidityStr = "--";  // 若转换失败，例如内容不是数字，则显示为 "--"
+        }
+
+        std::cout << "| " <<  centerText(f.date, 10)
+                  << " | " <<  centerText(f.textDay, 12)
+                  << " | " <<  centerText(f.textNight, 12)
+                  << " | " <<  centerText(temp.str(), 11)
+                  << " | " <<  centerText(f.windDirDay, 8)
+                  << " | " <<  centerText(f.windScaleDay, 6)
+                  << " | " <<  centerText(f.precip, 10)
+                  <<  centerText(humidityStr, 8) << " |" << "\n";
+
     }
 
     std::cout <<
-            "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
-}
+        "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
+    std::cout << std::endl;  // 👈 加一行空行
+    std::cout << "-R 强制刷新" << std::endl;
 
-void displayWeatherCommander(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, boolean forceRefresh) {
+    }
+
+
+
+
+void displayWeatherCommander(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, bool forceRefresh) {
     WeatherManager manager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
     ForecastResult result;
     if (forceRefresh) {

@@ -90,6 +90,13 @@
     "solar_term": "🌾 节气",
     "zodiac": "🐉 属相",
     "return_hint": "按任意键返回主菜单..."
+  },
+  "solar_term": {
+    "current_term": "当前节气名称"
+  },
+
+  "zodiac": {
+    "current_zodiac": "当前生肖"
   }
 }
 
