@@ -52,6 +52,7 @@ set(CLI_SOURCES
         utils/lunar_api.cpp
         utils/doubao_translator.cpp
         utils/date_utils.cpp
+        utils/doubao_helper.cpp
 )
 set(WEATHER_GLOBAL
         weather_core/weather_manager.cpp          # 天气核心实现
@@ -96,6 +97,16 @@ add_executable(weather_gui
 target_link_libraries(weather_gui curl)
 # 链接 Qt6 的 Widgets 和 Network 模块到 GUI 可执行文件
 target_link_libraries(weather_gui Qt6::Widgets Qt6::Network)
+# 显式告诉 find_package 去哪里找 CURL
+set(CURL_INCLUDE_DIR "${CURL_PATH}/include")
+set(CURL_LIBRARY "${CURL_PATH}/lib/libcurl.a")  # 如果你用 dll，写 libcurl.dll.a
+
+set(CURL_FOUND TRUE)
+
+
+find_package(CURL REQUIRED)
+
+
 
 
 # 自动复制运行时 DLL（如 libcurl.dll）到可执行文件目录

@@ -2,6 +2,7 @@
   "main_cli": {
     "menu_title": "🏠 Weather CLI System Menu",
     "menu_options": [
+      "🤖 AI Life Suggestions",
       "🗓️ Show Current Date",
       "☁️ Show Weather Forecast",
       "📋 View Life Indices",
@@ -100,5 +101,12 @@
 
   "zodiac": {
     "current_zodiac": "Current Zodiac Sign"
+  },
+  "ai_suggestion": {
+    "greeting": "Hello, here are your customized daily life suggestions:",
+    "dressing": "The temperature is mild, a light jacket is recommended.",
+    "sport": "Good for outdoor activities. Don't forget sunscreen.",
+    "travel": "Traffic looks smooth today, perfect for a short trip.",
+    "loading": "Generating AI suggestions, please wait..."
   }
 }

@@ -24,6 +24,8 @@
 #include "config_key.h"
 #include "doubao_translator.h"
 #include "date_utils.h"  // 包含辅助函数头文件
+#include "doubao_helper.h"  // 调用豆包函数
+
 
 
 
@@ -88,7 +90,7 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装
     while (true) {
         clearConsole();
         std::cout << "🔧 " << i18n.tr("settings", "menu_title") << "\n";
-        std::cout << "--------------------------\n";
+        std::cout << "------------------------\n";
         std::cout << "1. 📅 " << i18n.tr("settings", "date_format") << "（" << configUser.getDateFormateMenu() << "）\n";
         std::cout << "2. 🧭 " << i18n.tr("settings", "cache_life_index") << "（" << configUser.
                 getCacheExpiry("life_index") << " 分钟）\n";
@@ -171,6 +173,22 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 }
+void showAISuggestions(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n) {
+    std::cout << "\t🌟 " << i18n.tr("ai_suggestion", "loading") << "\n";
+
+    // 从 configKey 获取豆包参数
+    std::string token = configKey.getDoubaoKey();             // 需要你定义 getDoubaoKey()
+    std::string endpointId = configKey.getDoubaoEndpoint(); // 需要你定义 getDoubaoEndpointId()
+
+    // 构造提示词（可拓展为动态天气建议）
+    std::string prompt = "你是一个生活助手，请根据今天的天气情况，给出穿衣、运动和出行建议。";
+
+    // 调用豆包 API 获取建议
+    std::string suggestion = callDoubaoAI(token, endpointId, prompt);
+
+    // 输出结果
+    std::cout << "\n🤖 " << suggestion << std::endl;
+}
 
 // 显示当前日期
 void showCurrentDate(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, bool showAll) {//showAll是否显示全部信息
@@ -197,6 +215,10 @@ void showCurrentDate(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, b
 }
 
 
+void printLine() {
+    std::cout << "+--------------+--------------+--------------+--------------+"
+                 "--------------+--------------+--------------+--------------+\n";
+}
 void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser) {
     clearConsole();
 
@@ -216,20 +238,19 @@ void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser) 
               << "（ID: " << configUser.getCityId() << "）\n\n";
     std::cout << i18n.tr("forecast", "forecast_title") << "\n\n";
 
-    std::cout <<
-            "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
-    std::cout << "| " <<centerText(i18n.tr("forecast", "date"), 10)
-            << " | " <<centerText(i18n.tr("forecast", "text_day"), 12)
-            << " | " <<centerText(i18n.tr("forecast", "text_night"), 12)
-            << " | " <<centerText(i18n.tr("forecast", "temperature"), 11)
-            << " | " <<centerText(i18n.tr("forecast", "wind_dir"), 8)
-            << " | " <<centerText(i18n.tr("forecast", "wind_scale"), 6)
-            << " | " <<centerText(i18n.tr("forecast", "precip"), 10)
-            << " | " <<centerText(i18n.tr("forecast", "humidity"), 8) << " |\n";
-    std::cout <<
-            "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
+    printLine();
+    std::cout << "| " << centerText(i18n.tr("forecast", "date"), 12)
+              << " | " << centerText(i18n.tr("forecast", "text_day"), 12)
+              << " | " << centerText(i18n.tr("forecast", "text_night"), 12)
+              << " | " << centerText(i18n.tr("forecast", "temperature"), 12)
+              << " | " << centerText(i18n.tr("forecast", "wind_dir"), 12)
+              << " | " << centerText(i18n.tr("forecast", "wind_scale"), 12)
+              << " | " << centerText(i18n.tr("forecast", "precip"), 12)
+              << " | " << centerText(i18n.tr("forecast", "humidity"), 12) << " |\n";
+    printLine();
 
     for (const auto &f : result.forecasts) {
+
         // 拼接温度范围
         std::ostringstream temp;
         temp << f.tempMin << "~" << f.tempMax;
@@ -239,27 +260,46 @@ void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser) 
 
         // 安全转换湿度为整数字符串
         std::string humidityStr;
+        temp.str("");         // 清空内容
+        temp.clear();         // 重置状态标志
+        precipStr.str("");
+        precipStr.clear();
+        humidityStr = "--";
         try {
             humidityStr = std::to_string(std::stoi(f.humidity));  // "86.0" -> 86 -> "86"
         } catch (...) {
             humidityStr = "--";  // 若转换失败，例如内容不是数字，则显示为 "--"
         }
 
-        std::cout << "| " <<  centerText(f.date, 10)
-                  << " | " <<  centerText(f.textDay, 12)
-                  << " | " <<  centerText(f.textNight, 12)
-                  << " | " <<  centerText(temp.str(), 11)
-                  << " | " <<  centerText(f.windDirDay, 8)
-                  << " | " <<  centerText(f.windScaleDay, 6)
-                  << " | " <<  centerText(f.precip, 10)
-                  <<  centerText(humidityStr, 8) << " |" << "\n";
+        // 数据行（循环中使用）
+        // 温度范围拼接
+        temp << f.tempMin << "~" << f.tempMax;
+
+        // 降水量格式化
+        precipStr << std::fixed << std::setprecision(1) << f.precip;
+
+        // 湿度处理（避免小数）
+        try {
+            humidityStr = std::to_string(std::stoi(f.humidity));
+        } catch (...) {}
+
+        std::ostringstream row;
+        row << "| " << centerText(f.date, 12)
+            << " | " << centerText(f.textDay, 12)
+            << " | " << centerText(f.textNight, 12)
+            << " | " << centerText(temp.str(), 12)
+            << " | " << centerText(f.windDirDay, 12)
+            << " | " << centerText(f.windScaleDay, 12)
+            << " | " << centerText(precipStr.str(), 12)
+            << " | " << centerText(humidityStr, 12) << " |\n";
+
+        std::cout << row.str();
+
+
 
     }
 
-    std::cout <<
-        "+------------+--------------+--------------+-------------+----------+--------+------------+----------+\n";
-    std::cout << std::endl;  // 👈 加一行空行
-    std::cout << "-R 强制刷新" << std::endl;
+    printLine();
 
     }
 
@@ -345,7 +385,7 @@ void showLifeIndices(ConfigUser &configUser, ConfigKey &configKey) {
                     << "📌 类型：" << idx.name << "\n"
                     << "📈 等级：" << idx.level << "（" << idx.category << "）\n"
                     << "📖 建议：" << idx.text << "\n"
-                    << "--------------------------\n";
+                    << "------------------------\n";
         }
 
         std::cout << "\n🔁 按 R 刷新数据，任意其他键返回主菜单...\n";
@@ -440,23 +480,27 @@ int main(int argc, char *argv[]) {
             clearConsole();
 
             std::cout << "\n" << i18n.tr("main_cli", "menu_title") << "\n";
-            std::cout << "--------------------------\n";
+            std::cout << "------------------------\n";
             auto options = i18n.trList("main_cli", "menu_options");
             for (size_t i = 0; i < options.size(); ++i) {
                 std::cout << i + 1 << ". " << options[i] << "\n";
             }
-            std::cout << "--------------------------\n";
+            std::cout << "------------------------\n";
             std::cout << i18n.tr("main_cli", "prompt_input") << std::flush;
             std::string choice;
             std::getline(std::cin, choice);
             clearConsole();
             // 处理不同的 choice 选项
-            if (choice == "1") {
-                std::cout << i18n.tr("date_view", "title") << "\n"; // 📍 主菜单 > 当前日期时间
-                showCurrentDate(configUser, configKey, i18n, true); // 传入 showAll 来控制显示内容
-                std::cout << "\n" << i18n.tr("date_view", "return_hint"); // 按任意键返回主菜单……
-                _getch(); // 等待用户按键
-            } else if (choice == "2") {
+            if (choice == "0") {
+                showAISuggestions(configUser, configKey, i18n);
+                std::cout << "\n" << i18n.tr("main_cli", "return_hint");
+                _getch();
+            } else if (choice == "1") {
+                std::cout << i18n.tr("date_view", "title") << "\n";
+                showCurrentDate(configUser, configKey, i18n, true);
+                std::cout << "\n" << i18n.tr("date_view", "return_hint");
+                _getch();
+            }else if (choice == "2") {
                 showWeatherForecast(configUser, configKey, i18n);
             } else if (choice == "3") {
                 showLifeIndices(configUser, configKey);

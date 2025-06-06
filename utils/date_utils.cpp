@@ -2,6 +2,9 @@
 #include "date_utils.h"
 #include "Config_Key.h"  // 包含 ConfigKey 类
 #include "i18n_loader.h"  // 正确的相对路径
+#include <string>
+#include <codecvt>
+#include <locale>
 
 // 获取农历信息
 std::string getLunarInfo(const ConfigKey& configKey, const std::string& language, I18n& i18n) {
@@ -21,12 +24,22 @@ std::string getZodiacInfo(I18n& i18n) {
     return i18n.tr("zodiac", "current_zodiac");  // 返回生肖名称
 }
 
-size_t visualLength(const std::string &str) {
-    size_t len = 0;
-    for (unsigned char ch : str) {
-        len += (ch >= 0x80) ? 2 : 1;  // 中文/emoji 宽度估算
+size_t visualLength(const std::string &utf8Str) {
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
+    std::wstring wide = conv.from_bytes(utf8Str);
+
+    size_t width = 0;
+    for (wchar_t wc : wide) {
+        // CJK字符（中文、日文、韩文）或 emoji 宽度估为2，否则为1
+        if ((wc >= 0x4E00 && wc <= 0x9FFF) ||  // CJK统一汉字
+            (wc >= 0x1F300 && wc <= 0x1FAD6) ||  // emoji 表情
+            (wc >= 0x2E80 && wc <= 0x2EFF)) {
+            width += 2;
+            } else {
+                width += 1;
+            }
     }
-    return len;
+    return width;
 }
 std::string padRight(const std::string &str, size_t targetLen) {
     size_t visualLen = visualLength(str);
