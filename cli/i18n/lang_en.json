@@ -16,7 +16,6 @@
     "goodbye": "👋 Goodbye! Thanks for using the Weather CLI system.",
     "back_to_menu": "Press Enter to return to the menu...",
     "return_hint": "Press any key to return to the main menu..."
-
   },
   "searchCity": {
     "title": "📍 Main Menu > Set City",
@@ -88,7 +87,6 @@
     "weiyu_short": "Short Quote",
     "weiyu_long": "Long Quote"
   },
-
   "date_view": {
     "title": "📍 Main Menu > Current Date and Time",
     "solar": "📅 Solar Calendar",
@@ -97,16 +95,46 @@
     "zodiac": "🐉 Zodiac Sign",
     "return_hint": "Press any key to return to the main menu..."
   },
-
   "solar_term": {
     "current_term": "Current Solar Term"
   },
-
   "zodiac": {
     "current_zodiac": "Current Zodiac Sign"
   },
   "ai_suggestion": {
     "getting": "Getting Weather Information",
     "loading": "Generating AI suggestions, please wait..."
+  },
+  "weather_view": {
+    "forecast_title": "Weather Forecast"
+  },
+  "life_index": {
+    "title": "Life Indices for the City of",
+    "index_list": "are as follows:",
+    "date": "Date",
+    "type": "Type",
+    "level": "Level",
+    "suggestion": "Suggestion",
+    "prompt_refresh": "🔁 Press R to refresh data, any other key to return to the main menu...",
+    "fetch_failed": "❌ Unable to fetch life index data.",
+    "运动指数": "Sports Index",
+    "洗车指数": "Car Wash Index",
+    "穿衣指数": "Clothing Index",
+    "钓鱼指数": "Fishing Index",
+    "紫外线指数": "UV Index",
+    "旅游指数": "Travel Index",
+    "过敏指数": "Allergy Index",
+    "舒适度指数": "Comfort Index",
+    "感冒指数": "Cold Index",
+    "空气污染扩散条件指数": "Air Pollution Dispersion Conditions Index",
+    "空调开启指数": "Air Conditioning Index",
+    "太阳镜指数": "Sunglasses Index",
+    "化妆指数": "Makeup Index",
+    "晾晒指数": "Drying Index",
+    "交通指数": "Traffic Index",
+    "防晒指数": "Sun Protection Index"
+  },
+  "city_update": {
+    "title": "Update City"
   }
 }

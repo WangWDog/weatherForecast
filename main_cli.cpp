@@ -404,13 +404,13 @@ void showWeatherForecast(ConfigUser &configUser, ConfigKey &configKey, I18n &i18
                                           configUser.getCacheExpiry("daily_forecast"));
 
     if (result.forecasts.empty()) {
-        std::cout << i18n.tr("forecast", "fetch_failed") << std::endl;
+        std::cout << i18n.tr("forecast", "fetch_failed") << std::endl;  // 翻译 "fetch_failed"
         return;
     }
 
     while (true) {
         displayWeather(result, i18n, configUser);
-        std::cout << "\n" << i18n.tr("forecast", "prompt_refresh") << "\n";
+        std::cout << "\n" << i18n.tr("forecast", "prompt_refresh") << "\n";  // 翻译 "prompt_refresh"
         char ch = _getch();
         if (ch == 'R' || ch == 'r') {
             result = manager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(), 0); // 强制刷新
@@ -421,14 +421,14 @@ void showWeatherForecast(ConfigUser &configUser, ConfigKey &configKey, I18n &i18
 }
 
 
-void showLifeIndices(ConfigUser &configUser, ConfigKey &configKey) {
+void showLifeIndices(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n) {
     WeatherManager manager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
 
     // 初次加载（尝试用缓存）
     auto result = manager.getLifeIndices(configUser.getCityId(), configUser.getCacheExpiry("weather_index"));
 
     if (result.indices.empty()) {
-        std::cout << "❌ 无法获取生活指数数据。\n";
+        std::cout << i18n.tr("life_index", "fetch_failed") << "\n";  // 使用翻译获取 "无法获取生活指数数据"
         return;
     }
 
@@ -437,29 +437,30 @@ void showLifeIndices(ConfigUser &configUser, ConfigKey &configKey) {
 
         // 缓存信息展示
         if (result.fromCache) {
-            std::cout << "📦 当前数据来自缓存。\n";
+            std::cout << i18n.tr("forecast", "from_cache") << "\n";  // 使用翻译获取 "当前数据来自缓存"
         } else {
-            std::cout << "🌐 当前数据来自网络。\n";
+            std::cout << i18n.tr("forecast", "from_network") << "\n";  // 使用翻译获取 "当前数据来自网络"
         }
 
         if (result.timestamp > 0) {
             char buf[64];
             std::tm *local = std::localtime(&result.timestamp);
             std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", local);
-            std::cout << "🕒 数据更新时间：" << buf << "\n";
+            std::cout << i18n.tr("forecast", "updated_time") << buf << "\n";  // 使用翻译获取 "数据更新时间"
         }
 
         // 生活指数展示
-        std::cout << "📌 城市：" << configUser.getDefaultCity() << " 的生活指数如下：\n\n";
+        std::cout << i18n.tr("life_index", "title") << configUser.getDefaultCity() << i18n.tr("life_index", "index_list") << "\n\n";  // 翻译 "城市：<city> 的生活指数如下："
         for (const auto &idx: result.indices) {
-            std::cout << "📅 日期：" << idx.date << "\n"
-                    << "📌 类型：" << idx.name << "\n"
-                    << "📈 等级：" << idx.level << "（" << idx.category << "）\n"
-                    << "📖 建议：" << idx.text << "\n"
-                    << "------------------------\n";
+            std::cout << i18n.tr("life_index", "date") << ": " << idx.date << "\n"  // 翻译 "日期："
+                      << i18n.tr("life_index", "type") << ": " << idx.name << "\n"  // 翻译 "类型："
+                      << i18n.tr("life_index", "level") << ": " << idx.level << "（" << idx.category << "）\n"  // 翻译 "等级："
+                      << i18n.tr("life_index", "suggestion") << ": " << idx.text << "\n"  // 翻译 "建议："
+                      << "------------------------\n";
         }
 
-        std::cout << "\n🔁 按 R 刷新数据，任意其他键返回主菜单...\n";
+
+        std::cout << "\n" << i18n.tr("life_index", "prompt_refresh") << "\n";  // 翻译 "按 R 刷新数据，任意其他键返回主菜单..."
         char ch = _getch();
         if (ch == 'R' || ch == 'r') {
             result = manager.getLifeIndices(configUser.getCityId(), 0); // 设置过期时间为 0 强制刷新
@@ -468,6 +469,7 @@ void showLifeIndices(ConfigUser &configUser, ConfigKey &configKey) {
         }
     }
 }
+
 
 void showCommandHelp() {
     std::cout << "Available commands:\n";
@@ -503,9 +505,9 @@ void handleCommand(int argc, char *argv[], ConfigUser &configUser, ConfigKey &co
         }
         displayWeatherCommander(configUser, configKey, i18n, forceRefresh);
     } else if (command == "show_life") {
-        showLifeIndices(configUser, configKey);
+        showLifeIndices(configUser, configKey,i18n);
     } else if (command == "update_city") {
-        updateCity(configUser, configKey);
+        updateCity(configUser, configKey, i18n);
     } else if (command == "update_settings") {
         updateUserSettings(configUser, i18n);
     } else if (command == "exit") {
@@ -573,22 +575,35 @@ int main(int argc, char *argv[]) {
                 std::cout << "\n" << i18n.tr("date_view", "return_hint");
                 _getch();
                 continue;
-            }else if (choice == "2") {
-                showWeatherForecast(configUser, configKey, i18n);
+            } else if (choice == "2") {
+                // 显示天气预报
+                std::cout << i18n.tr("weather_view", "forecast_title") << "\n";  // 使用多语言支持
+                showWeatherForecast(configUser, configKey, i18n);  // 调用已有的函数来显示天气预报
+                std::cout << i18n.tr("main_cli", "return_hint") << "\n";  // 使用多语言支持
+                _getch();  // 等待用户输入
                 continue;
             } else if (choice == "3") {
-                showLifeIndices(configUser, configKey);
+                // 显示生活指数
+                std::cout << i18n.tr("life_index", "title") << "\n";  // 使用多语言支持
+                showLifeIndices(configUser, configKey,i18n);  // 调用已有的函数来显示生活指数
+                std::cout << i18n.tr("main_cli", "return_hint") << "\n";  // 使用多语言支持
+                _getch();  // 等待用户输入
                 continue;
             } else if (choice == "4") {
-                updateCity(configUser, configKey);
-                delay_ms(2000);
+                // 更新城市
+                std::cout << i18n.tr("city_update", "title") << "\n";  // 使用多语言支持
+                updateCity(configUser, configKey,i18n);  // 调用已有的函数来更新城市
+                delay_ms(2000);  // 延迟2秒
             } else if (choice == "5") {
-                updateUserSettings(configUser, i18n);
+                // 更新用户设置
+                std::cout << i18n.tr("settings", "update_title") << "\n";  // 使用多语言支持
+                updateUserSettings(configUser, i18n);  // 调用已有的函数来更新用户设置
                 continue;
             } else if (choice == "6") {
-                std::cout << i18n.tr("main_cli", "goodbye") << std::endl;
-                delay_ms(5000);
-                break;
+                // 退出
+                std::cout << i18n.tr("main_cli", "goodbye") << std::endl;  // 使用多语言支持
+                delay_ms(5000);  // 延迟5秒
+                break;  // 退出程序
             } else {
                 std::cout << i18n.tr("main_cli", "invalid_option") << std::endl;
             }

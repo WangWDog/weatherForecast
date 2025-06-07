@@ -15,8 +15,7 @@
     "goodbye": "👋 再见！感谢使用天气CLI系统。",
     "back_to_menu": "按 Enter 返回菜单...",
     "return_hint": "按任意键返回主菜单……",
-    "menu_loading": "⚙\uFE0F 加载预设设置 ",
-
+    "menu_loading": "⚙\uFE0F 加载预设设置 "
   },
   "searchCity": {
     "title": "📍 主菜单 > 设置城市",
@@ -46,7 +45,8 @@
     "language_load_success": "🌐 已切换至新语言：",
     "saved_and_exit": "💾 配置已保存，正在返回主菜单...",
     "invalid_option": "❌ 无效选项，请重新输入。",
-    "press_enter_continue": "按回车继续..."
+    "press_enter_continue": "按回车继续...",
+    "update_title": "更新设置"
   },
   "forecast": {
     "from_cache": "📦 当前数据来自缓存。",
@@ -102,8 +102,40 @@
   "ai_suggestion": {
     "getting": "正在获取天气信息",
     "loading": "正在生成 AI 建议"
+  },
+  "weather_view": {
+    "forecast_title": "天气预报"
+  },
+  "life_index": {
+    "title": "城市的生活指数",
+    "index_list": "如下所示：",
+    "date": "日期",
+    "type": "类型",
+    "level": "等级",
+    "suggestion": "建议",
+    "prompt_refresh": "🔁 按 R 刷新数据，任意其他键返回主菜单...",
+    "fetch_failed": "❌ 无法获取生活指数数据。",
+    "运动指数": "运动指数",
+    "洗车指数": "洗车指数",
+    "穿衣指数": "穿衣指数",
+    "钓鱼指数": "钓鱼指数",
+    "紫外线指数": "紫外线指数",
+    "旅游指数": "旅游指数",
+    "过敏指数": "过敏指数",
+    "舒适度指数": "舒适度指数",
+    "感冒指数": "感冒指数",
+    "空气污染扩散条件指数": "空气污染扩散条件指数",
+    "空调开启指数": "空调开启指数",
+    "太阳镜指数": "太阳镜指数",
+    "化妆指数": "化妆指数",
+    "晾晒指数": "晾晒指数",
+    "交通指数": "交通指数",
+    "防晒指数": "防晒指数"
+  },
+  "city_update": {
+    "title": "更新城市"
   }
-}
 
+}
 
 
