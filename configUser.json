@@ -4,18 +4,22 @@
   "units": "metric",
   "language": "zh",
   "cache_expiry_minutes": {
-      "realtime_weather": 20,
-      "hourly_forecast": 45,
-      "daily_forecast": 120,
-      "weather_alert": 10,
-      "weather_index": 360,
-      "minutely_precipitation": 8,
-      "realtime_air_quality": 45,
-      "air_quality_forecast": 600,
-      "tide_and_current": 600,
-      "typhoon": 30,
-      "solar_radiation": 360
+    "realtime_weather": 20,
+    "hourly_forecast": 45,
+    "daily_forecast": 120,
+    "weather_alert": 10,
+    "weather_index": 360,
+    "minutely_precipitation": 8,
+    "realtime_air_quality": 45,
+    "air_quality_forecast": 600,
+    "tide_and_current": 600,
+    "typhoon": 30,
+    "solar_radiation": 360
   },
   "date_formate_menu": "%Y-%m-%d %H:%M:%S",
-  "city_id": "101210701"
+  "city_id": "101210701",
+  "location": {
+    "name": "温州",
+    "id": "101210701"
+  }
 }

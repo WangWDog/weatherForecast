@@ -117,7 +117,7 @@ ForecastResult WeatherManager::get7DayForecast(const std::string& locationId,con
     CURL* curl = curl_easy_init();
     if (curl) {
         struct curl_slist* headers = nullptr;
-        headers = curl_slist_append(headers, ("X-QW-Api-Key: " + apiKey).c_str());
+        headers = curl_slist_append(headers, ("X-QW-Api-Key:" + apiKey).c_str());
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
@@ -167,10 +167,14 @@ ForecastResult WeatherManager::get7DayForecast(const std::string& locationId,con
                 std::ofstream fout(cacheFile);
                 if (fout) fout << cache.dump(4);
             }
+        }else {
+            std::cerr <<"结果请求失败 res状态值："<< res<< std::endl;
+            exit(1);
         }
     }
     return result;
 }
+
 
 LifeIndexWithMeta WeatherManager::getLifeIndices(const std::string& locationId, int expiryMinutes) {
     LifeIndexWithMeta result;
@@ -261,3 +265,59 @@ LifeIndexWithMeta WeatherManager::getLifeIndices(const std::string& locationId, 
 
     return result;
 }
+// 新增的 getCachedCurrentWeather 方法
+WeatherNow WeatherManager::getCachedCurrentWeather(const std::string& locationId) {
+    WeatherNow result;
+    const std::string cacheFile = "cache_weather.json";
+    std::ifstream fin(cacheFile);
+
+    if (fin) {
+        try {
+            json cache;
+            fin >> cache;
+            fin.close();
+
+            // 检查缓存中是否包含 current_weather 字段及其时间戳
+            if (cache.contains("current_weather") && cache["current_weather"].contains("timestamp")) {
+                std::time_t now = std::time(nullptr);
+                std::time_t ts = cache["current_weather"]["timestamp"].get<std::time_t>();
+
+                // 如果缓存未过期（1小时有效期）
+                if (difftime(now, ts) < 3600) {
+                    result.success = true;
+
+                    // 确保字段存在并获取相应的数据
+                    if (cache["current_weather"].contains("temperature")) {
+                        result.data.temp = cache["current_weather"]["temperature"];
+                    } else {
+                        result.data.temp = "未知";  // 提供默认值
+                    }
+
+                    if (cache["current_weather"].contains("text")) {
+                        result.data.text = cache["current_weather"]["text"];
+                    } else {
+                        result.data.text = "未知";  // 提供默认值
+                    }
+
+                    if (cache["current_weather"].contains("windSpeed")) {
+                        result.data.windSpeed = cache["current_weather"]["windSpeed"];
+                    } else {
+                        result.data.windSpeed = "未知";  // 提供默认值
+                    }
+
+                    if (cache["current_weather"].contains("humidity")) {
+                        result.data.humidity = cache["current_weather"]["humidity"];
+                    } else {
+                        result.data.humidity = "未知";  // 提供默认值
+                    }
+                }
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "读取缓存出错: " << e.what() << std::endl;
+        }
+    }
+
+    return result;
+}
+
+

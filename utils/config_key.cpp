@@ -30,3 +30,10 @@ std::string ConfigKey::getDoubaoKey() const {
 void ConfigKey::setHost(const std::string& host) {
     configJson["host"] = host;
 }
+std::string ConfigKey::getQWeatherKey() const {
+    return configJson.value("key_free", "");
+}
+
+std::string ConfigKey::getQWeatherHost() const {
+    return configJson.value("host_hf", "");
+}

@@ -22,6 +22,7 @@ std::string ConfigUser::getUnits() const {
     return configJson.value("units", "metric");
 }
 
+
 void ConfigUser::setUnits(const std::string& units) {
     configJson["units"] = units;
 }
@@ -59,3 +60,16 @@ std::string ConfigUser::getCityId() const {
 void ConfigUser::setCityId(const std::string& id) {
     configJson["city_id"] = id;
 }
+
+std::string ConfigUser::getCityName() const {
+    if (configJson.contains("location") && configJson["location"].contains("name")) {
+        return configJson["location"]["name"].get<std::string>();
+    }
+    // 若不存在则 fallback 到 default_city
+    return configJson.value("default_city", "北京");
+}
+
+std::string ConfigUser::getLocationId() const {
+    return configJson["city_id"].get<std::string>();
+}
+

@@ -1,11 +1,17 @@
-#ifndef WEATHERFORECAST_DOUBAO_HELPER_H
-#define WEATHERFORECAST_DOUBAO_HELPER_H
+#ifndef WEATHER_CLI_DOUBAO_HELPER_H
+#define WEATHER_CLI_DOUBAO_HELPER_H
+#pragma once
 
 #include <string>
 
-// 使用 Doubao AI 接口生成生活建议
-// 参数：token（API 密钥）、endpointId（模型 ID）、prompt（提示语）
-// 返回：AI 生成的回答，如遇错误返回错误描述文本
-std::string callDoubaoAI(const std::string& token, const std::string& endpointId, const std::string& prompt);
+// 调用豆包 AI，返回生活建议文本
+// 参数：
+// - token：API Key
+// - endpointId：模型名称（如 "doubao-1.5-pro-32k-250115"）
+// - cityName：城市名称（如 "温州"），可用于构造 prompt
+// 修改声明：将 cityName 替换为 fullPrompt
+std::string callDoubaoAI(const std::string& token, const std::string& endpointId, const std::string& fullPrompt);
 
-#endif // WEATHERFORECAST_DOUBAO_HELPER_H
+
+
+#endif // WEATHER_CLI_DOUBAO_HELPER_H

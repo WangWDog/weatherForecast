@@ -10,58 +10,59 @@ static size_t WriteCallback(char* ptr, size_t size, size_t nmemb, std::string* o
     return size * nmemb;
 }
 
-std::string callDoubaoAI(const std::string& token, const std::string& endpointId, const std::string& prompt) {
+std::string callDoubaoAI(const std::string& token, const std::string& endpointId, const std::string& fullPrompt) {
+    // 初始化 CURL
     CURL* curl = curl_easy_init();
-    std::string response;
-
-    if (curl) {
-        struct curl_slist* headers = nullptr;
-        headers = curl_slist_append(headers, ("Authorization: Bearer " + token).c_str());
-        headers = curl_slist_append(headers, "Content-Type: application/json");
-
-        // ✅ 替换构造格式为新版 API 要求（包含 system 和 user 双角色）
-        json payload = {
-            {"model", endpointId},
-            {"messages", {
-                {{"role", "system"}, {"content", "你是一个生活助手，擅长为用户提供生活建议。"}},
-                {{"role", "user"}, {"content", prompt}}
-            }}
-        };
-        std::string body = payload.dump();
-
-        // ✅ 修改为新版豆包接口
-        curl_easy_setopt(curl, CURLOPT_URL, "https://ark.cn-beijing.volces.com/api/v3/chat/completions");
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-
-        // ✅ 开启兼容选项以避免 SSL 报错（可选，根据平台决定）
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-
-        curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");  // ⚠️ 有些返回值默认是 gzip 压缩的
-
-        CURLcode res = curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-        curl_slist_free_all(headers);
-
-        if (res != CURLE_OK) {
-            return "[网络错误: " + std::string(curl_easy_strerror(res)) + "]";
-        }
-    } else {
-        return "[初始化 curl 失败]";
+    if (!curl) {
+        return "[CURL 初始化失败]";
     }
 
-    // ✅ 尝试解析新版返回格式
+    std::string response;
+
+    // 构建请求体
+    json payload = {
+        {"model", endpointId},
+        {"messages", {
+            {{"role", "system"}, {"content", "你是一个生活助手，擅长为用户提供生活建议。"}},
+            {{"role", "user"}, {"content", fullPrompt}}
+        }}
+    };
+
+    std::string body = payload.dump();
+
+    // 构建请求头
+    struct curl_slist* headers = nullptr;
+    headers = curl_slist_append(headers, ("Authorization: Bearer " + token).c_str());
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+
+    // 设置 CURL 选项
+    curl_easy_setopt(curl, CURLOPT_URL, "https://ark.cn-beijing.volces.com/api/v3/chat/completions");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);  // 忽略 SSL 验证
+    curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
+
+    // 执行请求
+    CURLcode res = curl_easy_perform(curl);
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+
+    if (res != CURLE_OK) {
+        return "[网络请求失败: " + std::string(curl_easy_strerror(res)) + "]";
+    }
+
+    // 解析响应
     try {
         json j = json::parse(response);
-        if (j.contains("choices") && j["choices"].size() > 0) {
+        if (j.contains("choices") && j["choices"].is_array() && j["choices"].size() > 0) {
+            // 只返回 AI 的建议内容
             return j["choices"][0]["message"]["content"].get<std::string>();
         } else {
             return "[AI 响应格式不正确]";
         }
-    } catch (...) {
-        return "[解析响应失败]";
+    } catch (const std::exception& e) {
+        return "[解析响应失败] 错误信息: " + std::string(e.what());
     }
 }

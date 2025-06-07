@@ -25,4 +25,8 @@ public:
 
     std::string getCityId() const;
     void setCityId(const std::string& id);
+
+    std::string getCityName() const;
+    std::string getLocationId() const;
+
 };

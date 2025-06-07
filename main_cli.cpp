@@ -2,6 +2,7 @@
 #include <string>
 #include <ctime>
 #include <iomanip>
+#include <ctime>
 #include <sstream>
 #include <fstream>
 #include <json.hpp>
@@ -25,6 +26,7 @@
 #include "doubao_translator.h"
 #include "date_utils.h"  // 包含辅助函数头文件
 #include "doubao_helper.h"  // 调用豆包函数
+
 
 
 
@@ -173,21 +175,121 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 }
+
+using json = nlohmann::json;
+
+std::vector<LifeIndex> getLifeIndices(ConfigUser& configUser, ConfigKey& configKey) {
+    std::vector<LifeIndex> lifeIndices;
+
+    // 构建 API 请求 URL
+    std::string url = "http://api.weather.com/v1/lifeindex?city=" + configUser.getCityId() +
+                      "&language=" + configUser.getLanguage() + "&apiKey=" + configKey.getHFApiKey();
+
+    // 初始化 cURL 请求
+    CURL* curl = curl_easy_init();
+    if (curl) {
+        // 设置请求 URL
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+        // 设置响应写入回调函数
+        std::string response_data;
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, [](char* ptr, size_t size, size_t nmemb, std::string* data) -> size_t {
+            data->append(ptr, size * nmemb);
+            return size * nmemb;
+        });
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_data);
+
+        // 执行请求
+        CURLcode res = curl_easy_perform(curl);
+
+        if (res == CURLE_OK) {
+            // 解析 JSON 响应
+            try {
+                json j = json::parse(response_data);
+
+                // 假设 API 返回一个 "lifeIndices" 数组
+                if (j.contains("lifeIndices")) {
+                    for (const auto& item : j["lifeIndices"]) {
+                        LifeIndex index;
+                        index.date = item.value("date", "");
+                        index.name = item.value("name", "");
+                        index.level = item.value("level", "");
+                        index.category = item.value("category", "");
+                        index.text = item.value("text", "");
+
+                        lifeIndices.push_back(index);
+                    }
+                }
+            } catch (const std::exception& e) {
+                std::cerr << "解析生活指数数据失败: " << e.what() << std::endl;
+            }
+        } else {
+            std::cerr << "请求失败: " << curl_easy_strerror(res) << std::endl;
+        }
+
+        // 清理 cURL
+        curl_easy_cleanup(curl);
+    } else {
+        std::cerr << "无法初始化 cURL!" << std::endl;
+    }
+
+    return lifeIndices;
+}
+
 void showAISuggestions(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n) {
+    clearConsole();
     std::cout << "\t🌟 " << i18n.tr("ai_suggestion", "loading") << "\n";
 
-    // 从 configKey 获取豆包参数
-    std::string token = configKey.getDoubaoKey();             // 需要你定义 getDoubaoKey()
-    std::string endpointId = configKey.getDoubaoEndpoint(); // 需要你定义 getDoubaoEndpointId()
+    // 获取豆包参数
+    std::string token = configKey.getDoubaoKey();  // 使用 configKey 获取正确的 API 密钥
+    std::string endpointId = configKey.getDoubaoEndpoint();
 
-    // 构造提示词（可拓展为动态天气建议）
-    std::string prompt = "你是一个生活助手，请根据今天的天气情况，给出穿衣、运动和出行建议。";
+    // 获取城市
+    std::string locationId = configUser.getCityId();
 
-    // 调用豆包 API 获取建议
-    std::string suggestion = callDoubaoAI(token, endpointId, prompt);
+    // 创建 WeatherManager 对象
+    WeatherManager weatherManager(configKey.getHFApiKey(), configKey.getHFHost());  // 确保API密钥与 host 兼容
 
-    // 输出结果
+    // 获取当前天气数据
+    auto weatherResult = weatherManager.get7DayForecast(locationId, configUser.getLanguage(), configUser.getCacheExpiry("daily_forecast"));
+    auto weather = weatherResult.forecasts[0];
+    // 从 weather 中获取数据
+    std::string temp = weather.tempMax;  // 当前温度
+    std::string condition = weather.textDay;  // 当前天气状况
+    std::string windSpeed = weather.windDirDay;  // 获取实际风速数据，检查实际字段名
+    std::string humidity = weather.humidity;  // 获取湿度数据，若有数据的话
+
+    // 获取生活指数数据
+    std::vector<LifeIndex> lifeIndices = getLifeIndices(configUser, configKey);  // 调用 getLifeIndices 获取生活指数
+
+    // 构建生活指数的描述
+    std::string lifeIndexSummary = "根据目前的生活指数，以下是一些重要信息：\n";
+    for (const auto& idx : lifeIndices) {
+        lifeIndexSummary += "📅 " + idx.date + "\n" +
+                            "📌 类型：" + idx.name + "\n" +
+                            "📈 等级：" + idx.level + "（" + idx.category + "）\n" +
+                            "📖 建议：" + idx.text + "\n" +
+                            "------------------------\n";
+    }
+
+    // 构建 AI 请求体，包含天气和生活指数的内容
+    std::string fullPrompt = "现在用户所在城市是 " + locationId +
+                             "，当前气温为 " + temp +
+                             "，天气状况为 " + condition +
+                             "，风速为 " + windSpeed +
+                             "，湿度为 " + humidity + "。\n" +
+                             lifeIndexSummary +  // 添加生活指数信息
+                             "请根据这些信息提供穿衣建议、运动建议与出行建议。";
+
+    std::cout << "构建的请求体： " << fullPrompt << std::endl;  // 输出查看请求体
+
+    // 获取AI建议
+    std::string suggestion = callDoubaoAI(token, endpointId, fullPrompt);
+
+    // 输出 AI 给出的建议
     std::cout << "\n🤖 " << suggestion << std::endl;
+    std::cout << "\n" << i18n.tr("main_cli", "return_hint");
+    _getch();  // 等待任意键返回主菜单
 }
 
 // 显示当前日期

@@ -36,18 +36,39 @@ struct LifeIndexWithMeta {
     bool fromCache = false;
     std::time_t timestamp = 0;
 };
+
 struct ForecastResult {
     std::vector<DailyForecast> forecasts;
     bool fromCache = false;
     std::time_t timestamp = 0;
 };
+
+struct WeatherNowData {
+    std::string temp;  // 温度
+    std::string text;  // 天气状况
+    std::string windSpeed;  // 风速
+    std::string humidity;  // 湿度
+};
+
+
+struct WeatherNow {
+    WeatherNowData data;
+    bool success = false;
+    bool fromCache = false;
+    std::time_t timestamp = 0;
+};
+
+
 class WeatherManager {
 public:
     explicit WeatherManager(std::string key, std::string host, std::string lang = "zh");
+
     std::vector<DailyForecast> forecasts;
-    std::vector<CityResult> searchCity(const std::string& keyword,const std::string& lang);
+    std::vector<CityResult> searchCity(const std::string& keyword, const std::string& lang);
     LifeIndexWithMeta getLifeIndices(const std::string& locationId, int expiryMinutes);
-    ForecastResult get7DayForecast(const std::string& locationId,const std::string& language,int cacheExpiryMinutes);
+    ForecastResult get7DayForecast(const std::string& locationId, const std::string& language, int cacheExpiryMinutes);
+    WeatherNow getCachedCurrentWeather(const std::string& locationId);  // 新增方法
+
 private:
     std::string apiKey;
     std::string host;
