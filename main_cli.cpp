@@ -32,14 +32,15 @@
 
 
 
-#ifdef _WIN32
+//#ifdef _WIN32
 #include <windows.h>
-#endif
+//#endif
 
 using json = nlohmann::json;
 
 // 用于调用 API 获取农历、节气和黄历等信息
 std::string getLunarInfo(ConfigKey &config_key, const std::string &lang, I18n &i18n) {
+
     std::string response = callLunarApi(config_key, lang); // 请求 API(Key and 语言，返回json
 
     if (response.empty()) {
@@ -73,11 +74,6 @@ std::string getLunarInfo(ConfigKey &config_key, const std::string &lang, I18n &i
         printIfNotEmpty("\t📖", "微语·长", "WeiYu_l");
 
         std::string lunarInfo = oss.str();
-
-        if (lang == "en") {
-            lunarInfo = translateWithDoubao(lunarInfo, "英文", config_key);
-        }//调用豆包翻译语言
-
         return lunarInfo;
     } catch (const std::exception &e) {
         return std::string("❌ JSON 解析失败：") + e.what();
@@ -179,67 +175,10 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装
 
 using json = nlohmann::json;
 
-std::vector<LifeIndex> getLifeIndices(ConfigUser& configUser, ConfigKey& configKey) {
-    std::vector<LifeIndex> lifeIndices;
-
-    // 构建 API 请求 URL
-    std::string url = "http://api.weather.com/v1/lifeindex?city=" + configUser.getCityId() +
-                      "&language=" + configUser.getLanguage() + "&apiKey=" + configKey.getHFApiKey();
-
-    // 初始化 cURL 请求
-    CURL* curl = curl_easy_init();
-    if (curl) {
-        // 设置请求 URL
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-
-        // 设置响应写入回调函数
-        std::string response_data;
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, [](char* ptr, size_t size, size_t nmemb, std::string* data) -> size_t {
-            data->append(ptr, size * nmemb);
-            return size * nmemb;
-        });
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_data);
-
-        // 执行请求
-        CURLcode res = curl_easy_perform(curl);
-
-        if (res == CURLE_OK) {
-            // 解析 JSON 响应
-            try {
-                json j = json::parse(response_data);
-
-                // 假设 API 返回一个 "lifeIndices" 数组
-                if (j.contains("lifeIndices")) {
-                    for (const auto& item : j["lifeIndices"]) {
-                        LifeIndex index;
-                        index.date = item.value("date", "");
-                        index.name = item.value("name", "");
-                        index.level = item.value("level", "");
-                        index.category = item.value("category", "");
-                        index.text = item.value("text", "");
-
-                        lifeIndices.push_back(index);
-                    }
-                }
-            } catch (const std::exception& e) {
-                std::cerr << "解析生活指数数据失败: " << e.what() << std::endl;
-            }
-        } else {
-            std::cerr << "请求失败: " << curl_easy_strerror(res) << std::endl;
-        }
-
-        // 清理 cURL
-        curl_easy_cleanup(curl);
-    } else {
-        std::cerr << "无法初始化 cURL!" << std::endl;
-    }
-
-    return lifeIndices;
-}
-
 void showAISuggestions(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n) {
     clearConsole();
-    std::cout << "\t🌟 " << i18n.tr("ai_suggestion", "loading") << "\n";
+    std::cout << "\t🌟 " << i18n.tr("ai_suggestion", "getting") << "\n";
+
 
     // 获取豆包参数
     std::string token = configKey.getDoubaoKey();  // 使用 configKey 获取正确的 API 密钥
@@ -261,11 +200,10 @@ void showAISuggestions(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n)
     std::string humidity = weather.humidity;  // 获取湿度数据，若有数据的话
 
     // 获取生活指数数据
-    std::vector<LifeIndex> lifeIndices = getLifeIndices(configUser, configKey);  // 调用 getLifeIndices 获取生活指数
-
+    LifeIndexWithMeta lifeIndex = weatherManager.getLifeIndices(locationId,configUser.getCacheExpiry("daily_forecast"));
     // 构建生活指数的描述
     std::string lifeIndexSummary = "根据目前的生活指数，以下是一些重要信息：\n";
-    for (const auto& idx : lifeIndices) {
+    for (const auto& idx : lifeIndex.indices) {
         lifeIndexSummary += "📅 " + idx.date + "\n" +
                             "📌 类型：" + idx.name + "\n" +
                             "📈 等级：" + idx.level + "（" + idx.category + "）\n" +
@@ -274,7 +212,7 @@ void showAISuggestions(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n)
     }
 
     // 构建 AI 请求体，包含天气和生活指数的内容
-    std::string fullPrompt = "现在用户所在城市是 " + locationId +
+    std::string fullPrompt = "请你用"+configUser.getLanguage()+"语言回答:现在用户所在城市是 " + locationId +
                              "，当前气温为 " + temp +
                              "，天气状况为 " + condition +
                              "，风速为 " + windSpeed +
@@ -282,15 +220,14 @@ void showAISuggestions(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n)
                              lifeIndexSummary +  // 添加生活指数信息
                              "请根据这些信息提供穿衣建议、运动建议与出行建议。";
 
-    std::cout << "构建的请求体： " << fullPrompt << std::endl;  // 输出查看请求体
-
+    //std::cout << "构建的请求体： " << fullPrompt << std::endl;  // 输出查看请求体
     // 获取AI建议
     std::string suggestion = callDoubaoAI(token, endpointId, fullPrompt);
 
     // 输出 AI 给出的建议
     std::cout << "\n🤖 " << suggestion << std::endl;
-    std::cout << "\n" << i18n.tr("main_cli", "return_hint");
-    _getch();  // 等待任意键返回主菜单
+    std::cout << "\n";
+    std::cout << std::flush; // 强制刷新输出
 }
 
 // 显示当前日期
@@ -336,6 +273,13 @@ void showCurrentDate(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, b
     if (showAll) {
         // 显示农历信息
         std::cout << lunarInfo;
+        if (configUser.getLanguage() == "en")
+        {
+             std::cout << "Waiting for traslation..." << std::endl;
+             lunarInfo = translateWithDoubao(lunarInfo,"English",configKey);
+             clearConsole();
+             std::cout << lunarInfo;
+        }
     }
 
     std::cout << std::flush; // 强制刷新输出
@@ -602,7 +546,7 @@ int main(int argc, char *argv[]) {
         handleCommand(argc, argv, configUser, configKey, i18n);
     } else {
         // 没有命令行参数，则进入交互式菜单
-        showLoadingBar("⚙️加载预设配置", 8, 40, "\033[38;5;117m");
+        showLoadingBar(i18n.tr("main_cli", "menu_loading"), 8, 40, "\033[38;5;117m");
         while (true) {
             clearConsole();
 
@@ -622,23 +566,28 @@ int main(int argc, char *argv[]) {
                 showAISuggestions(configUser, configKey, i18n);
                 std::cout << "\n" << i18n.tr("main_cli", "return_hint");
                 _getch();
+                continue;
             } else if (choice == "1") {
                 std::cout << i18n.tr("date_view", "title") << "\n";
                 showCurrentDate(configUser, configKey, i18n, true);
                 std::cout << "\n" << i18n.tr("date_view", "return_hint");
                 _getch();
+                continue;
             }else if (choice == "2") {
                 showWeatherForecast(configUser, configKey, i18n);
+                continue;
             } else if (choice == "3") {
                 showLifeIndices(configUser, configKey);
+                continue;
             } else if (choice == "4") {
                 updateCity(configUser, configKey);
                 delay_ms(2000);
             } else if (choice == "5") {
                 updateUserSettings(configUser, i18n);
+                continue;
             } else if (choice == "6") {
                 std::cout << i18n.tr("main_cli", "goodbye") << std::endl;
-                delay_ms(2000);
+                delay_ms(5000);
                 break;
             } else {
                 std::cout << i18n.tr("main_cli", "invalid_option") << std::endl;

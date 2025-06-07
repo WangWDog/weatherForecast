@@ -1,5 +1,6 @@
 {
   "main_cli": {
+    "menu_title": "🏠 天气 CLI 系统菜单",
     "menu_options": [
       "🤖 AI 生活建议",
       "🗓️ 显示当前日期",
@@ -13,7 +14,9 @@
     "invalid_option": "❌ 无效选项，请重新输入。",
     "goodbye": "👋 再见！感谢使用天气CLI系统。",
     "back_to_menu": "按 Enter 返回菜单...",
-    "return_hint": "按任意键返回主菜单……"
+    "return_hint": "按任意键返回主菜单……",
+    "menu_loading": "⚙\uFE0F 加载预设设置 ",
+
   },
   "searchCity": {
     "title": "📍 主菜单 > 设置城市",
@@ -68,22 +71,20 @@
     "prompt_back": "按任意键返回主菜单……"
   },
   "lunar": {
-
-  "solar": "公历",
-  "week": "星期",
-  "lunar": "农历",
-  "lunar_year": "农历年份",
-  "zodiac": "属相",
-  "ganzhi_year": "干支年",
-  "constellation": "星座",
-  "festival": "节日",
-  "jieqi": "节气",
-  "yi": "宜",
-  "ji": "忌",
-  "weiyu_short": "微语短句",
-  "weiyu_long": "微语长句"
+    "solar": "公历",
+    "week": "星期",
+    "lunar": "农历",
+    "lunar_year": "农历年份",
+    "zodiac": "属相",
+    "ganzhi_year": "干支年",
+    "constellation": "星座",
+    "festival": "节日",
+    "jieqi": "节气",
+    "yi": "宜",
+    "ji": "忌",
+    "weiyu_short": "微语短句",
+    "weiyu_long": "微语长句"
   },
-
   "date_view": {
     "title": "📍 主菜单 > 当前日期时间",
     "solar": "📅 公历",
@@ -95,19 +96,14 @@
   "solar_term": {
     "current_term": "当前节气名称"
   },
-
   "zodiac": {
     "current_zodiac": "当前生肖"
   },
   "ai_suggestion": {
-    "greeting": "你好，以下是为您定制的今日生活建议：",
-    "dressing": "今日气温适中，建议穿薄外套。",
-    "sport": "适宜户外锻炼，记得做好防晒。",
-    "travel": "出行路况良好，适合短途旅行。",
-    "loading": "正在生成 AI 建议，请稍候……"
+    "getting": "正在获取天气信息",
+    "loading": "正在生成 AI 建议"
   }
-
-  }
+}
 
 
 

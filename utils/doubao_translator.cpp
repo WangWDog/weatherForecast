@@ -47,7 +47,7 @@ std::string translateWithDoubao(const std::string& text, const std::string& targ
     json payload = {
         {"model", endpointId},
         {"messages", {
-            {{"role", "system"}, {"content", "You are a helpful assistant."}},
+            {{"role", "system"}, {"content", "You are a helpful assistant. 请在json字串中每个值前加入\\t"}},
             {{"role", "user"}, {"content", prompt}}
         }}
     };

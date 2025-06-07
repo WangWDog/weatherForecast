@@ -23,7 +23,7 @@ std::string callDoubaoAI(const std::string& token, const std::string& endpointId
     json payload = {
         {"model", endpointId},
         {"messages", {
-            {{"role", "system"}, {"content", "你是一个生活助手，擅长为用户提供生活建议。"}},
+            {{"role", "system"}, {"content", "你是一个生活助手，擅长为用户提供生活建议。请用不超过100字的一段话返回 不要使用markdown格式，用\\n表示换行"}},
             {{"role", "user"}, {"content", fullPrompt}}
         }}
     };

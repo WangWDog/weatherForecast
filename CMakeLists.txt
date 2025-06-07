@@ -21,6 +21,7 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
 
 set(CURL_PATH "F:\\CPlusDependences\\LibCurl\\V8")
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -static-libgcc")
 # 包含头文件路径
 include_directories(
         ${CURL_PATH}/include
