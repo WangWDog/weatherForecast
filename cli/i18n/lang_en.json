@@ -10,10 +10,12 @@
       "🔧 User Settings",
       "❌ Exit Program"
     ],
-    "prompt_input": "Please enter an option (1-6):",
+    "prompt_input": "Please enter an option (0-6):",
     "invalid_option": "❌ Invalid option, please try again.",
     "goodbye": "👋 Goodbye! Thanks for using the Weather CLI system.",
-    "back_to_menu": "Press Enter to return to the menu..."
+    "back_to_menu": "Press Enter to return to the menu...",
+    "return_hint": "Press any key to return to the main menu..."
+
   },
   "searchCity": {
     "title": "📍 Main Menu > Set City",

@@ -9,10 +9,11 @@
       "🔧 用户设置",
       "❌ 退出程序"
     ],
-    "prompt_input": "请输入选项（1-6）：",
+    "prompt_input": "请输入选项（0-6）",
     "invalid_option": "❌ 无效选项，请重新输入。",
     "goodbye": "👋 再见！感谢使用天气CLI系统。",
-    "back_to_menu": "按 Enter 返回菜单..."
+    "back_to_menu": "按 Enter 返回菜单...",
+    "return_hint": "按任意键返回主菜单……"
   },
   "searchCity": {
     "title": "📍 主菜单 > 设置城市",

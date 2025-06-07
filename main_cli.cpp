@@ -483,7 +483,7 @@ int main(int argc, char *argv[]) {
             std::cout << "------------------------\n";
             auto options = i18n.trList("main_cli", "menu_options");
             for (size_t i = 0; i < options.size(); ++i) {
-                std::cout << i + 1 << ". " << options[i] << "\n";
+                std::cout << i << ". " << options[i] << "\n";
             }
             std::cout << "------------------------\n";
             std::cout << i18n.tr("main_cli", "prompt_input") << std::flush;
