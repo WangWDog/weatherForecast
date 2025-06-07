@@ -26,6 +26,7 @@
 #include "doubao_translator.h"
 #include "date_utils.h"  // 包含辅助函数头文件
 #include "doubao_helper.h"  // 调用豆包函数
+#include "CacheManager.h"
 
 
 
@@ -293,26 +294,50 @@ void showAISuggestions(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n)
 }
 
 // 显示当前日期
-void showCurrentDate(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, bool showAll) {//showAll是否显示全部信息
+std::string fetchLunarInfoFromNetwork(ConfigKey& configKey, const std::string& language, I18n& i18n) {
+    // 从网络获取农历信息的代码
+    return getLunarInfo(configKey, language, i18n); // 假设 getLunarInfo 是现有的网络获取农历的函数
+}
+void showCurrentDate(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, bool showAll) {
     clearConsole(); // 清空控制台
 
     // 获取当前时间
     std::time_t now = std::time(nullptr);
     std::tm *currentTime = std::localtime(&now);
 
+    // 缓存管理器实例
+    CacheManager cacheManager(configUser.getConfigJson());
+
+
+    // 检查缓存中是否有农历信息
+    std::string lunarInfo = cacheManager.getCache("lunar_info");
+    bool isFromCache = false;  // 用于标记数据来源
+
+    if (lunarInfo.empty()) {
+        // 如果缓存中没有数据或过期，从网络获取
+        lunarInfo = fetchLunarInfoFromNetwork(configKey, configUser.getLanguage(), i18n);
+        // 缓存农历信息
+        cacheManager.setCache("lunar_info", lunarInfo);
+        isFromCache = false;  // 数据来源是网络
+    } else {
+        isFromCache = true;  // 数据来源是缓存
+    }
+
     // 显示公历时间
     std::cout << "\t" << i18n.tr("date_view", "solar") << ": "
-            << std::put_time(std::localtime(&now), configUser.getDateFormateMenu().c_str()) << std::endl;
+              << std::put_time(std::localtime(&now), configUser.getDateFormateMenu().c_str()) << std::endl;
 
-    // 输出调试信息，确保我们进入了 `showAll` 的判断部分
-    if (showAll) {
-       // 调试输出，确保进入了 showAll 的判断
-        // 获取农历信息
-        std::string lunarInfo = getLunarInfo(configKey, configUser.getLanguage(), i18n);//获取农历 + 节气 + 宜忌
-        std::cout << lunarInfo;  // 直接输出多行内容，不加“🌙 农历：”
-
-
+    if (isFromCache) {
+        std::cout << "(来自缓存)" << std::endl;
+    } else {
+        std::cout << "(来自网络)" << std::endl;
     }
+
+    if (showAll) {
+        // 显示农历信息
+        std::cout << lunarInfo;
+    }
+
     std::cout << std::flush; // 强制刷新输出
 }
 

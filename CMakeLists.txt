@@ -53,6 +53,7 @@ set(CLI_SOURCES
         utils/doubao_translator.cpp
         utils/date_utils.cpp
         utils/doubao_helper.cpp
+        weather_core/CacheManager.cpp
 )
 set(WEATHER_GLOBAL
         weather_core/weather_manager.cpp          # 天气核心实现
