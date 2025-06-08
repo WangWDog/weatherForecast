@@ -1,5 +1,7 @@
 #include "CacheManager.h"
 #include <chrono>
+#include <fstream>  // 添加文件流头文件
+#include <iostream>
 
 CacheManager::CacheManager(const nlohmann::json& config) : configJson(config) {}
 
@@ -29,4 +31,30 @@ void CacheManager::setCache(const std::string& key, const std::string& value) {
     entry.data = value;
     entry.timestamp = std::chrono::steady_clock::now();
     cache[key] = entry;
+}
+
+// 清除所有缓存
+void CacheManager::clearAllCache() {
+    cache.clear();
+}
+
+// 清除指定键的缓存
+void CacheManager::clearCache(const std::string& key) {
+    auto it = cache.find(key);
+    if (it != cache.end()) {
+        cache.erase(it); // 删除指定键的缓存
+    }
+}
+
+// 清空指定缓存文件内容
+void CacheManager::clearCacheFile(const std::string& filename) {
+    // 打开文件并清空内容
+    std::ofstream file(filename, std::ofstream::trunc);
+
+    if (file.is_open()) {
+        file.close();
+        std::cout << "文件 " << filename << " 已清空!" << std::endl;
+    } else {
+        std::cerr << "无法打开文件 " << filename << "!" << std::endl;
+    }
 }

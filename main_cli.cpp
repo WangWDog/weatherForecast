@@ -11,6 +11,7 @@
 #include <conio.h>
 #include <windows.h>
 #include <curl/curl.h>
+#include <fstream>
 
 #include "cli_animation_loader.h"
 #include "cli_clear_console.h"
@@ -149,9 +150,29 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装
             std::string lang;
             std::cout << i18n.tr("settings", "input_language");
             std::getline(std::cin, lang);
+
             if (lang != ":q") {
                 configUser.setLanguage(lang);
                 std::cout << i18n.tr("settings", "updated") << "\n";
+
+                // 加载配置文件 cache.json
+                std::ifstream configFile("cache.json");
+                nlohmann::json configJson;
+                if (configFile.is_open()) {
+                    configFile >> configJson;  // 读取配置文件内容到 configJson
+                    configFile.close();
+                } else {
+                    std::cerr << "无法打开配置文件 cache.json!" << std::endl;
+                    return;
+                }
+
+                // 实例化 CacheManager 对象
+                CacheManager cacheManager(configJson);  // 使用加载的配置文件对象初始化 CacheManager
+
+                // 清空缓存文件和所有缓存，每次都会执行
+                cacheManager.clearCacheFile("cache.json");
+                cacheManager.clearAllCache();
+
                 if (!i18n.load(lang)) {
                     std::cout << i18n.tr("settings", "language_load_fail") << "\n";
                 } else {
@@ -161,6 +182,7 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装
                 std::cout << i18n.tr("settings", "cancelled") << "\n";
             }
             continue;
+
         }//修改语言
         else if (choice == "5") {
             configUser.save();
