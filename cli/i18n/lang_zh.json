@@ -83,7 +83,12 @@
     "yi": "宜",
     "ji": "忌",
     "weiyu_short": "微语短句",
-    "weiyu_long": "微语长句"
+    "weiyu_long": "微语长句",
+    "from_cache": "📦 黄历数据来自缓存",
+    "from_network": "🌐 黄历数据来自网络",
+    "updated_time": "⏰ 数据更新时间:",
+    "refresh_hint": "📌 按 R 键刷新黄历数据，其他键返回菜单...",
+    "refresh_again_hint": "📌 按 R 键继续刷新，其他键返回菜单..."
   },
   "date_view": {
     "title": "📍 主菜单 > 当前日期时间",
@@ -115,27 +120,28 @@
     "suggestion": "建议",
     "prompt_refresh": "🔁 按 R 刷新数据，任意其他键返回主菜单...",
     "fetch_failed": "❌ 无法获取生活指数数据。",
-    "运动指数": "运动指数",
-    "洗车指数": "洗车指数",
-    "穿衣指数": "穿衣指数",
-    "钓鱼指数": "钓鱼指数",
-    "紫外线指数": "紫外线指数",
-    "旅游指数": "旅游指数",
-    "过敏指数": "过敏指数",
-    "舒适度指数": "舒适度指数",
-    "感冒指数": "感冒指数",
-    "空气污染扩散条件指数": "空气污染扩散条件指数",
-    "空调开启指数": "空调开启指数",
-    "太阳镜指数": "太阳镜指数",
-    "化妆指数": "化妆指数",
-    "晾晒指数": "晾晒指数",
-    "交通指数": "交通指数",
-    "防晒指数": "防晒指数"
+    "sport_index": "运动指数",
+    "car_wash_index": "洗车指数",
+    "dressing_index": "穿衣指数",
+    "fishing_index": "钓鱼指数",
+    "uv_index": "紫外线指数",
+    "tourism_index": "旅游指数",
+    "allergy_index": "过敏指数",
+    "comfort_index": "舒适度指数",
+    "cold_index": "感冒指数",
+    "air_pollution_diffusion_index": "空气污染扩散条件指数",
+    "air_conditioner_index": "空调开启指数",
+    "sunglasses_index": "太阳镜指数",
+    "makeup_index": "化妆指数",
+    "drying_index": "晾晒指数",
+    "traffic_index": "交通指数",
+    "sunscreen_index": "防晒指数"
   },
   "city_update": {
     "title": "更新城市"
   }
-
 }
+
+
 
 

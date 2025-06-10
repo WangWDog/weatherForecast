@@ -267,7 +267,6 @@ void showCurrentDate(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, b
     // 缓存管理器实例
     CacheManager cacheManager(configUser.getConfigJson());
 
-
     // 检查缓存中是否有农历信息
     std::string lunarInfo = cacheManager.getCache("lunar_info");
     bool isFromCache = false;  // 用于标记数据来源
@@ -293,20 +292,33 @@ void showCurrentDate(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n, b
     }
 
     if (showAll) {
-        // 显示农历信息
-        std::cout << lunarInfo;
-        if (configUser.getLanguage() == "en")
-        {
-             std::cout << "Waiting for traslation..." << std::endl;
-             lunarInfo = translateWithDoubao(lunarInfo,"English",configKey);
-             clearConsole();
-             std::cout << lunarInfo;
+        if (configUser.getLanguage() == "en") {
+            // 先输出中文黄历信息
+            std::cout << lunarInfo;
+
+            std::cout << "Waiting for translation..." << std::endl;
+            lunarInfo = translateWithDoubao(lunarInfo, "English", configKey);
+            clearConsole();
+
+            // 再次显示公历时间和数据来源
+            std::cout << "\t" << i18n.tr("date_view", "solar") << ": "
+                      << std::put_time(std::localtime(&now), configUser.getDateFormateMenu().c_str()) << std::endl;
+            if (isFromCache) {
+                std::cout << "(来自缓存)" << std::endl;
+            } else {
+                std::cout << "(来自网络)" << std::endl;
+            }
+
+            // 输出翻译后的黄历信息
+            std::cout << lunarInfo;
+        } else {
+            // 非英文语言，直接输出黄历信息
+            std::cout << lunarInfo;
         }
     }
 
     std::cout << std::flush; // 强制刷新输出
 }
-
 
 void printLine() {
     std::cout << "+--------------+--------------+--------------+--------------+"
@@ -597,6 +609,7 @@ int main(int argc, char *argv[]) {
                 std::cout << "\n" << i18n.tr("date_view", "return_hint");
                 _getch();
                 continue;
+
             } else if (choice == "2") {
                 // 显示天气预报
                 std::cout << i18n.tr("weather_view", "forecast_title") << "\n";  // 使用多语言支持
