@@ -103,6 +103,7 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装
         std::string choice;
         std::getline(std::cin, choice);//获取用户输入
 
+
         if (choice == "1") {
             std::string fmt;
             std::cout << i18n.tr("settings", "input_date_format");
@@ -457,6 +458,11 @@ void showWeatherForecast(ConfigUser &configUser, ConfigKey &configKey, I18n &i18
 
 void showLifeIndices(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n) {
     WeatherManager manager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
+
+    // 强制刷新缓存
+    CacheManager cacheManager(configUser.getConfigJson());
+    cacheManager.clearAllCache();  // 清除所有缓存
+
 
     // 初次加载（尝试用缓存）
     auto result = manager.getLifeIndices(configUser.getCityId(), configUser.getCacheExpiry("weather_index"));

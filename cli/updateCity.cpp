@@ -10,7 +10,7 @@
 #include "i18n/i18n_loader.h"
 
 void updateCity(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n) {
-    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleOutputCP(CP_UTF8);  // 设置控制台编码为 UTF-8
 
     WeatherManager wm(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
 
@@ -53,7 +53,7 @@ void updateCity(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n) {
         } else if (ch == '\n') {
             return;
         } else if (ch == '\b' && !keyword.empty()) {
-            keyword.pop_back();
+            keyword.pop_back();  // 退格删除一个字符
         } else if (ch >= '0' && ch <= '9' && !matches.empty()) {
             int index = ch - '0';
             if (index >= 1 && index <= matches.size()) {
@@ -66,7 +66,7 @@ void updateCity(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n) {
                 return;
             }
         } else {
-            keyword += ch;
+            keyword += ch;  // 将字符添加到关键字中
         }
     }
 }
