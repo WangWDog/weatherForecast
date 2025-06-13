@@ -103,7 +103,6 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装
         std::string choice;
         std::getline(std::cin, choice);//获取用户输入
 
-
         if (choice == "1") {
             std::string fmt;
             std::cout << i18n.tr("settings", "input_date_format");
@@ -514,6 +513,7 @@ void showLifeIndices(ConfigUser &configUser, ConfigKey &configKey, I18n &i18n) {
 void showCommandHelp() {
     std::cout << "Available commands:\n";
     std::cout << "  show_date        - Show current date and time\n";
+    std::cout << "  show_date --all  - Show current time, date, and the Chinese Almanac\n";
     std::cout << "  show_forecast    - Show 7-day weather forecast\n";
     std::cout << "  show_life        - Show life indices for the city\n";
     std::cout << "  update_city      - Update the city setting\n";
