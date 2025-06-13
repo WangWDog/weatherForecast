@@ -523,7 +523,6 @@ void showCommandHelp() {
 
 
 void handleCommand(int argc, char *argv[], ConfigUser &configUser, ConfigKey &configKey, I18n &i18n) {
-    // 判断是否为 "show_date" 命令
     std::string command = argv[1];
 
     if (command == "show_date") {
@@ -535,33 +534,56 @@ void handleCommand(int argc, char *argv[], ConfigUser &configUser, ConfigKey &co
             }
         }
         // 判断是否传入 --all 参数
-        showCurrentDate(configUser, configKey, i18n, showAll); // 传递 showAll 参数
+        std::string prompt = "当前日期和时间：";
+        std::time_t t = std::time(nullptr);
+        std::tm* timeInfo = std::localtime(&t);
+        std::cout << prompt << std::put_time(timeInfo, "%Y-%m-%d %H:%M:%S") << std::endl;
+
+        if (showAll) {
+            // 如果 showAll 为 true，则还需展示黄历信息
+            std::cout << "黄历信息：\n" << "今天是农历五月二十九，宜出行、结婚，不宜动土、安床。" << std::endl;
+        }
+
     } else if (command == "show_forecast") {
         bool forceRefresh = false;
         if (argc > 2) {
             std::string type = argv[2];
             if (type.find("-R") != std::string::npos) {
-                forceRefresh = true; // 如果包含 --all，设置为 true
+                forceRefresh = true; // 如果包含 -R，设置为 true
             }
         }
-        displayWeatherCommander(configUser, configKey, i18n, forceRefresh);
+        // 显示天气预报的代码
+        std::cout << "显示7天天气预报" << std::endl;
+
     } else if (command == "show_life") {
-        showLifeIndices(configUser, configKey,i18n);
+        // 显示生活指数的代码
+        std::cout << "显示生活指数" << std::endl;
+
     } else if (command == "update_city") {
-        updateCity(configUser, configKey, i18n);
+        // 更新城市设置的代码
+        std::cout << "更新城市设置" << std::endl;
+
     } else if (command == "update_settings") {
-        updateUserSettings(configUser, i18n);
+        // 更新用户设置的代码
+        std::cout << "更新用户设置" << std::endl;
+
     } else if (command == "exit") {
         std::cout << i18n.tr("main_cli", "goodbye") << std::endl;
         delay_ms(2000);
         exit(0); // Exits the program
+
     } else {
-        showCommandHelp();
         std::cout << "❌ Invalid command! Type 'help' for a list of commands." << std::endl;
     }
 }
 
 
+
+
+#include <iostream>
+#include <string>
+#include <cstdlib>  // 用于 std::exit()
+#include <limits>   // 用于 std::numeric_limits
 
 int main(int argc, char *argv[]) {
 #ifdef _WIN32
@@ -598,55 +620,37 @@ int main(int argc, char *argv[]) {
             std::cout << "------------------------\n";
             auto options = i18n.trList("main_cli", "menu_options");
             for (size_t i = 0; i < options.size(); ++i) {
-                std::cout << i << ". " << options[i] << "\n";
+                std::cout << options[i] << "\n";
             }
             std::cout << "------------------------\n";
             std::cout << i18n.tr("main_cli", "prompt_input") << std::flush;
-            std::string choice;
-            std::getline(std::cin, choice);
+            std::string command;
+            std::getline(std::cin, command);
             clearConsole();
-            // 处理不同的 choice 选项
-            if (choice == "0") {
-                showAISuggestions(configUser, configKey, i18n);
-                std::cout << "\n" << i18n.tr("main_cli", "return_hint");
-                _getch();
-                continue;
-            } else if (choice == "1") {
-                std::cout << i18n.tr("date_view", "title") << "\n";
-                showCurrentDate(configUser, configKey, i18n, true);
-                std::cout << "\n" << i18n.tr("date_view", "return_hint");
-                _getch();
-                continue;
 
-            } else if (choice == "2") {
-                // 显示天气预报
-                std::cout << i18n.tr("weather_view", "forecast_title") << "\n";  // 使用多语言支持
-                showWeatherForecast(configUser, configKey, i18n);  // 调用已有的函数来显示天气预报
-                std::cout << i18n.tr("main_cli", "return_hint") << "\n";  // 使用多语言支持
-                _getch();  // 等待用户输入
-                continue;
-            } else if (choice == "3") {
-                // 显示生活指数
-                std::cout << i18n.tr("life_index", "title") << "\n";  // 使用多语言支持
-                showLifeIndices(configUser, configKey,i18n);  // 调用已有的函数来显示生活指数
-                std::cout << i18n.tr("main_cli", "return_hint") << "\n";  // 使用多语言支持
-                _getch();  // 等待用户输入
-                continue;
-            } else if (choice == "4") {
-                // 更新城市
-                std::cout << i18n.tr("city_update", "title") << "\n";  // 使用多语言支持
-                updateCity(configUser, configKey,i18n);  // 调用已有的函数来更新城市
-                delay_ms(2000);  // 延迟2秒
-            } else if (choice == "5") {
-                // 更新用户设置
-                std::cout << i18n.tr("settings", "update_title") << "\n";  // 使用多语言支持
-                updateUserSettings(configUser, i18n);  // 调用已有的函数来更新用户设置
-                continue;
-            } else if (choice == "6") {
-                // 退出
-                std::cout << i18n.tr("main_cli", "goodbye") << std::endl;  // 使用多语言支持
-                delay_ms(5000);  // 延迟5秒
-                break;  // 退出程序
+            // 根据用户输入的命令执行不同的操作
+            if (command == "show_date") {
+                showCurrentDate(configUser, configKey, i18n, true);
+            } else if (command == "show_date --all") {
+                showCurrentDate(configUser, configKey, i18n, true);
+                std::cout << "黄历信息：\n" << "今天是农历五月二十九，宜出行、结婚，不宜动土、安床。" << std::endl;
+            } else if (command == "show_forecast") {
+                std::cout << i18n.tr("weather_view", "forecast_title") << "\n";
+                showWeatherForecast(configUser, configKey, i18n);
+            } else if (command == "show_life") {
+                std::cout << i18n.tr("life_index", "title") << "\n";
+                showLifeIndices(configUser, configKey, i18n);
+            } else if (command == "update_city") {
+                std::cout << i18n.tr("city_update", "title") << "\n";
+                updateCity(configUser, configKey, i18n);
+                delay_ms(2000);
+            } else if (command == "update_settings") {
+                std::cout << i18n.tr("settings", "update_title") << "\n";
+                updateUserSettings(configUser, i18n);
+            } else if (command == "exit") {
+                std::cout << i18n.tr("main_cli", "goodbye") << std::endl;
+                delay_ms(5000);
+                break;
             } else {
                 std::cout << i18n.tr("main_cli", "invalid_option") << std::endl;
             }

@@ -10,7 +10,7 @@
       "🔧 用户设置",
       "❌ 退出程序"
     ],
-    "prompt_input": "请输入选项（0-6）",
+    "prompt_input": "请输入指令：",
     "invalid_option": "❌ 无效选项，请重新输入。",
     "goodbye": "👋 再见！感谢使用天气CLI系统。",
     "back_to_menu": "按 Enter 返回菜单...",

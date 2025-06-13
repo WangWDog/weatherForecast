@@ -11,7 +11,7 @@
       "❌ Exit Program"
     ],
     "menu_loading": "⚙\uFE0F Loading preset settings ",
-    "prompt_input": "Please enter an option (0-6):",
+    "prompt_input": "Please enter an  instruction: ",
     "invalid_option": "❌ Invalid option, please try again.",
     "goodbye": "👋 Goodbye! Thanks for using the Weather CLI system.",
     "back_to_menu": "Press Enter to return to the menu...",
