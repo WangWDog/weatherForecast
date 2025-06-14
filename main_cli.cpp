@@ -595,6 +595,11 @@ int main(int argc, char *argv[]) {
     ConfigKey configKey("configKey.json");
     I18n i18n;
 
+    if (!i18n.load("zh")) {  // 默认加载中文语言
+        std::cerr << "❌ 初始化失败，程序退出。\n";
+        return 1;
+    }
+
     if (!configUser.load() || !configKey.load() || !i18n.load(configUser.getLanguage())) {
         std::cerr << "❌ 初始化失败，程序退出。\n";
         return 1;
