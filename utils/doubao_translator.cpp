@@ -4,7 +4,7 @@
 #include <iostream>
 #include "../config/config_key.h"
 #include "doubao_translator.h"
-#include "weather_manager.h"  // ✅ 它定义了 struct LunarData
+#include "../core/weather_manager.h"
 
 
 using json = nlohmann::json;

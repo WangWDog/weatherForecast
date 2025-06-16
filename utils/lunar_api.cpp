@@ -53,7 +53,7 @@ std::string formatLunarInfo(const LunarData& d, I18n& i18n)
     return oss.str();
 }
 
-std::string callLunarApi(ConfigKey& config_key, const std::string& lang)
+std::string callLunarApi(std::string apiKey)
 {
     CURL* curl;
     CURLcode res;
@@ -62,12 +62,13 @@ std::string callLunarApi(ConfigKey& config_key, const std::string& lang)
     curl_global_init(CURL_GLOBAL_DEFAULT);
     curl = curl_easy_init();
 
-    std::string apiKey = config_key.getFreeApiKey();
-   std::string date = getTodayDateYYYYMMDD();
+    std::string date = getTodayDateYYYYMMDD();
+
     // ✅ 加入语言参数 lang
     std::string final_url = "https://api.shwgij.com/api/lunars/lunar?date=" + date +
-                            "&key=" + apiKey +
-                            "&lang=" + lang;  // 👈 就是这部分
+                            "&key=" + apiKey
+                            // +"&lang=" + lang
+                                            ;
 
     // std::cout << "🌐 请求 URL: " << final_url << std::endl;
 

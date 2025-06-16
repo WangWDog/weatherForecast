@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 
-// 前向声明，避免头文件耦合太深
 class ConfigKey;
 class I18n;
 

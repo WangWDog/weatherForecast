@@ -25,43 +25,58 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -static-libgcc")
 # 包含头文件路径
 include_directories(
         ${CURL_PATH}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/weather_core  # 天气核心模块路径
+        core/weather_core  # 天气核心模块路径
         ${CMAKE_CURRENT_SOURCE_DIR}/gui           # GUI 模块路径
         ${CMAKE_CURRENT_SOURCE_DIR}/utils         # 工具模块路径
         ${CMAKE_CURRENT_SOURCE_DIR}/cli           # 命令行模块路径
+        ${CMAKE_CURRENT_SOURCE_DIR}/core           # 命令行模块路径
         ${CMAKE_CURRENT_SOURCE_DIR}/cli/i18n       # 命令行模块路径
+        ${CMAKE_CURRENT_SOURCE_DIR}/config
 )
 #引入CurlLib和bin
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/weather_core)
+include_directories(core/weather_core)
 link_directories(${CURL_PATH}/lib)
 
 # 源码文件（CLI 用）
 set(CLI_SOURCES
         cli/delay.cpp
         cli/cli_animation_loader.cpp
-        cli/cli_clear_console.cpp
+        cli/displayUtils/cli_clear_console.cpp
         main_cli.cpp
         config/config_user.cpp
         config/config_key.cpp
         config/base_config.cpp
         cli/i18n/i18n_loader.cpp
         cli/i18n/i18n_loader.h
-        cli/updateCity.cpp
-        cli/updateCity.h
         utils/lunar_api.h
         utils/lunar_api.cpp
         utils/doubao_translator.cpp
         utils/date_utils.cpp
         utils/doubao_helper.cpp
-        weather_core/CacheManager.cpp
+        core/CacheManager.cpp
         cli/cli_menu_controller.cpp
         cli/cli_menu_controller.h
         config/config_context.cpp
         config/config_context.h
+        cli/cli_application.cpp
+        cli/cli_application.cpp
+        cli/cli_application.h
+        cli/cli_ai_advisor.cpp
+        cli/cli_ai_advisor.h
+        cli/cli_date_display.cpp
+        cli/cli_date_display.h
+        cli/cli_life_index.cpp
+        cli/cli_life_index.h
+        cli/cli_user_settings.cpp
+        cli/cli_user_settings.h
+        core/doubao_manager.cpp
+        core/doubao_manager.h
+        cli/cli_weather_display.cpp
+        cli/cli_weather_display.h
 )
 set(WEATHER_GLOBAL
-        weather_core/weather_manager.cpp          # 天气核心实现
+        core/weather_manager.cpp          # 天气核心实现
         config/config_loader.cpp
         utils/ip_locator.cpp
         config/config_user.cpp
@@ -81,7 +96,7 @@ set(GUI_SOURCES
 # GUI 头文件（用于自动处理 MOC）
 set(GUI_HEADERS
         gui/mainwindow.h                          # 主窗口头文件
-        weather_core/weather_manager.h            # 天气管理器头文件
+        core/weather_manager.h            # 天气管理器头文件
         config/config_loader.h                     # 配置加载头文件
 )
 

@@ -20,7 +20,7 @@ struct LunarData {
     std::string weiyuLong;
 };
 
-std::string callLunarApi(ConfigKey& config_key, const std::string& lang);
+std::string callLunarApi(std::string apikey);
 LunarData parseLunarJson(const std::string& jsonStr);
 std::string formatLunarInfo(const LunarData& d, I18n& i18n);
 std::string getLunarInfo(ConfigKey& config_key, const std::string& lang, I18n& i18n);
