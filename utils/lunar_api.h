@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "config_key.h"
+#include "../config/config_key.h"
 #include "i18n_loader.h"
 
 struct LunarData {

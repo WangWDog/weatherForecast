@@ -3,8 +3,8 @@
 #include <curl/curl.h>
 
 #include "cli_clear_console.h"
-#include "config_key.h"
-#include "config_user.h"
+#include "../config/config_key.h"
+#include "../config/config_user.h"
 #include "delay.h"
 #include "weather_manager.h"
 #include "i18n/i18n_loader.h"

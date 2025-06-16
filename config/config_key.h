@@ -1,7 +1,7 @@
 #pragma once
 #include "base_config.h"
 #include <string>
-#include <json.hpp>  // 添加 JSON 支持
+#include <../utils/json.hpp>
 
 class ConfigKey : public BaseConfig {
 public:

@@ -1,5 +1,5 @@
-#include "config_key.h"
 
+#include "config_key.h"
 ConfigKey::ConfigKey(const std::string& path) : BaseConfig(path) {}
 
 std::string ConfigKey::getHFApiKey() const {

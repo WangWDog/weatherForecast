@@ -42,9 +42,9 @@ set(CLI_SOURCES
         cli/cli_animation_loader.cpp
         cli/cli_clear_console.cpp
         main_cli.cpp
-        utils/config_user.cpp
-        utils/config_key.cpp
-        utils/base_config.cpp
+        config/config_user.cpp
+        config/config_key.cpp
+        config/base_config.cpp
         cli/i18n/i18n_loader.cpp
         cli/i18n/i18n_loader.h
         cli/updateCity.cpp
@@ -55,17 +55,21 @@ set(CLI_SOURCES
         utils/date_utils.cpp
         utils/doubao_helper.cpp
         weather_core/CacheManager.cpp
+        cli/cli_menu_controller.cpp
+        cli/cli_menu_controller.h
+        config/config_context.cpp
+        config/config_context.h
 )
 set(WEATHER_GLOBAL
         weather_core/weather_manager.cpp          # 天气核心实现
-        utils/config_loader.cpp
+        config/config_loader.cpp
         utils/ip_locator.cpp
-        utils/config_user.cpp
-        utils/config_user.h
-        utils/config_key.cpp
-        utils/config_key.h
-        utils/base_config.cpp
-        utils/base_config.h
+        config/config_user.cpp
+        config/config_user.h
+        config/config_key.cpp
+        config/config_key.h
+        config/base_config.cpp
+        config/base_config.h
 )
 
 # 源码文件（GUI 用）
@@ -78,7 +82,7 @@ set(GUI_SOURCES
 set(GUI_HEADERS
         gui/mainwindow.h                          # 主窗口头文件
         weather_core/weather_manager.h            # 天气管理器头文件
-        utils/config_loader.h                     # 配置加载头文件
+        config/config_loader.h                     # 配置加载头文件
 )
 
 # CLI 可执行文件

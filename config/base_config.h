@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <json.hpp>
+#include <../utils/json.hpp>
 
 class BaseConfig {
 public:

@@ -2,7 +2,7 @@
 #include <json.hpp>
 #include <fstream>
 #include <iostream>
-#include "config_key.h"
+#include "../config/config_key.h"
 #include "doubao_translator.h"
 #include "weather_manager.h"  // ✅ 它定义了 struct LunarData
 

@@ -1,5 +1,5 @@
-#include "config_user.h"
 
+#include "config_user.h"
 ConfigUser::ConfigUser(const std::string& path) : BaseConfig(path) {}
 
 std::string ConfigUser::getDefaultCity() const {

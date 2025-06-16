@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "config_key.h"
+#include "../config/config_key.h"
 #include "lunar_api.h"
 #include "../weather_core/weather_manager.h"  // ✅ 相对路径更精确
 

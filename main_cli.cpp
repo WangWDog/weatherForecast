@@ -15,15 +15,15 @@
 
 #include "cli_animation_loader.h"
 #include "cli_clear_console.h"
-#include "config_key.h"
-#include "config_loader.h"
-#include "config_user.h"
+#include "config/config_key.h"
+#include "config/config_loader.h"
+#include "config/config_user.h"
 #include "delay.h"
 #include "updateCity.h"
 #include "weather_manager.h"
 #include "i18n/i18n_loader.h"
 #include "lunar_api.h"
-#include "config_key.h"
+#include "config/config_key.h"
 #include "doubao_translator.h"
 #include "date_utils.h"  // 包含辅助函数头文件
 #include "doubao_helper.h"  // 调用豆包函数
