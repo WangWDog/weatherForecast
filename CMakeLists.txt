@@ -74,6 +74,8 @@ set(CLI_SOURCES
         core/doubao_manager.h
         cli/cli_weather_display.cpp
         cli/cli_weather_display.h
+        cli/cli_update_city.cpp
+        cli/cli_update_city.h
 )
 set(WEATHER_GLOBAL
         core/weather_manager.cpp          # 天气核心实现

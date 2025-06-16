@@ -19,7 +19,6 @@
 #include "config/config_loader.h"
 #include "config/config_user.h"
 #include "delay.h"
-#include "updateCity.h"
 #include "core/weather_manager.h"
 #include "i18n/i18n_loader.h"
 #include "lunar_api.h"

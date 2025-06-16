@@ -7,22 +7,14 @@
 #include "cli_ai_advisor.h"
 #include "delay.h"
 #include "cli_weather_display.h"
-// #include "cli_animation_loader.h"
-// #include "cli_ai_advisor.h"
-// #include "cli_weather_display.h"
-// #include "cli_menu_controller.h"
-// #include "cli_weather_display.h"
-// #include "displayUtils/cli_clear_console.h"
 #include "CacheManager.h"
+#include "cli_date_display.h"
+#include "cli_life_index.h"
+#include "cli_update_city.h"
+#include "cli_user_settings.h"
 
-// 外部功能声明（由其他模块实现）
-void showAISuggestions(ConfigContext&, I18n&);
-void showCurrentDate(ConfigContext&, I18n&, bool);
-void showWeatherForecast(ConfigContext&, I18n&);
-void showLifeIndices(ConfigContext&, I18n&);
-void updateUserSettings(ConfigUser&, I18n&);
 
-    CliMenuController::CliMenuController(ConfigContext& configContext, I18n& translator)
+CliMenuController::CliMenuController(ConfigContext& configContext, I18n& translator)
         : configContext(configContext), i18n(translator) {}
 
     void CliMenuController::run() {
@@ -55,7 +47,7 @@ void updateUserSettings(ConfigUser&, I18n&);
                 showLifeIndices(configContext, i18n);
             } else if (command == "4") {
                 std::cout << i18n.tr("city_update", "title") << "\n";
-                updateCity(configContext, i18n);
+                showCityChoose(configContext, i18n);
                 delay_ms(2000);
             } else if (command == "5") {
                 std::cout << i18n.tr("settings", "update_title") << "\n";
