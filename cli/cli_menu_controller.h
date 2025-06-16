@@ -2,8 +2,6 @@
 #pragma once
 
 #include "config_context.h"
-#include "../config/config_user.h"
-#include "../config/config_key.h"
 #include "i18n/i18n_loader.h"
 
 class CliMenuController {

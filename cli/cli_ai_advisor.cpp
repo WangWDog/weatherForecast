@@ -65,5 +65,8 @@ void showAISuggestions(ConfigContext& ctx, I18n& i18n) {
     // 输出 AI 给出的建议
     std::cout << "\n🤖 " << suggestion << std::endl;
     std::cout << "\n";
+    std::cout << i18n.tr("ai_suggestion", "back_hint");
+
     std::cout << std::flush; // 强制刷新输出
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
