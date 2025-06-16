@@ -82,10 +82,6 @@ std::string getLunarInfo(ConfigKey &config_key, const std::string &lang, I18n &i
 }
 
 
-// 宽字符对齐工具函数（仅估算宽度）
-
-
-
 void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装用户设置。il8n:国际化翻译
     while (true) {
         clearConsole();
@@ -195,7 +191,6 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装
     }
 }
 
-using json = nlohmann::json;
 
 void showAISuggestions(ConfigUser& configUser, ConfigKey& configKey, I18n& i18n) {
     clearConsole();
@@ -625,6 +620,7 @@ int main(int argc, char *argv[]) {
             std::cout << "------------------------\n";
             auto options = i18n.trList("main_cli", "menu_options");
             for (size_t i = 0; i < options.size(); ++i) {
+                std::cout << i<<". ";
                 std::cout << options[i] << "\n";
             }
             std::cout << "------------------------\n";
@@ -635,33 +631,37 @@ int main(int argc, char *argv[]) {
 
 
             // 根据用户输入的命令执行不同的操作
-            if (command == "show_date") {
+            if (command == "0")
+            {
+                showAISuggestions(configUser,configKey,i18n);
+            }
+            else if (command == "1") {
                 showCurrentDate(configUser, configKey, i18n, true);
             } else if (command == "show_date --all") {
                 showCurrentDate(configUser, configKey, i18n, true);
                 std::cout << "黄历信息：\n" << "今天是农历五月二十九，宜出行、结婚，不宜动土、安床。" << std::endl;
-            } else if (command == "show_forecast") {
+            } else if (command == "2") {
                 std::cout << i18n.tr("weather_view", "forecast_title") << "\n";
                 showWeatherForecast(configUser, configKey, i18n);
-            } else if (command == "show_life") {
+            } else if (command == "3") {
                 std::cout << i18n.tr("life_index", "title") << "\n";
                 showLifeIndices(configUser, configKey, i18n);
-            } else if (command == "update_city") {
+            } else if (command == "4") {
                 std::cout << i18n.tr("city_update", "title") << "\n";
                 updateCity(configUser, configKey, i18n);
                 delay_ms(2000);
-            } else if (command == "update_settings") {
+            } else if (command == "5") {
                 std::cout << i18n.tr("settings", "update_title") << "\n";
                 updateUserSettings(configUser, i18n);
-            } else if (command == "exit") {
+            } else if (command == "6") {
                 std::cout << i18n.tr("main_cli", "goodbye") << std::endl;
                 delay_ms(5000);
                 break;
             } else {
                 std::cout << i18n.tr("main_cli", "invalid_option") << std::endl;
             }
-            std::cout << "\n" << i18n.tr("main_cli", "back_to_menu");
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            // std::cout << "\n" << i18n.tr("main_cli", "back_to_menu");
+            // std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
 
