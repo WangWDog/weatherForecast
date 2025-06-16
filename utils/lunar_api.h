@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+
+#include "config_context.h"
 #include "../config/config_key.h"
 #include "i18n_loader.h"
 
@@ -23,6 +25,5 @@ struct LunarData {
 std::string callLunarApi(std::string apikey);
 LunarData parseLunarJson(const std::string& jsonStr);
 std::string formatLunarInfo(const LunarData& d, I18n& i18n);
-std::string getLunarInfo(ConfigKey& config_key, const std::string& lang, I18n& i18n);
 
 void printLunarData(const LunarData& d);

@@ -10,9 +10,8 @@
 #include "../core/CacheManager.h"
 #include "displayUtils/cli_clear_console.h"
 
-class I18n;
 
-std::string getLunarInfo(ConfigContext cft,I18n &i18n) {
+std::string getLunarInfo(ConfigContext& cft,I18n &i18n) {
     auto config_key = cft.key();
     auto config_user = cft.user();
     std::string response = callLunarApi(config_key.getFreeApiKey()); // 请求 API(Key and 语言，返回json
@@ -71,7 +70,7 @@ void showCurrentDate(ConfigContext& config_context, I18n& i18n, bool showAll) {
 
     if (lunarInfo.empty()) {
         // 如果缓存中没有数据或过期，从网络获取
-        lunarInfo = getLunarInfo(configKey, configUser.getLanguage(), i18n);
+        lunarInfo = getLunarInfo(config_context, i18n);
         // 缓存农历信息
         cacheManager.setCache("lunar_info", lunarInfo);
         isFromCache = false;  // 数据来源是网络
