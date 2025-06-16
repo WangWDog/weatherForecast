@@ -1,16 +1,5 @@
-//
-// Created by 13033 on 2025/6/16.
-//
+#pragma once
 
-#ifndef CLI_LIFE_INDEX_H
-#define CLI_LIFE_INDEX_H
-
-
-
-class cli_life_index {
-
-};
-
-
-
-#endif //CLI_LIFE_INDEX_H
+#include "config_context.h"
+#include "i18n_loader.h"
+void showLifeIndices(ConfigContext& cft,I18n& i18n);

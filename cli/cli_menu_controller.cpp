@@ -6,8 +6,13 @@
 #include "displayUtils/cli_clear_console.h"
 #include "cli_ai_advisor.h"
 #include "delay.h"
-#include "updateCity.h"
-#include "doubao_translator.h"
+#include "cli_weather_display.h"
+// #include "cli_animation_loader.h"
+// #include "cli_ai_advisor.h"
+// #include "cli_weather_display.h"
+// #include "cli_menu_controller.h"
+// #include "cli_weather_display.h"
+// #include "displayUtils/cli_clear_console.h"
 #include "CacheManager.h"
 
 // 外部功能声明（由其他模块实现）

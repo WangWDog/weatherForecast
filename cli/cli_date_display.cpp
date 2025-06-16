@@ -54,7 +54,7 @@ std::string getLunarInfo(ConfigContext cft,I18n &i18n) {
     }
 }
 
-void showCurrentDate(ConfigContext& config_context, I18n &i18n, bool showAll) {
+void showCurrentDate(ConfigContext& config_context, I18n& i18n, bool showAll) {
     auto configUser = config_context.user();
     auto configKey = config_context.key();
     clearConsole(); // 清空控制台

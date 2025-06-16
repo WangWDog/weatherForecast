@@ -19,7 +19,7 @@ void printLine() {
     std::cout << "+--------------+--------------+--------------+--------------+"
                  "--------------+--------------+--------------+--------------+\n";
 }
-void showWeatherForecast(ConfigContext config_context, I18n &i18n) {
+void showWeatherForecast(ConfigContext& config_context, I18n &i18n) {
     auto configKey = config_context.key();
     auto configUser = config_context.user();
     WeatherManager manager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());

@@ -1,16 +1,5 @@
-//
-// Created by 13033 on 2025/6/16.
-//
+#pragma once
+#include "config_user.h"
+#include "i18n_loader.h"
 
-#ifndef CLI_USER_SETTINGS_H
-#define CLI_USER_SETTINGS_H
-
-
-
-class cli_user_settings {
-
-};
-
-
-
-#endif //CLI_USER_SETTINGS_H
+void updateUserSettings(ConfigUser&,I18n&);
