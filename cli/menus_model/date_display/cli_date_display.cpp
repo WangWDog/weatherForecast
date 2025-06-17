@@ -7,8 +7,8 @@
 
 #include "doubao_translator.h"
 #include "lunar_api.h"
-#include "../core/CacheManager.h"
-#include "displayUtils/cli_clear_console.h"
+#include "../../../core/CacheManager.h"
+#include "../../common/cli_clear_console.h"
 
 
 std::string getLunarInfo(ConfigContext& cft,I18n &i18n) {

@@ -11,7 +11,7 @@
 #include "date_utils.h"
 #include "i18n_loader.h"
 #include "weather_manager.h"
-#include "displayUtils/cli_clear_console.h"
+#include "../common/cli_clear_console.h"
 
 void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser);
 

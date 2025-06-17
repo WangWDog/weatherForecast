@@ -40,9 +40,9 @@ link_directories(${CURL_PATH}/lib)
 
 # 源码文件（CLI 用）
 set(CLI_SOURCES
-        cli/delay.cpp
-        cli/cli_animation_loader.cpp
-        cli/displayUtils/cli_clear_console.cpp
+        cli/common/delay.cpp
+        cli/common/cli_animation_loader.cpp
+        cli/common/cli_clear_console.cpp
         main_cli.cpp
         config/config_user.cpp
         config/config_key.cpp
@@ -55,27 +55,29 @@ set(CLI_SOURCES
         utils/date_utils.cpp
         utils/doubao_helper.cpp
         core/CacheManager.cpp
-        cli/cli_menu_controller.cpp
-        cli/cli_menu_controller.h
+        cli/menus_model/cli_menu_controller.cpp
+        cli/menus_model/cli_menu_controller.h
         config/config_context.cpp
         config/config_context.h
         cli/cli_application.cpp
         cli/cli_application.cpp
         cli/cli_application.h
-        cli/cli_ai_advisor.cpp
-        cli/cli_ai_advisor.h
-        cli/cli_date_display.cpp
-        cli/cli_date_display.h
-        cli/cli_life_index.cpp
-        cli/cli_life_index.h
-        cli/cli_user_settings.cpp
-        cli/cli_user_settings.h
+        cli/menus_model/ai_advisor/cli_ai_advisor.cpp
+        cli/menus_model/ai_advisor/cli_ai_advisor.h
+        cli/menus_model/date_display/cli_date_display.cpp
+        cli/menus_model/date_display/cli_date_display.h
+        cli/menus_model/life_index/cli_life_index.cpp
+        cli/menus_model/life_index/cli_life_index.h
+        cli/menus_model/user_setting/cli_user_settings.cpp
+        cli/menus_model/user_setting/cli_user_settings.h
         core/doubao_manager.cpp
         core/doubao_manager.h
-        cli/cli_weather_display.cpp
-        cli/cli_weather_display.h
-        cli/cli_update_city.cpp
-        cli/cli_update_city.h
+        cli/menus_model/weather_display/cli_weather_display.cpp
+        cli/menus_model/weather_display/cli_weather_display.h
+        cli/menus_model/update_city/cli_update_city.cpp
+        cli/menus_model/update_city/cli_update_city.h
+        cli/dispatch_model/cli_menu_dispatch_controller.cpp
+        cli/dispatch_model/cli_menu_dispatch_controller.h
 )
 set(WEATHER_GLOBAL
         core/weather_manager.cpp          # 天气核心实现

@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include "CacheManager.h"
-#include "displayUtils/cli_clear_console.h"
+#include "../common/cli_clear_console.h"
 
 void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装用户设置。il8n:国际化翻译
     while (true) {

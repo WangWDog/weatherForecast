@@ -2,13 +2,13 @@
 #include <iostream>
 #include <curl/curl.h>
 
-#include "displayUtils/cli_clear_console.h"
+#include "../../common/cli_clear_console.h"
 #include "config_context.h"
-#include "../config/config_key.h"
-#include "../config/config_user.h"
-#include "delay.h"
+#include "../../../config/config_key.h"
+#include "../../../config/config_user.h"
+#include "../../common/delay.h"
 #include "weather_manager.h"
-#include "i18n/i18n_loader.h"
+#include "../../i18n/i18n_loader.h"
 
 void showCityChoose(ConfigContext& config_context, I18n& i18n) {
     SetConsoleOutputCP(CP_UTF8);  // 设置控制台编码为 UTF-8

@@ -2,16 +2,16 @@
 
 #include <iostream>
 
-#include "cli_animation_loader.h"
-#include "displayUtils/cli_clear_console.h"
-#include "cli_ai_advisor.h"
-#include "delay.h"
-#include "cli_weather_display.h"
+#include "../common/cli_animation_loader.h"
+#include "../common/cli_clear_console.h"
+#include "ai_advisor/cli_ai_advisor.h"
+#include "../common/delay.h"
+#include "weather_display/cli_weather_display.h"
 #include "CacheManager.h"
-#include "cli_date_display.h"
-#include "cli_life_index.h"
-#include "cli_update_city.h"
-#include "cli_user_settings.h"
+#include "date_display/cli_date_display.h"
+#include "life_index/cli_life_index.h"
+#include "update_city/cli_update_city.h"
+#include "user_setting/cli_user_settings.h"
 
 
 CliMenuController::CliMenuController(ConfigContext& configContext, I18n& translator)

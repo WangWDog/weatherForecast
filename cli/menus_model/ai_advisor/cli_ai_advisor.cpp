@@ -8,7 +8,7 @@
 
 #include "doubao_helper.h"
 #include "weather_manager.h"
-#include "displayUtils/cli_clear_console.h"
+#include "../common/cli_clear_console.h"
 
 void showAISuggestions(ConfigContext& ctx, I18n& i18n) {
     clearConsole();
