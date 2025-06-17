@@ -111,7 +111,8 @@ void handleCommand(int argc, char *argv[], ConfigUser &configUser, ConfigKey &co
         if (argc > 2) {
             std::string type = argv[2];
             if (type.find("-R") != std::string::npos) {
-                forceRefresh = true; // 如果包含 -R，设置为 true
+                forceRefresh = true;
+            // 如果包含 -R，设置为 true
             }
         }
         // 显示天气预报的代码
