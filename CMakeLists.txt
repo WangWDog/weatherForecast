@@ -6,17 +6,7 @@ project(weatherForecast)
 set(CMAKE_CXX_STANDARD 20)
 # 设置 C++ 标准为 C++17
 
-set(CMAKE_AUTOMOC ON)
-# 自动处理 Qt 的 MOC（元对象编译器），用于 QObject 派生类的信号与槽机制
 
-set(CMAKE_AUTORCC ON)
-# 自动处理 Qt 的资源文件（.qrc）
-
-set(CMAKE_AUTOUIC ON)
-# 自动处理 Qt Designer 生成的 .ui 文件（用于图形界面）
-
-# 查找 Qt6 包（Widgets、Network 模块）
-find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
 # 查找 Qt6 并确保 Widgets 和 Network 模块可用，否则中止编译
 
 set(CURL_PATH "F:\\CPlusDependences\\LibCurl\\V8")
