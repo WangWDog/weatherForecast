@@ -115,6 +115,7 @@ void handleCommand(int argc, char *argv[], ConfigUser &configUser, ConfigKey &co
             }
         }
         // 显示天气预报的代码
+
         std::cout << "显示7天天气预报" << std::endl;
 
     } else if (command == "show_life") {
