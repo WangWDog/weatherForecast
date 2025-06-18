@@ -1,0 +1,78 @@
+@startuml
+skinparam classAttributeIconSize 0
+class CliApplication {
+  ConfigContext ctx
+  I18n i18n
+  void run(int argc, char* argv[])
+}
+class LoaderStyle {
+}
+class CliMode {
+}
+class I18n {
+  bool load(const std::string& language)
+}
+class BaseConfig {
+  string configPath
+  json configJson
+  explicit BaseConfig(const std::string& path)
+  bool load()
+  bool save()
+}
+class ConfigContext {
+  ConfigUser configUser
+  ConfigKey configKey
+}
+class ConfigKey extends BaseConfig {
+  json configData
+  explicit ConfigKey(const std::string& path = "configKey.json")
+  void setApiKey(const std::string& key)
+  void setHost(const std::string& host)
+}
+class ConfigLoader {
+  string configPath
+  json configJson
+  explicit ConfigLoader(const std::string& config_path = "configUser.json")
+  bool load()
+  void setDefaultCity(const std::string& city)
+  void setUseIPLocation(bool useIP)
+  void setUnits(const std::string& units)
+  void setLanguage(const std::string& lang)
+  void setCityId(const std::string& id)
+  void setCacheExpiry(const std::string& key, int minutes)
+}
+class ConfigUser extends BaseConfig {
+  explicit ConfigUser(const std::string& path = "configUser.json")
+  void setDefaultCity(const std::string& city)
+  void setUseIPLocation(bool useIP)
+  void setUnits(const std::string& units)
+  void setLanguage(const std::string& lang)
+  void setCacheExpiry(const std::string& key, int minutes)
+  void setDateFormateMenu(const std::string& dateFormate)
+  void setCityId(const std::string& id)
+}
+class CacheManager {
+  string data
+  time_point timestamp
+  explicit CacheManager(const json& config)
+  string getCache(const std::string& key)
+  void setCache(const std::string& key, const std::string& value, int expiryMinutes = 0)
+  void clearAllCache()
+  void clearCache(const std::string& key)
+  void clearCacheFile(const std::string& filename)
+}
+class doubao_manager {
+}
+class WeatherManager {
+  string apiKey
+  string host
+  string lang
+  explicit WeatherManager(std::string key, std::string host, std::string lang = "zh")
+  LifeIndexWithMeta getLifeIndices(const std::string& locationId, int expiryMinutes)
+  ForecastResult get7DayForecast(const std::string& locationId, const std::string& language, int cacheExpiryMinutes)
+  WeatherNow getCachedCurrentWeather(const std::string& locationId)
+}
+class mainwindow extends QWidget {
+  explicit mainwindow(QWidget *parent = nullptr)
+}
+@enduml

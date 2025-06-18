@@ -1,0 +1,59 @@
+@startuml
+title weatherForecast CLI 架构关系图
+
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+
+package "common" {
+  class CliContext
+}
+
+package "config" {
+  class ConfigContext
+  class ConfigUser
+  class ConfigKey
+}
+
+package "i18n" {
+  class I18n
+}
+
+package "cli/menus_model" {
+  class CliMenuController
+  class CliMenuDispatchController
+}
+
+package "cli/display" {
+  class cli_weather_display
+  class cli_life_index
+  class cli_ai_advisor
+  class cli_date_display
+  class cli_user_settings
+  class cli_update_city
+}
+
+' 上下文依赖
+CliMenuController --> CliContext
+CliMenuDispatchController --> CliContext
+CliContext --> ConfigContext
+CliContext --> I18n
+
+' ConfigContext 下属组件
+ConfigContext --> ConfigUser
+ConfigContext --> ConfigKey
+
+' 控制器与功能模块调用
+CliMenuController --> cli_weather_display
+CliMenuController --> cli_life_index
+CliMenuController --> cli_ai_advisor
+CliMenuController --> cli_date_display
+CliMenuController --> cli_user_settings
+CliMenuController --> cli_update_city
+
+CliMenuDispatchController --> cli_weather_display
+CliMenuDispatchController --> cli_life_index
+CliMenuDispatchController --> cli_date_display
+CliMenuDispatchController --> cli_user_settings
+CliMenuDispatchController --> cli_update_city
+
+@enduml

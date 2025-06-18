@@ -1,10 +1,9 @@
-// cli_application.cpp
 #include "cli_application.h"
-#include "menus_model/cli_menu_controller.h"
-// #include "cli_command_dispatcher.h"  // 你之后可以加入
+#include "dispatch_model/cli_dispatch_controller.h"
+#include "display/cli_menu_controller.h"
 #include <iostream>
 
-#include "dispatch_model/cli_menu_dispatch_controller.h"
+#include "common/cli_context.h"
 
 CliApplication::CliApplication()
     : ctx("configUser.json", "configKey.json") {
@@ -15,11 +14,13 @@ CliApplication::CliApplication()
 }
 
 void CliApplication::run(int argc, char* argv[]) {
-    if (argc > 1) {
-        CliCommandDispatcher controller(ctx, i18n);
-        controller.handle(argc,argv);
+    CliContext cliCtx(ctx, i18n, argc > 1 ? CliMode::Dispatcher : CliMode::Interactive);
+
+    if (cliCtx.mode == CliMode::Dispatcher) {
+        CliDispatchController controller(cliCtx);
+        controller.handle(argc, argv);
     } else {
-        CliMenuController controller(ctx, i18n);  // 你之前已生成
+        CliMenuController controller(cliCtx);
         controller.run();
     }
 }
