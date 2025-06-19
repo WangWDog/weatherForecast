@@ -10,30 +10,34 @@
 #include "../../../core/CacheManager.h"
 #include "../../common/cli_clear_console.h"
 
-
+// 获取农历信息
 std::string getLunarInfo(ConfigContext& cft,I18n &i18n) {
     auto config_key = cft.key();
     auto config_user = cft.user();
+    // 调用农历API获取数据，从API获取农历信息
     std::string response = callLunarApi(config_key.getFreeApiKey()); // 请求 API(Key and 语言，返回json
 
+    // 检查API响应是否为空
     if (response.empty()) {
-        return "❌ 未获取到农历信息";//提示错误信息
+        return "❌ 未获取到农历信息"; // 提示错误信息
     }
 
     try {
+        // 解析JSON响应
         auto j = nlohmann::json::parse(response);
         if (!j.contains("data")) return "❌ 响应数据无效";
-        const auto &d = j["data"];//解析json
-        std::ostringstream oss;
+        const auto &d = j["data"]; // 获取数据部分
+        std::ostringstream oss; // 创建输出流
 
+        // Lambda函数：条件输出农历信息
         auto printIfNotEmpty = [&](const std::string &emoji, const std::string &label, const std::string &key) {
             if (d.contains(key) && !d[key].get<std::string>().empty()) {
                 oss << emoji << " " << label << "：" << d[key].get<std::string>() << "\n";
             }
-        };//输出函数
+        }; // 输出函数
 
         // 信息输出
-        //printIfNotEmpty("\t📅", "公历", "Solar");
+        // printIfNotEmpty("\t📅", "公历", "Solar");
         printIfNotEmpty("\t📆", "星期", "Week");
         printIfNotEmpty("\t🌙", "农历", "Lunar");
         printIfNotEmpty("\t🧧", "农历年份", "LunarYear");
@@ -46,10 +50,10 @@ std::string getLunarInfo(ConfigContext& cft,I18n &i18n) {
         printIfNotEmpty("\t💬", "微语·短", "WeiYu_s");
         printIfNotEmpty("\t📖", "微语·长", "WeiYu_l");
 
-        std::string lunarInfo = oss.str();
-        return lunarInfo;
+        std::string lunarInfo = oss.str(); // 获取格式化字符串
+        return lunarInfo; // 返回农历信息
     } catch (const std::exception &e) {
-        return std::string("❌ JSON 解析失败：") + e.what();
+        return std::string("❌ JSON 解析失败：") + e.what(); // 错误处理
     }
 }
 
