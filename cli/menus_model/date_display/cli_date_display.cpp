@@ -57,6 +57,7 @@ std::string getLunarInfo(ConfigContext& cft,I18n &i18n) {
     }
 }
 
+// 显示当前日期函数
 void showCurrentDate(ConfigContext& config_context, I18n& i18n, bool showAll) {
     auto configUser = config_context.user();
     auto configKey = config_context.key();
@@ -117,6 +118,8 @@ void showCurrentDate(ConfigContext& config_context, I18n& i18n, bool showAll) {
             std::cout << lunarInfo;
         }
     }
+
+    // 显示返回提示并等待用户输入
     std::cout << std::flush; // 强制刷新输出
     std::cout << i18n.tr("date_view", "return_hint")<<std::endl;
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
