@@ -59,13 +59,18 @@ bool I18n::load(const std::string& language) {
     return true; // 返回加载成功
 }
 
+// tr 方法：获取翻译文本
 std::string I18n::tr(const std::string& key) const{
+    // 在翻译映射中查找键
     auto it = translations.find(key);
+    // 如果找到返回翻译文本，否则返回缺失标记
     return it != translations.end() ? it->second : "[missing: " + key + "]";
 }
 
 std::string I18n::tr(const std::string& section, const std::string& key) const {
+    // 组合section和key为完整键名
     std::string fullKey = section + "." + key;
+    // 调用单参数版本进行查找
     return tr(fullKey);
 }
 
@@ -74,6 +79,7 @@ std::vector<std::string> I18n::trList(const std::string& section, const std::str
     auto it = translations.find(section + "." + key);
     if (it != translations.end()) {
         try {
+            // 尝试将存储的字符串解析为JSON数组
             json parsed = json::parse(it->second);
             if (parsed.is_array()) {
                 for (auto& val : parsed) {
@@ -81,10 +87,12 @@ std::vector<std::string> I18n::trList(const std::string& section, const std::str
                 }
             }
         } catch (...) {
+            // JSON解析失败处理
             std::cerr << "[warn] trList failed to parse key: " << section + "." + key << std::endl;
         }
     } else {
+        // 键名缺失处理
         std::cerr << "[missing: " << section + "." + key << "]" << std::endl;
     }
-    return result;
+    return result; // 返回结果列表（可能为空）
 }
