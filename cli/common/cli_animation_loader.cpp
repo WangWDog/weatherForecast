@@ -6,7 +6,7 @@
 // 显示加载进度条函数
 // 参数：任务名称, 总步数, 每步延时(毫秒), ANSI颜色代码
 void showLoadingBar(const std::string& taskName, int steps, int delayPerStepMs, const std::string& color) {
-    const int barWidth = 10; // 进度条可视宽度（10个字符）
+    const int barWidth = 10;  // 进度条可视宽度（10个字符）
 
     for (int i = 0; i <= steps; ++i) {
         // 计算当前进度百分比 (0.0~1.0)
