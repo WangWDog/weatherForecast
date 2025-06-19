@@ -11,9 +11,9 @@
 #include "../common/cli_clear_console.h"
 
 void showAISuggestions(ConfigContext& ctx, I18n& i18n) {
-    clearConsole();
-    auto configKey = ctx.key();
-    auto configUser = ctx.user();
+    clearConsole();  // 清空控制台屏幕
+    auto configKey = ctx.key();  // 获取API密钥配置
+    auto configUser = ctx.user();  // 获取用户配置
 
     std::cout << "\t🌟 " << i18n.tr("ai_suggestion", "getting") << "\n";
 
