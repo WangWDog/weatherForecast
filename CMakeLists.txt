@@ -45,7 +45,6 @@ set(CLI_SOURCES
         config/config_context.cpp
         config/config_context.h
         cli/cli_application.cpp
-        cli/cli_application.cpp
         cli/cli_application.h
         cli/display/ai_advisor/cli_ai_advisor.cpp
         cli/display/ai_advisor/cli_ai_advisor.h
@@ -68,7 +67,6 @@ set(CLI_SOURCES
 )
 set(WEATHER_GLOBAL
         core/weather_manager.cpp          # 天气核心实现
-        config/config_loader.cpp
         cli/display/update_city/cli_update_city.cpp
         cli/display/update_city/cli_update_city.h
         cli/context_builder/buildAISuggestionContent.cpp

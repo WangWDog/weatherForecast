@@ -48,3 +48,32 @@ bool I18n::load(const std::string& language) {
     std::cout << "[I18n] ✅ 语言文件加载成功（" << translations.size() << " 条目）" << std::endl;
     return true;
 }
+std::string I18n::tr(const std::string& key) const{
+    auto it = translations.find(key);
+    return it != translations.end() ? it->second : "[missing: " + key + "]";
+}
+
+std::string I18n::tr(const std::string& section, const std::string& key) const {
+    std::string fullKey = section + "." + key;
+    return tr(fullKey);
+}
+
+std::vector<std::string> I18n::trList(const std::string& section, const std::string& key) {
+    std::vector<std::string> result;
+    auto it = translations.find(section + "." + key);
+    if (it != translations.end()) {
+        try {
+            json parsed = json::parse(it->second);
+            if (parsed.is_array()) {
+                for (auto& val : parsed) {
+                    if (val.is_string()) result.push_back(val.get<std::string>());
+                }
+            }
+        } catch (...) {
+            std::cerr << "[warn] trList failed to parse key: " << section + "." + key << std::endl;
+        }
+    } else {
+        std::cerr << "[missing: " << section + "." + key << "]" << std::endl;
+    }
+    return result;
+}

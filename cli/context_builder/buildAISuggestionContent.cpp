@@ -1,6 +1,7 @@
 
 #include <string>
 #include "config_context.h"
+#include "doubao_helper.h"
 #include "weather_manager.h"
 
 std::string buildAISuggestionContent(ConfigContext& ctx) {
@@ -30,5 +31,6 @@ std::string buildAISuggestionContent(ConfigContext& ctx) {
             << "------------------------\n";
     }
 
-    return oss.str();
+    auto suggestion = callDoubaoAI(configKey.getDoubaoKey(), configKey.getDoubaoEndpoint(), oss.str());
+    return suggestion;
 }

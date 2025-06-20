@@ -15,12 +15,9 @@
 void showAISuggestions(CliContext& ctx) {
     clearConsole();
     std::cout << "\t🌟 " << ctx.i18n.tr("ai_suggestion", "getting") << "\n";
-
-    ConfigKey& configKey = ctx.config.key();  // ⬅️ 注意括号：这是调用函数
-    std::string prompt = buildAISuggestionContent(ctx.config);
-    std::string suggestion = callDoubaoAI(configKey.getDoubaoKey(), configKey.getDoubaoEndpoint(), prompt);
-
-    std::cout << "\n🤖 " << suggestion << "\n\n";
+    std::string suggestion = buildAISuggestionContent(ctx.config);
+    clearConsole();
+    std::cout << "\n🤖 " << suggestion << "\n";
 
     // 仅在交互模式下提示返回
     if (ctx.mode == CliMode::Interactive) {
