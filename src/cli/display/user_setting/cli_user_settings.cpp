@@ -19,8 +19,9 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装
                 getCacheExpiry("life_index") << " 分钟）\n";
         std::cout << "3. 🌦 " << i18n.tr("settings", "cache_forecast") << "（" << configUser.
                 getCacheExpiry("daily_forecast") << " 分钟）\n";
-        std::cout << "4. 🈯 " << i18n.tr("settings", "language") << "（" << configUser.getLanguage() << "） \n";
-        std::cout << "5. 🔙 " << i18n.tr("settings", "back") << "\n";//输出五个菜单选项
+        std::cout << "4. 🌡 " << i18n.tr("settings", "units") << "（" << configUser.getUnits() << "）\n";
+        std::cout << "5. 🈯 " << i18n.tr("settings", "language") << "（" << configUser.getLanguage() << "） \n";
+        std::cout << "6. 🔙 " << i18n.tr("settings", "back") << "\n";//输出菜单选项
 
         std::cout << i18n.tr("settings", "prompt_input");
         std::string choice;
@@ -69,7 +70,18 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装
                 std::cout << i18n.tr("settings", "cancelled") << "\n";
             }
         }//修改天气预报缓存时间
-        else if (choice == "4")
+        else if (choice == "4") {
+            std::string u;
+            std::cout << i18n.tr("settings", "input_units");
+            std::getline(std::cin, u);
+            if (u != ":q") {
+                configUser.setUnits(u);
+                std::cout << i18n.tr("settings", "updated") << "\n";
+            } else {
+                std::cout << i18n.tr("settings", "cancelled") << "\n";
+            }
+        }
+        else if (choice == "5")
         {
             std::string lang;
             std::cout << i18n.tr("settings", "input_language");
@@ -92,7 +104,7 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装
             }
             continue;
         }//修改语言
-        else if (choice == "5") {
+        else if (choice == "6") {
             configUser.save();
             std::cout << i18n.tr("settings", "saved_and_exit") << "\n";
             return;

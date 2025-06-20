@@ -12,6 +12,9 @@ public:
     std::string getUnits() const;
     void setUnits(const std::string& units);
 
+    std::string getIndexUnits() const;
+    void setIndexUnits(const std::string& units);
+
     std::string getLanguage() const;
     void setLanguage(const std::string& lang);
 

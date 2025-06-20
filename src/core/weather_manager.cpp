@@ -77,17 +77,19 @@ std::vector<CityResult> WeatherManager::searchCity(const std::string& keyword,co
 ForecastResult WeatherManager::get7DayForecast(
     const std::string& locationId,
     const std::string& language,
+    const std::string& unit,
     int cacheExpiryMinutes,
     CacheManager& cache // ✅ 外部传入 cache
 ) {
     ForecastResult result;
+    std::string cacheKey = "forecast_" + language + "_" + unit;
 
     // 1. 缓存可用：直接使用
-    if (cache.isValid("forecast", cacheExpiryMinutes)) {
+    if (cache.isValid(cacheKey, cacheExpiryMinutes)) {
         result.fromCache = true;
-        result.timestamp = cache.getTimestamp("forecast");
+        result.timestamp = cache.getTimestamp(cacheKey);
 
-        for (const auto& item : cache.getCache("forecast")) {
+        for (const auto& item : cache.getCache(cacheKey)) {
             DailyForecast f;
             f.date = item.value("date", "");
             f.textDay = item.value("textDay", "");
@@ -105,7 +107,7 @@ ForecastResult WeatherManager::get7DayForecast(
     }
 
     // 2. 请求网络数据
-    std::string url = "https://" + host + "/v7/weather/7d?location=" + locationId + "&lang=" + language;
+    std::string url = "https://" + host + "/v7/weather/7d?location=" + locationId + "&lang=" + language + "&unit=" + unit;
     std::string response;
     CURL* curl = curl_easy_init();
 
@@ -165,7 +167,7 @@ ForecastResult WeatherManager::get7DayForecast(
                 });
             }
 
-            cache.setCache("forecast", dataJson);  // ✅ 使用传入的 cache 保存
+            cache.setCache(cacheKey, dataJson);  // ✅ 使用传入的 cache 保存
         }
     } catch (...) {
         std::cerr << "❌ JSON解析失败: forecast 响应异常" << std::endl;
