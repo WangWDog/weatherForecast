@@ -1,0 +1,156 @@
+{
+  "main_cli": {
+    "menu_title": "🏠 Weather CLI System Menu",
+    "menu_options": [
+      "🤖 AI Life Suggestions",
+      "🗓️ Show Current Date",
+      "☁️ Show Weather Forecast",
+      "📋 View Life Indices",
+      "🚩 Set City",
+      "🔧 User Settings",
+      "❌ Exit Program"
+    ],
+    "current_city_pr": "(Current City：",
+    "current_city_la": ")",
+    "menu_loading": "⚙\uFE0F Loading preset settings ",
+    "prompt_input": "Please enter an  instruction: ",
+    "invalid_option": "❌ Invalid option, please try again.",
+    "goodbye": "👋 Goodbye! Thanks for using the Weather CLI system.",
+    "back_to_menu": "Press Enter to return to the menu...",
+    "return_hint": "Press any key to return to the main menu..."
+  },
+  "meta": {
+    "source_cache": "📦 Data from cache.",
+    "source_network": "🌐 Data from network.",
+    "updated_at": "🕒 Data updated at: "
+  },
+  "searchCity": {
+    "title": "📍 Main Menu > Set City",
+    "searching": "Search Results",
+    "not_found": "❌ No matching cities found",
+    "select_prompt": "👉 Enter a number to select a city, or keep typing to search...",
+    "input_hint": "🔍 Enter city keyword (type : to return to menu)",
+    "cancelled": "↩️ Setting cancelled. Returning to main menu.",
+    "success": "✅ City set successfully"
+  },
+  "settings": {
+    "menu_title": "User Settings Menu",
+    "date_format": "Change date-time format",
+    "cache_life_index": "Set life index cache duration",
+    "cache_forecast": "Set forecast cache duration",
+    "units": "Set units",
+    "language": "Change language",
+    "back": "Return to main menu",
+    "prompt_input": "Please enter your choice (1-6): ",
+    "input_date_format": "📅 Enter new date format (e.g. %Y-%m-%d %H:%M:%S, enter :q to cancel): ",
+    "input_cache_life": "🧭 Enter life index cache time (minutes, :q to cancel): ",
+    "input_cache_forecast": "🌦 Enter forecast cache time (minutes, :q to cancel): ",
+    "input_units": "🌡 Enter units (metric/imperial, :q to cancel): ",
+    "input_language": "🈯 Enter language code (zh / en, :q to cancel): ",
+    "updated": "✅ Settings updated.",
+    "cancelled": "↩️ Change cancelled.",
+    "invalid_input": "❌ Invalid input.",
+    "language_load_fail": "❌ Failed to load language file. Using previous language.",
+    "language_load_success": "🌐 Switched to new language:",
+    "saved_and_exit": "💾 Settings saved. Returning to main menu...",
+    "invalid_option": "❌ Invalid option. Please try again.",
+    "press_enter_continue": "Press Enter to continue..."
+  },
+  "forecast": {
+    "from_cache": "📦 Data from cache.",
+    "from_network": "🌐 Data from the internet.",
+    "updated_time": "🕒 Data updated at: ",
+    "city": "📡 City: ",
+    "forecast_title": "📆 7-Day Weather Forecast:",
+    "date": "📅 Date",
+    "text_day": "☀️ Daytime",
+    "text_night": "🌙 Nighttime",
+    "temperature": "🌡 Temp",
+    "temp_unit_c": "°C",
+    "temp_unit_f": "°F",
+    "wind_dir": "🍃 Wind Dir",
+    "wind_scale": "💨 Wind",
+    "precip": "🌧 Precip",
+    "precip_unit_mm": "mm",
+    "precip_unit_in": "in",
+    "humidity": "💧 Humidity (%)",
+    "prompt_refresh": "🔁 Press R to refresh, any other key to return...",
+    "commander_prompt_refresh": "\uD83D\uDD01 -R force refresh",
+    "fetch_failed": "❌ Failed to fetch weather data. Check network or API."
+  },
+  "date": {
+    "menu_path": "Main Menu > Current Date & Time",
+    "prompt_back": "Press any key to return to main menu..."
+  },
+  "lunar": {
+    "fetch_failed": "❌ Failed to retrieve lunar info",
+    "invalid_response": "❌ Invalid response data",
+    "parse_error": "❌ JSON parse error",
+    "solar": "Solar Date",
+    "week": "Week",
+    "lunar": "Lunar Calendar",
+    "lunar_year": "Lunar Year",
+    "zodiac": "Zodiac",
+    "ganzhi_year": "Heavenly Stems",
+    "constellation": "Zodiac Sign",
+    "festival": "Festival",
+    "jieqi": "Solar Term",
+    "yi": "Suitable For",
+    "ji": "Avoid",
+    "weiyu_short": "Short Quote",
+    "weiyu_long": "Long Quote"
+  },
+  "date_view": {
+    "title": "📍 Main Menu > Current Date and Time",
+    "solar": "📅 Solar Calendar",
+    "lunar": "🌙 Lunar Calendar",
+    "solar_term": "🌾 Solar Term",
+    "zodiac": "🐉 Zodiac Sign",
+    "return_hint": "Press any key to return to the main menu..."
+  },
+  "solar_term": {
+    "current_term": "Current Solar Term"
+  },
+  "zodiac": {
+    "current_zodiac": "Current Zodiac Sign"
+  },
+  "ai_suggestion": {
+    "title": "📍 Main Menu > AI suggestion",
+    "getting_weather_reference": "Getting weather information",
+    "getting_life_index_reference": "Getting life index",
+    "loading": "Generating AI suggestion, Waiting for around 5s",
+    "back_hint": "Press Enter to return"
+  },
+  "weather_view": {
+    "forecast_title": "Weather Forecast"
+  },
+  "life_index": {
+    "title": "Life Indices for the City of",
+    "index_list": "are as follows:",
+    "date": "Date",
+    "type": "Type",
+    "level": "Level",
+    "suggestion": "Suggestion",
+    "prompt_refresh": "🔁 Press R to refresh data, any other key to return to the main menu...",
+    "fetch_failed": "❌ Unable to fetch life index data.",
+    "sport_index": "Sports Index",
+    "car_wash_index": "Car Wash Index",
+    "dressing_index": "Dressing Index",
+    "fishing_index": "Fishing Index",
+    "uv_index": "UV Index",
+    "tourism_index": "Tourism Index",
+    "allergy_index": "Allergy Index",
+    "comfort_index": "Comfort Index",
+    "cold_index": "Cold Index",
+    "air_pollution_diffusion_index": "Air Pollution Diffusion Index",
+    "air_conditioner_index": "Air Conditioner Index",
+    "sunglasses_index": "Sunglasses Index",
+    "makeup_index": "Makeup Index",
+    "drying_index": "Drying Index",
+    "traffic_index": "Traffic Index",
+    "sunscreen_index": "Sunscreen Index"
+  },
+  "city_update": {
+    "title": "Update City"
+  }
+}
