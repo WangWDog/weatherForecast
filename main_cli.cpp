@@ -22,9 +22,8 @@
 #include "i18n/i18n_loader.h"
 #include "lunar_api.h"
 #include "config/config_key.h"
-#include "doubao_translator.h"
 #include "date_utils.h"  // 包含辅助函数头文件
-#include "doubao_helper.h"  // 调用豆包函数
+#include "core/doubao_manager.h"
 #include "core/CacheManager.h"
 
 

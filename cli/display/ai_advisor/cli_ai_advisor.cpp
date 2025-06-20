@@ -6,7 +6,6 @@
 
 #include <iostream>
 
-#include "doubao_helper.h"
 #include "weather_manager.h"
 #include "../common/cli_clear_console.h"
 #include "common/cli_context.h"

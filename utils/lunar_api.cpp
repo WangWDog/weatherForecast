@@ -1,18 +1,14 @@
 #include "lunar_api.h"
 #include <iostream>
 #include <json.hpp>
-#include <curl/curl.h>
 #include <ctime>
 #include <iomanip>
 #include <sstream>
-#include "doubao_translator.h"
+#include "../core/doubao_manager.h"
+#include "http_client.h"
 
 using json = nlohmann::json;
 
-static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
-    ((std::string*)userp)->append((char*)contents, size * nmemb);
-    return size * nmemb;
-}
 std::string getTodayDateYYYYMMDD() {
     std::time_t now = std::time(nullptr);
     std::tm* local = std::localtime(&now);
@@ -55,40 +51,12 @@ std::string formatLunarInfo(const LunarData& d, I18n& i18n)
 
 std::string callLunarApi(std::string apiKey)
 {
-    CURL* curl;
-    CURLcode res;
-    std::string readBuffer;
-
-    curl_global_init(CURL_GLOBAL_DEFAULT);
-    curl = curl_easy_init();
-
     std::string date = getTodayDateYYYYMMDD();
-
-    // ✅ 加入语言参数 lang
     std::string final_url = "https://api.shwgij.com/api/lunars/lunar?date=" + date +
-                            "&key=" + apiKey
-                            // +"&lang=" + lang
-                                            ;
-
-    // std::cout << "🌐 请求 URL: " << final_url << std::endl;
-
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, final_url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-        curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
-
-        res = curl_easy_perform(curl);
-        if (res != CURLE_OK) {
-            std::cerr << "❌ cURL 请求失败：" << curl_easy_strerror(res) << std::endl;
-            readBuffer.clear();
-        }
-
-        curl_easy_cleanup(curl);
-    }
-
-    return readBuffer;
+                            "&key=" + apiKey;
+    std::string response;
+    HttpClient::get(final_url, response);
+    return response;
 }
 
 
@@ -138,4 +106,3 @@ void printLunarData(const LunarData& d, const std::string& lang, const ConfigKey
     std::cout << i18n.tr("lunar", "weiyu_short") << ": " << data.weiyuShort << "\n";
     std::cout << i18n.tr("lunar", "weiyu_long") << ": " << data.weiyuLong << "\n";
 }
-

@@ -1,16 +1,15 @@
-//
-// Created by 13033 on 2025/6/16.
-//
+#pragma once
+#include <string>
+#include "../utils/http_client.h"
+#include "../utils/json.hpp"
 
-#ifndef DOUBAO_MANAGER_H
-#define DOUBAO_MANAGER_H
-
-
-
-class doubao_manager {
-
+class DoubaoManager {
+public:
+    DoubaoManager(std::string token, std::string endpoint);
+    std::string translate(const std::string& text, const std::string& targetLang);
+    std::string getAdvice(const std::string& prompt);
+private:
+    std::string token;
+    std::string endpointId;
+    std::string request(const std::string& systemPrompt, const std::string& userPrompt);
 };
-
-
-
-#endif //DOUBAO_MANAGER_H

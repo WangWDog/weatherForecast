@@ -6,7 +6,7 @@
 #include <iostream>
 #include <conio.h>
 
-#include "doubao_translator.h"
+#include "../../../core/doubao_manager.h"
 #include "lunar_api.h"
 #include "../../../core/CacheManager.h"
 #include "../../common/cli_clear_console.h"
@@ -93,7 +93,8 @@ void showCurrentDate(CliContext& ctx, bool showAll) {
                 std::cout << lunarInfo;
                 std::cout << "\nWaiting for translation..." << std::endl;
 
-                lunarInfo = translateWithDoubao(lunarInfo, "English", configKey);
+                DoubaoManager doubao(configKey.getDoubaoKey(), configKey.getDoubaoEndpoint());
+                lunarInfo = doubao.translate(lunarInfo, "English");
 
                 clearConsole();
                 std::cout << (fromCache ? "(来自缓存)" : "(来自网络)") << std::endl;

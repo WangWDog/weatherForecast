@@ -26,4 +26,4 @@ std::string callLunarApi(std::string apikey);
 LunarData parseLunarJson(const std::string& jsonStr);
 std::string formatLunarInfo(const LunarData& d, I18n& i18n);
 
-void printLunarData(const LunarData& d);
+void printLunarData(const LunarData& d, const std::string& lang, const ConfigKey& configKey, const I18n& i18n);
