@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include "config_context.h"
-#include "date_utils.h"
+#include "common/date_utils.h"
 #include "i18n_loader.h"
 #include "weather_manager.h"
 #include "../common/cli_clear_console.h"

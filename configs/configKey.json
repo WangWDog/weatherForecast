@@ -1,0 +1,9 @@
+{
+    "key_hf": "your_hf_api_key",
+    "key_free": "your_free_api_key",
+    "host_hf": "api.example.com",
+    "doubao_endpoint_id": "",
+    "doubao_key": "",
+    "key_qweather": "",
+    "qweather_host": ""
+}

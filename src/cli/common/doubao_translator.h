@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include "../config/config_key.h"
-#include "lunar_api.h"
+#include "common/lunar_api.h"
 #include "../core/weather_manager.h"
 
 // 翻译函数声明（传入文本和 configKey）

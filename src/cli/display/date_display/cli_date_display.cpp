@@ -7,7 +7,7 @@
 #include <conio.h>
 
 #include "../../../core/doubao_manager.h"
-#include "lunar_api.h"
+#include "common/lunar_api.h"
 #include "../../../core/CacheManager.h"
 #include "../../common/cli_clear_console.h"
 #include "common/cli_context.h"

@@ -20,9 +20,9 @@
 #include "cli/common/delay.h"
 #include "core/weather_manager.h"
 #include "i18n/i18n_loader.h"
-#include "lunar_api.h"
+#include "common/lunar_api.h"
 #include "config/config_key.h"
-#include "date_utils.h"  // 包含辅助函数头文件
+#include "common/date_utils.h"  // 包含辅助函数头文件
 #include "core/doubao_manager.h"
 #include "core/CacheManager.h"
 
