@@ -8,7 +8,7 @@
 class CliMenuController {
 public:
     void run();
-    CliMenuController(CliContext& cli_context)
+    CliMenuController(CliContext& cliContext)
     : cliContext(cliContext)
     {
     }

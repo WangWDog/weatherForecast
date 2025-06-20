@@ -16,7 +16,8 @@
 
 void CliMenuController::run()
 {
-    showLoadingBar(cliContext.i18n.tr("main_cli", "menu_loading"), 8, 40, "\033[38;5;117m");
+    clearConsole();
+    showLoadingBar(cliContext.i18n.tr("main_cli", "menu_loading"), 8, 125, "\033[38;5;117m");
     while (true)
     {
         clearConsole();

@@ -7,11 +7,18 @@
 
 CliApplication::CliApplication()
     : ctx("configUser.json", "configKey.json") {
-    if (!i18n.load("zh") || !i18n.load(ctx.user().getLanguage())) {
+    const std::string lang = ctx.user().getLanguage();
+    if (lang != "zh" && i18n.load(lang)) {
+        std::cout << "✅ 已加载语言: " << lang << std::endl;
+    } else if (i18n.load("zh")) {
+        std::cout << "✅ 已回退至默认语言 zh" << std::endl;
+    } else {
         std::cerr << "❌ 初始化失败，语言文件加载错误。\n";
         std::exit(1);
     }
+
 }
+
 
 void CliApplication::run(int argc, char* argv[]) {
     CliContext cliCtx(ctx, i18n, argc > 1 ? CliMode::Dispatcher : CliMode::Interactive);

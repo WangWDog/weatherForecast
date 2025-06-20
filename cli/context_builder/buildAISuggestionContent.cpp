@@ -1,6 +1,5 @@
 
 #include <string>
-
 #include "config_context.h"
 #include "weather_manager.h"
 
