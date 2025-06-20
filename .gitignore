@@ -4,5 +4,5 @@ cmake-build-debug-bundled/
 cmake-build-debug-visual-studio/
 cmake-build-release
 CRULTest/http-client.private.env.json
-configKey.json
+configs/configKey.json
 

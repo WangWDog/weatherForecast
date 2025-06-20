@@ -108,13 +108,13 @@ endif()
 
 #用户配置文件
 file(COPY ${CMAKE_SOURCE_DIR}/configs/configUser.json
-        DESTINATION ${CMAKE_BINARY_DIR})
+        DESTINATION ${CMAKE_BINARY_DIR}/configs)
 #缓存文件
 file(COPY ${CMAKE_SOURCE_DIR}/configs/cache.json
-        DESTINATION ${CMAKE_BINARY_DIR})
+        DESTINATION ${CMAKE_BINARY_DIR}/configs)
 #apiKey文件
 file(COPY ${CMAKE_SOURCE_DIR}/configs/configKey.json
-        DESTINATION ${CMAKE_BINARY_DIR})
+        DESTINATION ${CMAKE_BINARY_DIR}/configs)
 
 #语言文件
 file(COPY ${SRC_ROOT}/cli/i18n/lang_zh.json
