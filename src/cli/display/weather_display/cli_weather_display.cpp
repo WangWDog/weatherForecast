@@ -76,10 +76,11 @@ void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser, 
 
     printLine();
 
-    std::string tempUnit = unit == "i" ? i18n.tr("forecast", "temp_unit_f")
-                                        : i18n.tr("forecast", "temp_unit_c");
-    std::string precipUnit = unit == "i" ? i18n.tr("forecast", "precip_unit_in")
-                                          : i18n.tr("forecast", "precip_unit_mm");
+    bool imperial = (unit == "i" || unit == "imperial");
+    std::string tempUnit = imperial ? i18n.tr("forecast", "temp_unit_f")
+                                    : i18n.tr("forecast", "temp_unit_c");
+    std::string precipUnit = imperial ? i18n.tr("forecast", "precip_unit_in")
+                                      : i18n.tr("forecast", "precip_unit_mm");
 
     std::string tempHeader = i18n.tr("forecast", "temperature") + "(" + tempUnit + ")";
     std::string precipHeader = i18n.tr("forecast", "precip") + "(" + precipUnit + ")";
