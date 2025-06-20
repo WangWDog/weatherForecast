@@ -3,7 +3,7 @@
 
 class ConfigUser : public BaseFile {
 public:
-    explicit ConfigUser(const std::string& path = "configUser.json");
+    explicit ConfigUser(const std::string& path = "configs/configUser.json");
 
 
     bool getUseIPLocation() const;

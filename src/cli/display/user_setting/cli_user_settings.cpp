@@ -79,7 +79,7 @@ void updateUserSettings(ConfigUser &configUser, I18n &i18n) {//configUser:封装
                 std::cout << i18n.tr("settings", "updated") << "\n";
 
                 // ✅ 正确地使用路径初始化 CacheManager
-                CacheManager cacheManager("cache.json");
+                CacheManager cacheManager("configs/cache.json");
                 cacheManager.clearAll();
 
                 if (!i18n.load(lang)) {

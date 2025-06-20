@@ -8,78 +8,80 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(CURL_PATH "F:\\CPlusDependences\\LibCurl\\V8")
 
+# 源码根目录
+set(SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -static-libgcc")
 
 # 包含头文件路径
 include_directories(
         ${CURL_PATH}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/core/weather_core  # 天气核心模块路径
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui           # GUI 模块路径
-        ${CMAKE_CURRENT_SOURCE_DIR}/utils         # 工具模块路径
-        ${CMAKE_CURRENT_SOURCE_DIR}/cli           # 命令行模块路径
-        ${CMAKE_CURRENT_SOURCE_DIR}/core           # 命令行模块路径
-        ${CMAKE_CURRENT_SOURCE_DIR}/cli/i18n       # 命令行模块路径
-        ${CMAKE_CURRENT_SOURCE_DIR}/config
+        ${SRC_ROOT}/core            # 天气核心模块路径
+        ${SRC_ROOT}/gui             # GUI 模块路径
+        ${SRC_ROOT}/utils           # 工具模块路径
+        ${SRC_ROOT}/cli             # 命令行模块路径
+        ${SRC_ROOT}/cli/i18n        # 国际化模块路径
+        ${SRC_ROOT}/config
 )
 #引入CurlLib和bin
 link_directories(${CURL_PATH}/lib)
 # 源码文件（CLI 用）
 set(CLI_SOURCES
-        cli/common/delay.cpp
-        cli/common/cli_animation_loader.cpp
-        cli/common/cli_clear_console.cpp
-        main_cli.cpp
-        config/config_user.cpp
-        config/config_key.cpp
-        config/base_config.cpp
-        cli/i18n/i18n_loader.cpp
-        cli/i18n/i18n_loader.h
-        utils/lunar_api.h
-        utils/lunar_api.cpp
-        utils/doubao_translator.cpp
-        utils/date_utils.cpp
-        utils/doubao_helper.cpp
-        core/CacheManager.cpp
-        cli/display/cli_menu_controller.cpp
-        cli/display/cli_menu_controller.h
-        config/config_context.cpp
-        config/config_context.h
-        cli/cli_application.cpp
-        cli/cli_application.h
-        cli/display/ai_advisor/cli_ai_advisor.cpp
-        cli/display/ai_advisor/cli_ai_advisor.h
-        cli/display/date_display/cli_date_display.cpp
-        cli/display/date_display/cli_date_display.h
-        cli/display/life_index/cli_life_index.cpp
-        cli/display/life_index/cli_life_index.h
-        cli/display/user_setting/cli_user_settings.cpp
-        cli/display/user_setting/cli_user_settings.h
-        core/doubao_manager.cpp
-        core/doubao_manager.h
-        cli/display/weather_display/cli_weather_display.cpp
-        cli/display/weather_display/cli_weather_display.h
+        ${SRC_ROOT}/cli/common/delay.cpp
+        ${SRC_ROOT}/cli/common/cli_animation_loader.cpp
+        ${SRC_ROOT}/cli/common/cli_clear_console.cpp
+        ${SRC_ROOT}/main_cli.cpp
+        ${SRC_ROOT}/config/config_user.cpp
+        ${SRC_ROOT}/config/config_key.cpp
+        ${SRC_ROOT}/config/base_config.cpp
+        ${SRC_ROOT}/cli/i18n/i18n_loader.cpp
+        ${SRC_ROOT}/cli/i18n/i18n_loader.h
+        ${SRC_ROOT}/utils/lunar_api.h
+        ${SRC_ROOT}/utils/lunar_api.cpp
+        ${SRC_ROOT}/utils/doubao_translator.cpp
+        ${SRC_ROOT}/utils/date_utils.cpp
+        ${SRC_ROOT}/utils/doubao_helper.cpp
+        ${SRC_ROOT}/core/CacheManager.cpp
+        ${SRC_ROOT}/cli/display/cli_menu_controller.cpp
+        ${SRC_ROOT}/cli/display/cli_menu_controller.h
+        ${SRC_ROOT}/config/config_context.cpp
+        ${SRC_ROOT}/config/config_context.h
+        ${SRC_ROOT}/cli/cli_application.cpp
+        ${SRC_ROOT}/cli/cli_application.h
+        ${SRC_ROOT}/cli/display/ai_advisor/cli_ai_advisor.cpp
+        ${SRC_ROOT}/cli/display/ai_advisor/cli_ai_advisor.h
+        ${SRC_ROOT}/cli/display/date_display/cli_date_display.cpp
+        ${SRC_ROOT}/cli/display/date_display/cli_date_display.h
+        ${SRC_ROOT}/cli/display/life_index/cli_life_index.cpp
+        ${SRC_ROOT}/cli/display/life_index/cli_life_index.h
+        ${SRC_ROOT}/cli/display/user_setting/cli_user_settings.cpp
+        ${SRC_ROOT}/cli/display/user_setting/cli_user_settings.h
+        ${SRC_ROOT}/core/doubao_manager.cpp
+        ${SRC_ROOT}/core/doubao_manager.h
+        ${SRC_ROOT}/cli/display/weather_display/cli_weather_display.cpp
+        ${SRC_ROOT}/cli/display/weather_display/cli_weather_display.h
 
-        cli/dispatch_model/cli_dispatch_controller.cpp
-        cli/dispatch_model/cli_dispatch_controller.h
-        cli/common/cli_context.cpp
-        cli/common/cli_context.h
+        ${SRC_ROOT}/cli/dispatch_model/cli_dispatch_controller.cpp
+        ${SRC_ROOT}/cli/dispatch_model/cli_dispatch_controller.h
+        ${SRC_ROOT}/cli/common/cli_context.cpp
+        ${SRC_ROOT}/cli/common/cli_context.h
 
 )
 set(WEATHER_GLOBAL
-        core/weather_manager.cpp          # 天气核心实现
-        cli/display/update_city/cli_update_city.cpp
-        cli/display/update_city/cli_update_city.h
-        cli/context_builder/buildAISuggestionContent.cpp
-        cli/context_builder/buildAISuggestionContent.h
-        utils/ip_locator.cpp
-        config/config_user.cpp
-        config/config_user.h
-        config/config_key.cpp
-        config/config_key.h
-        config/base_config.cpp
-        config/base_config.h
-        utils/http_client.cpp
-        utils/http_client.h
+        ${SRC_ROOT}/core/weather_manager.cpp          # 天气核心实现
+        ${SRC_ROOT}/cli/display/update_city/cli_update_city.cpp
+        ${SRC_ROOT}/cli/display/update_city/cli_update_city.h
+        ${SRC_ROOT}/cli/context_builder/buildAISuggestionContent.cpp
+        ${SRC_ROOT}/cli/context_builder/buildAISuggestionContent.h
+        ${SRC_ROOT}/utils/ip_locator.cpp
+        ${SRC_ROOT}/config/config_user.cpp
+        ${SRC_ROOT}/config/config_user.h
+        ${SRC_ROOT}/config/config_key.cpp
+        ${SRC_ROOT}/config/config_key.h
+        ${SRC_ROOT}/config/base_config.cpp
+        ${SRC_ROOT}/config/base_config.h
+        ${SRC_ROOT}/utils/http_client.cpp
+        ${SRC_ROOT}/utils/http_client.h
 )
 
 
@@ -105,18 +107,18 @@ if(WIN32)
 endif()
 
 #用户配置文件
-file(COPY ${CMAKE_SOURCE_DIR}/configUser.json
+file(COPY ${CMAKE_SOURCE_DIR}/configs/configUser.json
         DESTINATION ${CMAKE_BINARY_DIR})
 #缓存文件
-file(COPY ${CMAKE_SOURCE_DIR}/cache.json
+file(COPY ${CMAKE_SOURCE_DIR}/configs/cache.json
         DESTINATION ${CMAKE_BINARY_DIR})
 #apiKey文件
-file(COPY ${CMAKE_SOURCE_DIR}/configKey.json
+file(COPY ${CMAKE_SOURCE_DIR}/configs/configKey.json
         DESTINATION ${CMAKE_BINARY_DIR})
 
 #语言文件
-file(COPY ${CMAKE_SOURCE_DIR}/cli/i18n/lang_zh.json
+file(COPY ${SRC_ROOT}/cli/i18n/lang_zh.json
         DESTINATION ${CMAKE_BINARY_DIR}/i18n)
 #语言文件
-file(COPY ${CMAKE_SOURCE_DIR}/cli/i18n/lang_en.json
+file(COPY ${SRC_ROOT}/cli/i18n/lang_en.json
         DESTINATION ${CMAKE_BINARY_DIR}/i18n)
