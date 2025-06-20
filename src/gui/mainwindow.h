@@ -6,6 +6,7 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
+#include <QProcess>
 
 
 QT_BEGIN_NAMESPACE
@@ -22,8 +23,13 @@ public:
     // override关键字确保正确覆盖基类虚函数
     ~mainwindow() override;
 
+private slots:
+    void runCommand();
+    void readOutput();
+
 private:
     Ui::mainwindow *ui;
+    QProcess process;
 };
 
 

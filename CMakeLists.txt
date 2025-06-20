@@ -4,7 +4,8 @@ project(weatherForecast)
 # 设置当前项目的名称为 WeatherApp
 
 set(CMAKE_CXX_STANDARD 20)
-# 设置 C++ 标准为 C++17
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
+# 设置 C++ 标准为 C++20
 
 set(CURL_PATH "F:\\CPlusDependences\\LibCurl\\V8")
 
@@ -67,6 +68,12 @@ set(CLI_SOURCES
         ${SRC_ROOT}/cli/common/cli_context.h
 
 )
+set(GUI_SOURCES
+        ${SRC_ROOT}/gui/main_gui.cpp
+        ${SRC_ROOT}/gui/mainwindow.cpp
+        ${SRC_ROOT}/gui/mainwindow.h
+        ${SRC_ROOT}/gui/mainwindow.ui
+)
 set(WEATHER_GLOBAL
         ${SRC_ROOT}/core/weather_manager.cpp          # 天气核心实现
         ${SRC_ROOT}/cli/display/update_city/cli_update_city.cpp
@@ -106,6 +113,12 @@ if(WIN32)
     )
 endif()
 
+# GUI executable
+qt5_wrap_ui(GUI_UI ${SRC_ROOT}/gui/mainwindow.ui)
+qt5_wrap_cpp(GUI_MOC ${SRC_ROOT}/gui/mainwindow.h)
+add_executable(weather_gui ${GUI_SOURCES} ${GUI_UI} ${GUI_MOC})
+target_link_libraries(weather_gui PRIVATE Qt5::Widgets)
+
 #用户配置文件
 file(COPY ${CMAKE_SOURCE_DIR}/configs/configUser.json
         DESTINATION ${CMAKE_BINARY_DIR}/configs)
@@ -113,8 +126,10 @@ file(COPY ${CMAKE_SOURCE_DIR}/configs/configUser.json
 file(COPY ${CMAKE_SOURCE_DIR}/configs/cache.json
         DESTINATION ${CMAKE_BINARY_DIR}/configs)
 #apiKey文件
-file(COPY ${CMAKE_SOURCE_DIR}/configs/configKey.json
-        DESTINATION ${CMAKE_BINARY_DIR}/configs)
+if(EXISTS ${CMAKE_SOURCE_DIR}/configs/configKey.json)
+    file(COPY ${CMAKE_SOURCE_DIR}/configs/configKey.json
+            DESTINATION ${CMAKE_BINARY_DIR}/configs)
+endif()
 
 #语言文件
 file(COPY ${SRC_ROOT}/cli/i18n/lang_zh.json
