@@ -12,11 +12,6 @@ void showLifeIndices(ConfigContext& cft,I18n& i18n) {
     auto configUser = cft.user();
     WeatherManager manager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
 
-    // 强制刷新缓存
-    CacheManager cacheManager(configUser.getConfigJson());
-    cacheManager.clearAllCache();  // 清除所有缓存
-
-
     // 初次加载（尝试用缓存）
     auto result = manager.getLifeIndices(configUser.getCityId(), configUser.getCacheExpiry("weather_index"));
 
