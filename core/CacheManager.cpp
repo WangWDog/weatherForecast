@@ -30,7 +30,6 @@ void CacheManager::setCache(const std::string& key, const std::string& value, in
 }
 
 
-// 获取缓存数据：带过期检查，过期则删除并返回空
 std::string CacheManager::getCache(const std::string& key) {
     auto it = cache.find(key);
     if (it != cache.end()) {
@@ -47,12 +46,6 @@ std::string CacheManager::getCache(const std::string& key) {
     }
     return "";
 }
-
-// 设置缓存数据：记录时间戳（支持指定过期时间，默认使用配置）
-struct CacheEntry {
-    std::string data;
-    std::chrono::system_clock::time_point timestamp; // 使用system_clock
-};
 
 // 清除所有缓存
 void CacheManager::clearAllCache() {
