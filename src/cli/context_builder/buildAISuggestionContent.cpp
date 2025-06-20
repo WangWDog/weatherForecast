@@ -27,10 +27,14 @@ std::string buildAISuggestionContent(CliContext& cli) {
 
     // 构造 AI Prompt
     std::ostringstream oss;
+    std::string unit = configUser.getUnits();
+    bool imperial = (unit == "imperial" || unit == "i");
+    std::string tempUnit = imperial ? "℉" : "℃";
     oss << "请你用" << configUser.getLanguage() << "语言回答:现在用户所在城市是 "
-        << configUser.getCityId() << "，当前气温为 " << weather.tempMax
-        << "，天气状况为 " << weather.textDay << "，风速为 " << weather.windDirDay
-        << "，湿度为 " << weather.humidity << "。\n";
+        << configUser.getCityId() << "，当前气温为 " << weather.tempMax << tempUnit
+        << "，天气状况为 " << weather.textDay << "，风向为 " << weather.windDirDay
+        << "，风力为 " << weather.windScaleDay
+        << "，湿度为 " << weather.humidity << "%。请使用以上单位给出生活建议。\n";
 
     for (const auto& idx : lifeIndex.indices) {
         oss << "📅 " << idx.date << "\n"
