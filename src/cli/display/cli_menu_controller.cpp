@@ -51,7 +51,7 @@ void CliMenuController::run()
         else if (command == "2")
         {
             std::cout << cliContext.i18n.tr("weather_view", "forecast_title") << "\n";
-            showWeatherForecast(cliContext);
+            showWeatherForecast(cliContext, cliContext.config.user().getUnits());
         }
         else if (command == "3")
         {

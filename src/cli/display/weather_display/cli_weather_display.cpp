@@ -14,20 +14,24 @@
 #include "../common/cli_clear_console.h"
 #include "common/cli_context.h"
 
-void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser);
+void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser, const std::string& unit);
 
 void printLine() {
     std::cout << "+--------------+--------------+--------------+--------------+"
                  "--------------+--------------+--------------+--------------+\n";
 }
-void showWeatherForecast(CliContext& cli) {
+void showWeatherForecast(CliContext& cli, const std::string& unit) {
     auto& i18n = cli.i18n;
     auto& configKey = cli.config.key();
     auto& configUser = cli.config.user();
     WeatherManager manager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
 
-    auto result = manager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(),
-                                          configUser.getCacheExpiry("daily_forecast"),cli.cache);
+    auto result = manager.get7DayForecast(
+        configUser.getCityId(),
+        configUser.getLanguage(),
+        unit,
+        configUser.getCacheExpiry("daily_forecast"),
+        cli.cache);
 
     if (result.forecasts.empty()) {
         std::cout << i18n.tr("forecast", "fetch_failed") << std::endl;  // 翻译 "fetch_failed"
@@ -35,18 +39,23 @@ void showWeatherForecast(CliContext& cli) {
     }
 
     while (true) {
-        displayWeather(result, i18n, configUser);
+        displayWeather(result, i18n, configUser, unit);
         std::cout << "\n" << i18n.tr("forecast", "prompt_refresh") << "\n";  // 翻译 "prompt_refresh"
         char ch = _getch();
         if (ch == 'R' || ch == 'r') {
-            result = manager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(), 0,cli.cache); // 强制刷新
+            result = manager.get7DayForecast(
+                configUser.getCityId(),
+                configUser.getLanguage(),
+                unit,
+                0,
+                cli.cache); // 强制刷新
         } else {
             break;
         }
     }
 }
 
-void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser) {
+void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser, const std::string& unit) {
     clearConsole();
 
     std::cout << (result.fromCache
@@ -66,13 +75,22 @@ void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser) 
     std::cout << i18n.tr("forecast", "forecast_title") << "\n\n";
 
     printLine();
+
+    std::string tempUnit = unit == "i" ? i18n.tr("forecast", "temp_unit_f")
+                                        : i18n.tr("forecast", "temp_unit_c");
+    std::string precipUnit = unit == "i" ? i18n.tr("forecast", "precip_unit_in")
+                                          : i18n.tr("forecast", "precip_unit_mm");
+
+    std::string tempHeader = i18n.tr("forecast", "temperature") + "(" + tempUnit + ")";
+    std::string precipHeader = i18n.tr("forecast", "precip") + "(" + precipUnit + ")";
+
     std::cout << "| " << centerText(i18n.tr("forecast", "date"), 12)
               << " | " << centerText(i18n.tr("forecast", "text_day"), 12)
               << " | " << centerText(i18n.tr("forecast", "text_night"), 12)
-              << " | " << centerText(i18n.tr("forecast", "temperature"), 12)
+              << " | " << centerText(tempHeader, 12)
               << " | " << centerText(i18n.tr("forecast", "wind_dir"), 12)
               << " | " << centerText(i18n.tr("forecast", "wind_scale"), 12)
-              << " | " << centerText(i18n.tr("forecast", "precip"), 12)
+              << " | " << centerText(precipHeader, 12)
               << " | " << centerText(i18n.tr("forecast", "humidity"), 12) << " |\n";
     printLine();
 

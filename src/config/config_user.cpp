@@ -20,6 +20,14 @@ void ConfigUser::setUnits(const std::string& units) {
     configJson["units"] = units;
 }
 
+std::string ConfigUser::getIndexUnits() const {
+    return configJson.value("index_units", "metric");
+}
+
+void ConfigUser::setIndexUnits(const std::string& units) {
+    configJson["index_units"] = units;
+}
+
 std::string ConfigUser::getLanguage() const {
     return configJson.value("language", "zh");
 }

@@ -2,6 +2,7 @@
   "default_city": "温州",
   "use_ip_location": true,
   "units": "metric",
+  "index_units": "metric",
   "language": "zh",
   "cache_expiry_minutes": {
     "realtime_weather": 20,

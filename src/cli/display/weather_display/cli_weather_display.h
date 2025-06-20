@@ -1,3 +1,3 @@
 
 #include "common/cli_context.h"
-void showWeatherForecast(CliContext&);
+void showWeatherForecast(CliContext&, const std::string& unit);

@@ -68,7 +68,11 @@ public:
     std::vector<DailyForecast> forecasts;
     std::vector<CityResult> searchCity(const std::string& keyword, const std::string& lang);
     LifeIndexWithMeta getLifeIndices(const std::string& locationId, int expiryMinutes);
-    ForecastResult get7DayForecast(const std::string& locationId, const std::string& language, int cacheExpiryMinutes, CacheManager& cache);
+    ForecastResult get7DayForecast(const std::string& locationId,
+                                  const std::string& language,
+                                  const std::string& unit,
+                                  int cacheExpiryMinutes,
+                                  CacheManager& cache);
     LifeIndexWithMeta getLifeIndices(
     const std::string& locationId,
     int expiryMinutes,

@@ -44,7 +44,14 @@ void CliDispatchController::handle(int argc, char* argv[]) {
         showCurrentDate(cliContext, showAll);
 
     } else if (command == "show_forecast") {
-        showWeatherForecast(cliContext);
+        std::string unit = cliContext.config.user().getUnits();
+        for (int i = 2; i < argc; ++i) {
+            std::string arg = argv[i];
+            if (arg.rfind("--unit=", 0) == 0) {
+                unit = arg.substr(7);
+            }
+        }
+        showWeatherForecast(cliContext, unit);
 
     } else if (command == "show_life") {
         showLifeIndices(cliContext);
