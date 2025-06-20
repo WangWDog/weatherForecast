@@ -10,12 +10,19 @@
       "🔧 User Settings",
       "❌ Exit Program"
     ],
+    "current_city_pr": "(Current City：",
+    "current_city_la": ")",
     "menu_loading": "⚙\uFE0F Loading preset settings ",
     "prompt_input": "Please enter an  instruction: ",
     "invalid_option": "❌ Invalid option, please try again.",
     "goodbye": "👋 Goodbye! Thanks for using the Weather CLI system.",
     "back_to_menu": "Press Enter to return to the menu...",
     "return_hint": "Press any key to return to the main menu..."
+  },
+  "meta": {
+    "source_cache": "📦 Data from cache.",
+    "source_network": "🌐 Data from network.",
+    "updated_at": "🕒 Data updated at: "
   },
   "searchCity": {
     "title": "📍 Main Menu > Set City",
@@ -102,8 +109,11 @@
     "current_zodiac": "Current Zodiac Sign"
   },
   "ai_suggestion": {
-    "getting": "Getting Weather Information",
-    "loading": "Generating AI suggestions, please wait..."
+    "title": "📍 Main Menu > AI suggestion",
+    "getting_weather_reference": "Getting weather information",
+    "getting_life_index_reference": "Getting life index",
+    "loading": "Generating AI suggestion, Waiting for around 5s",
+    "back_hint": "Press Enter to return"
   },
   "weather_view": {
     "forecast_title": "Weather Forecast"

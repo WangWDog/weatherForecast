@@ -26,7 +26,12 @@ void CliMenuController::run()
         auto options = cliContext.i18n.trList("main_cli", "menu_options");
         for (size_t i = 0; i < options.size(); ++i)
         {
-            std::cout << i << ". " << options[i] << "\n";
+            std::cout << i << ". " << options[i] ;
+            if (i == 4)
+            {
+                std::cout <<cliContext.i18n.tr("main_cli","current_city_pr")<<cliContext.config.user().getCityName()<<cliContext.i18n.tr("main_cli","current_city_la");
+            }
+            std::cout<< "\n";
         }
         std::cout << "------------------------\n";
         std::cout << cliContext.i18n.tr("main_cli", "prompt_input") << std::flush;
@@ -46,17 +51,17 @@ void CliMenuController::run()
         else if (command == "2")
         {
             std::cout << cliContext.i18n.tr("weather_view", "forecast_title") << "\n";
-            showWeatherForecast(cliContext.config, cliContext.i18n);
+            showWeatherForecast(cliContext);
         }
         else if (command == "3")
         {
             std::cout << cliContext.i18n.tr("life_index", "title") << "\n";
-            showLifeIndices(cliContext.config, cliContext.i18n);
+            showLifeIndices(cliContext);
         }
         else if (command == "4")
         {
             std::cout << cliContext.i18n.tr("city_update", "title") << "\n";
-            showCityChoose(cliContext.config, cliContext.i18n);
+            showCityChoose(cliContext);
             delay_ms(2000);
         }
         else if (command == "5")

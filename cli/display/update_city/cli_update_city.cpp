@@ -9,12 +9,14 @@
 #include "../../common/delay.h"
 #include "weather_manager.h"
 #include "../../i18n/i18n_loader.h"
+#include "common/cli_context.h"
 
-void showCityChoose(ConfigContext& config_context, I18n& i18n) {
-    SetConsoleOutputCP(CP_UTF8);  // 设置控制台编码为 UTF-8
+void showCityChoose(CliContext& cli) {
 
-    auto configKey = config_context.key();
-    auto configUser = config_context.user();
+    auto& configKey = cli.config.key();
+    auto& configUser = cli.config.user();
+    auto& i18n = cli.i18n;
+    auto& cacheManager = cli.cache;
 
     WeatherManager wm(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
 
@@ -62,9 +64,12 @@ void showCityChoose(ConfigContext& config_context, I18n& i18n) {
             int index = ch - '0';
             if (index >= 1 && index <= matches.size()) {
                 const auto& selected = matches[index - 1];
-                configUser.setDefaultCity(selected.name);
+                configUser.setCityName(selected.name);
                 configUser.setCityId(selected.id);
                 configUser.save();
+                configUser.load();
+                //由于信息与城市有关 所以换城市后要清除缓存
+                cacheManager.clearAll();
                 std::cout << "\n" << i18n.tr("searchCity", "success") << ": " << selected.name
                     << "（" << selected.adm1 << " · " << selected.country << "）" << std::endl;  // 翻译 "城市设置成功"
                 return;

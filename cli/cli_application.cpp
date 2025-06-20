@@ -21,7 +21,8 @@ CliApplication::CliApplication()
 
 
 void CliApplication::run(int argc, char* argv[]) {
-    CliContext cliCtx(ctx, i18n, argc > 1 ? CliMode::Dispatcher : CliMode::Interactive);
+    CacheManager cache = CacheManager("cache.json");
+    CliContext cliCtx(ctx, i18n,cache, argc > 1 ? CliMode::Dispatcher : CliMode::Interactive);
 
     if (cliCtx.mode == CliMode::Dispatcher) {
         CliDispatchController controller(cliCtx);

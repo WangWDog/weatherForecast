@@ -1,6 +1,6 @@
 
 #include "config_key.h"
-ConfigKey::ConfigKey(const std::string& path) : BaseConfig(path) {}
+ConfigKey::ConfigKey(const std::string& path) : BaseFile(path) {}
 
 std::string ConfigKey::getHFApiKey() const {
     return configJson.value("key_hf", "");

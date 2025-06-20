@@ -1,20 +1,24 @@
 
+#include <iostream>
 #include <string>
 #include "config_context.h"
 #include "doubao_helper.h"
 #include "weather_manager.h"
+#include "common/cli_context.h"
 
-std::string buildAISuggestionContent(ConfigContext& ctx) {
+std::string buildAISuggestionContent(CliContext& cli) {
 
-    auto& configKey = ctx.key();
-    auto& configUser = ctx.user();
+    auto& configKey = cli.config.key();
+    auto& configUser = cli.config.user();
 
     // 调用天气和生活指数获取逻辑
     WeatherManager weatherManager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
-    auto weatherResult = weatherManager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(), configUser.getCacheExpiry("daily_forecast"));
-    auto weather = weatherResult.forecasts[0];
+    std::cout << "\t🌟 " << cli.i18n.tr("ai_suggestion", "getting_weather_reference") << "\n";
 
-    auto lifeIndex = weatherManager.getLifeIndices(configUser.getCityId(), configUser.getCacheExpiry("daily_forecast"));
+    auto weatherResult = weatherManager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(), configUser.getCacheExpiry("daily_forecast"),cli.cache);
+    auto weather = weatherResult.forecasts[0];
+    std::cout << "\t🌟 " << cli.i18n.tr("ai_suggestion", "getting_life_index_reference") << "\n";
+    auto lifeIndex = weatherManager.getLifeIndices(configUser.getCityId(), configUser.getCacheExpiry("daily_forecast"),cli.cache);
 
     // 构造 AI Prompt
     std::ostringstream oss;
@@ -30,7 +34,7 @@ std::string buildAISuggestionContent(ConfigContext& ctx) {
             << "📖 建议：" << idx.text << "\n"
             << "------------------------\n";
     }
-
+    std::cout << "\t🌟 " << cli.i18n.tr("ai_suggestion", "loading") << "\n";
     auto suggestion = callDoubaoAI(configKey.getDoubaoKey(), configKey.getDoubaoEndpoint(), oss.str());
     return suggestion;
 }

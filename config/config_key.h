@@ -3,7 +3,7 @@
 #include <string>
 #include <../utils/json.hpp>
 
-class ConfigKey : public BaseConfig {
+class ConfigKey : public BaseFile {
 public:
     explicit ConfigKey(const std::string& path = "configKey.json");
 

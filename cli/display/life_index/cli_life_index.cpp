@@ -6,14 +6,16 @@
 #include "i18n_loader.h"
 #include "weather_manager.h"
 #include "../../common/cli_clear_console.h"
+#include "common/cli_context.h"
 
-void showLifeIndices(ConfigContext& cft,I18n& i18n) {
-    auto configKey = cft.key();
-    auto configUser = cft.user();
+void showLifeIndices(CliContext& cli) {
+    auto& configKey = cli.config.key();
+    auto& configUser = cli.config.user();
+    auto& i18n = cli.i18n;
+
     WeatherManager manager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
 
-    // 初次加载（尝试用缓存）
-    auto result = manager.getLifeIndices(configUser.getCityId(), configUser.getCacheExpiry("weather_index"));
+    auto result = manager.getLifeIndices(configUser.getCityId(), configUser.getCacheExpiry("weather_index"),cli.cache);
 
     if (result.indices.empty()) {
         std::cout << i18n.tr("life_index", "fetch_failed") << "\n";  // 使用翻译获取 "无法获取生活指数数据"
@@ -38,7 +40,7 @@ void showLifeIndices(ConfigContext& cft,I18n& i18n) {
         }
 
         // 生活指数展示
-        std::cout << i18n.tr("life_index", "title") << configUser.getDefaultCity() << i18n.tr("life_index", "index_list") << "\n\n";  // 翻译 "城市：<city> 的生活指数如下："
+        std::cout << i18n.tr("life_index", "title") << configUser.getCityName() << i18n.tr("life_index", "index_list") << "\n\n";  // 翻译 "城市：<city> 的生活指数如下："
         for (const auto &idx: result.indices) {
             std::cout << i18n.tr("life_index", "date") << ": " << idx.date << "\n"  // 翻译 "日期："
                       << i18n.tr("life_index", "type") << ": " << idx.name << "\n"  // 翻译 "类型："
@@ -51,7 +53,7 @@ void showLifeIndices(ConfigContext& cft,I18n& i18n) {
         std::cout << "\n" << i18n.tr("life_index", "prompt_refresh") << "\n";  // 翻译 "按 R 刷新数据，任意其他键返回主菜单..."
         char ch = _getch();
         if (ch == 'R' || ch == 'r') {
-            result = manager.getLifeIndices(configUser.getCityId(), 0); // 设置过期时间为 0 强制刷新
+            result = manager.getLifeIndices(configUser.getCityId(), 0,cli.cache); // 设置过期时间为 0 强制刷新
         } else {
             break;
         }

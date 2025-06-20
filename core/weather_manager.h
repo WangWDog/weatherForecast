@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "CacheManager.h"
+
 struct DailyForecast {
     std::string date;
     std::string textDay;
@@ -66,9 +68,12 @@ public:
     std::vector<DailyForecast> forecasts;
     std::vector<CityResult> searchCity(const std::string& keyword, const std::string& lang);
     LifeIndexWithMeta getLifeIndices(const std::string& locationId, int expiryMinutes);
-    ForecastResult get7DayForecast(const std::string& locationId, const std::string& language, int cacheExpiryMinutes);
-    WeatherNow getCachedCurrentWeather(const std::string& locationId);  // 新增方法
-
+    ForecastResult get7DayForecast(const std::string& locationId, const std::string& language, int cacheExpiryMinutes, CacheManager& cache);
+    LifeIndexWithMeta getLifeIndices(
+    const std::string& locationId,
+    int expiryMinutes,
+    CacheManager& cache  // 👈 使用外部传入的 cache
+);
 private:
     std::string apiKey;
     std::string host;

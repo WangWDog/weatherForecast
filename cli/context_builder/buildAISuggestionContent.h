@@ -1,2 +1,2 @@
 #include "config_context.h"
-std::string buildAISuggestionContent(ConfigContext&);
+std::string buildAISuggestionContent(CliContext&);

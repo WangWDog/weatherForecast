@@ -2,10 +2,10 @@
 #include <string>
 #include <../utils/json.hpp>
 
-class BaseConfig {
+class BaseFile {
 public:
     // 构造函数声明
-    explicit BaseConfig(const std::string& path);
+    explicit BaseFile(const std::string& path);
 
     // 虚拟函数声明
     virtual bool load();
@@ -15,6 +15,6 @@ public:
     nlohmann::json getConfigJson() const;
 
 protected:
-    std::string configPath;        // 配置文件路径
+    std::string filePath;        // 配置文件路径
     nlohmann::json configJson;     // 配置内容（JSON 格式）
 };

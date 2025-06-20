@@ -1,4 +1,3 @@
 
-#include "config_context.h"
-#include "i18n_loader.h"
-void showWeatherForecast(ConfigContext& ,I18n&);
+#include "common/cli_context.h"
+void showWeatherForecast(CliContext&);

@@ -1,12 +1,10 @@
 #pragma once
 #include "base_config.h"
 
-class ConfigUser : public BaseConfig {
+class ConfigUser : public BaseFile {
 public:
     explicit ConfigUser(const std::string& path = "configUser.json");
 
-    std::string getDefaultCity() const;
-    void setDefaultCity(const std::string& city);
 
     bool getUseIPLocation() const;
     void setUseIPLocation(bool useIP);
@@ -27,6 +25,7 @@ public:
     void setCityId(const std::string& id);
 
     std::string getCityName() const;
-    std::string getLocationId() const;
+    void setCityName(const std::string& name);
+
 
 };

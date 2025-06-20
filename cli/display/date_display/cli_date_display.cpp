@@ -56,64 +56,64 @@ std::string getLunarInfo(ConfigContext& cft,I18n &i18n) {
 }
 
 void showCurrentDate(CliContext& ctx, bool showAll) {
-    auto configUser = ctx.config.user();
-    auto configKey = ctx.config.key();
-    CacheManager cacheManager(configUser.getConfigJson());
+    auto& configUser = ctx.config.user();
+    auto& configKey = ctx.config.key();
+    auto& cache = ctx.cache;  // 使用注入的统一 CacheManager
 
     std::string lunarInfo;
-    bool isFromCache = false;
+    bool fromCache = false;
 
     while (true) {
         clearConsole();
         std::time_t now = std::time(nullptr);
 
-        lunarInfo = cacheManager.getCache("lunar_info");
-        if (lunarInfo.empty()) {
+        // 判断缓存是否有效
+        if (cache.isValid("lunar_info", configUser.getCacheExpiry("lunar_info"))) {
+            lunarInfo = cache.getCache("lunar_info").get<std::string>();
+            fromCache = true;
+        } else {
             lunarInfo = getLunarInfo(ctx.config, ctx.i18n);
-            cacheManager.setCache("lunar_info", lunarInfo);
-            isFromCache = false;
-        } else {
-            isFromCache = true;
+            cache.setCache("lunar_info", lunarInfo);
+            fromCache = false;
         }
 
-        if (isFromCache) {
-            std::cout << "(来自缓存)" << std::endl;
-        } else {
-            std::cout << "(来自网络)" << std::endl;
-        }
+        std::time_t timestamp = fromCache
+        ? cache.getTimestamp("lunar_info")
+    : std::time(nullptr);
 
-        std::cout << "\t" << ctx.i18n.tr("date_view", "solar") << ": "
-                  << std::put_time(std::localtime(&now), configUser.getDateFormateMenu().c_str()) << std::endl;
+        // 输出来源说明（缓存或网络）
+        std::cout << ctx.i18n.tr("meta", fromCache ? "source_cache" : "source_network") << "\n";
+
+        // 输出更新时间
+        std::cout << ctx.i18n.tr("meta", "updated_at")
+                  << std::put_time(std::localtime(&timestamp), "%Y-%m-%d %H:%M:%S") << "\n";
 
         if (showAll) {
             if (configUser.getLanguage() == "en") {
                 std::cout << lunarInfo;
-                std::cout << "Waiting for translation..." << std::endl;
+                std::cout << "\nWaiting for translation..." << std::endl;
+
                 lunarInfo = translateWithDoubao(lunarInfo, "English", configKey);
+
                 clearConsole();
-                if (isFromCache) {
-                    std::cout << "(来自缓存)" << std::endl;
-                } else {
-                    std::cout << "(来自网络)" << std::endl;
-                }
+                std::cout << (fromCache ? "(来自缓存)" : "(来自网络)") << std::endl;
                 std::cout << "\t" << ctx.i18n.tr("date_view", "solar") << ": "
                           << std::put_time(std::localtime(&now), configUser.getDateFormateMenu().c_str()) << std::endl;
-                std::cout << lunarInfo;
+                std::cout << lunarInfo << std::endl;
             } else {
-                std::cout << lunarInfo;
+                std::cout << lunarInfo << std::endl;
             }
         }
 
-        std::cout << std::flush;
-
         if (ctx.mode == CliMode::Interactive) {
-            std::cout << i18n.tr("life_index", "prompt_refresh") << std::flush;
+            std::cout << ctx.i18n.tr("life_index", "prompt_refresh") << std::flush;
             char ch = _getch();
             if (ch == 'R' || ch == 'r') {
-                cacheManager.clearCache("lunar_info");
+                cache.clear("lunar_info");
                 continue;
             }
         }
+
         break;
     }
 }

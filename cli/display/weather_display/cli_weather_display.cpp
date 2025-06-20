@@ -12,6 +12,7 @@
 #include "i18n_loader.h"
 #include "weather_manager.h"
 #include "../common/cli_clear_console.h"
+#include "common/cli_context.h"
 
 void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser);
 
@@ -19,13 +20,14 @@ void printLine() {
     std::cout << "+--------------+--------------+--------------+--------------+"
                  "--------------+--------------+--------------+--------------+\n";
 }
-void showWeatherForecast(ConfigContext& config_context, I18n &i18n) {
-    auto configKey = config_context.key();
-    auto configUser = config_context.user();
+void showWeatherForecast(CliContext& cli) {
+    auto& i18n = cli.i18n;
+    auto& configKey = cli.config.key();
+    auto& configUser = cli.config.user();
     WeatherManager manager(configKey.getHFApiKey(), configKey.getHFHost(), configUser.getLanguage());
 
     auto result = manager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(),
-                                          configUser.getCacheExpiry("daily_forecast"));
+                                          configUser.getCacheExpiry("daily_forecast"),cli.cache);
 
     if (result.forecasts.empty()) {
         std::cout << i18n.tr("forecast", "fetch_failed") << std::endl;  // 翻译 "fetch_failed"
@@ -37,7 +39,7 @@ void showWeatherForecast(ConfigContext& config_context, I18n &i18n) {
         std::cout << "\n" << i18n.tr("forecast", "prompt_refresh") << "\n";  // 翻译 "prompt_refresh"
         char ch = _getch();
         if (ch == 'R' || ch == 'r') {
-            result = manager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(), 0); // 强制刷新
+            result = manager.get7DayForecast(configUser.getCityId(), configUser.getLanguage(), 0,cli.cache); // 强制刷新
         } else {
             break;
         }
@@ -59,7 +61,7 @@ void displayWeather(ForecastResult &result, I18n &i18n, ConfigUser &configUser) 
         std::cout << i18n.tr("forecast", "updated_time") << buf << "\n";
     }
 
-    std::cout << "\n" << i18n.tr("forecast", "city") << configUser.getDefaultCity()
+    std::cout << "\n" << i18n.tr("forecast", "city") << configUser.getCityName()
               << "（ID: " << configUser.getCityId() << "）\n\n";
     std::cout << i18n.tr("forecast", "forecast_title") << "\n\n";
 

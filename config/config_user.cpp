@@ -1,14 +1,7 @@
 
 #include "config_user.h"
-ConfigUser::ConfigUser(const std::string& path) : BaseConfig(path) {}
+ConfigUser::ConfigUser(const std::string& path) : BaseFile(path) {}
 
-std::string ConfigUser::getDefaultCity() const {
-    return configJson.value("default_city", "beijing");
-}
-
-void ConfigUser::setDefaultCity(const std::string& city) {
-    configJson["default_city"] = city;
-}
 
 bool ConfigUser::getUseIPLocation() const {
     return configJson.value("use_ip_location", false);
@@ -54,22 +47,17 @@ void ConfigUser::setCacheExpiry(const std::string& key, int minutes) {
 }
 
 std::string ConfigUser::getCityId() const {
-    return configJson.value("city_id", "");
+        return configJson["location"]["id"].get<std::string>();
 }
 
 void ConfigUser::setCityId(const std::string& id) {
-    configJson["city_id"] = id;
+    configJson["location"]["id"] = id;
+}
+void ConfigUser::setCityName(const std::string& name) {
+    configJson["location"]["name"] = name;
 }
 
-std::string ConfigUser::getCityName() const {
-    if (configJson.contains("location") && configJson["location"].contains("name")) {
-        return configJson["location"]["name"].get<std::string>();
-    }
-    // 若不存在则 fallback 到 default_city
-    return configJson.value("default_city", "北京");
+std::string ConfigUser::getCityName() const
+{
+    return configJson["location"]["name"].get<std::string>();
 }
-
-std::string ConfigUser::getLocationId() const {
-    return configJson["city_id"].get<std::string>();
-}
-

@@ -44,13 +44,13 @@ void CliDispatchController::handle(int argc, char* argv[]) {
         showCurrentDate(cliContext, showAll);
 
     } else if (command == "show_forecast") {
-        showWeatherForecast(cliContext.config, cliContext.i18n);
+        showWeatherForecast(cliContext);
 
     } else if (command == "show_life") {
-        showLifeIndices(cliContext.config, cliContext.i18n);
+        showLifeIndices(cliContext);
 
     } else if (command == "update_city") {
-        showCityChoose(cliContext.config, cliContext.i18n);
+        showCityChoose(cliContext);
 
     } else if (command == "update_settings") {
         updateUserSettings(cliContext.config.user(), cliContext.i18n);

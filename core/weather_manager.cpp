@@ -7,6 +7,8 @@
 #include <utility>
 #include <ctime>
 
+#include "CacheManager.h"
+
 using json = nlohmann::json;
 
 WeatherManager::WeatherManager(std::string key, std::string host, std::string lang)
@@ -72,249 +74,182 @@ std::vector<CityResult> WeatherManager::searchCity(const std::string& keyword,co
 
     return results;
 }
-
-ForecastResult WeatherManager::get7DayForecast(const std::string& locationId,const std::string& language,int cacheExpiryMinutes) {
+ForecastResult WeatherManager::get7DayForecast(
+    const std::string& locationId,
+    const std::string& language,
+    int cacheExpiryMinutes,
+    CacheManager& cache // ✅ 外部传入 cache
+) {
     ForecastResult result;
-    const std::string cacheFile = "cache.json";
-    json cache;
-    std::ifstream fin(cacheFile);
 
-    if (fin) {
-        try {
-            fin >> cache;
-        } catch (...) {
-            cache.clear();
+    // 1. 缓存可用：直接使用
+    if (cache.isValid("forecast", cacheExpiryMinutes)) {
+        result.fromCache = true;
+        result.timestamp = cache.getTimestamp("forecast");
+
+        for (const auto& item : cache.getCache("forecast")) {
+            DailyForecast f;
+            f.date = item.value("date", "");
+            f.textDay = item.value("textDay", "");
+            f.textNight = item.value("textNight", "");
+            f.tempMax = item.value("tempMax", "");
+            f.tempMin = item.value("tempMin", "");
+            f.windDirDay = item.value("windDirDay", "");
+            f.windScaleDay = item.value("windScaleDay", "");
+            f.precip = item.value("precip", "");
+            f.humidity = item.value("humidity", "");
+            result.forecasts.push_back(f);
         }
-        fin.close();
 
-        if (cache.contains("forecast") && cache["forecast"].contains("timestamp")) {
-            std::time_t now = std::time(nullptr);
-            std::time_t ts = cache["forecast"]["timestamp"].get<std::time_t>();
-
-            if (difftime(now, ts) < cacheExpiryMinutes * 60) {
-                result.fromCache = true;
-                result.timestamp = ts;
-                for (const auto& item : cache["forecast"]["data"]) {
-                    DailyForecast f;
-                    f.date = item["date"];
-                    f.textDay = item["textDay"];
-                    f.textNight = item["textNight"];
-                    f.tempMax = item["tempMax"];
-                    f.tempMin = item["tempMin"];
-                    f.windDirDay = item["windDirDay"];
-                    f.windScaleDay = item["windScaleDay"];
-                    f.precip = item["precip"];
-                    f.humidity = item["humidity"];
-                    result.forecasts.push_back(f);
-                }
-                return result;
-            }
-        }
+        return result;
     }
 
-    std::string url = "https://" + host + "/v7/weather/7d?location=" + locationId+"&lang="+language;
+    // 2. 请求网络数据
+    std::string url = "https://" + host + "/v7/weather/7d?location=" + locationId + "&lang=" + language;
     std::string response;
     CURL* curl = curl_easy_init();
-    if (curl) {
-        struct curl_slist* headers = nullptr;
-        headers = curl_slist_append(headers, ("X-QW-Api-Key:" + apiKey).c_str());
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-        curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
 
-        CURLcode res = curl_easy_perform(curl);
-        curl_slist_free_all(headers);
-        curl_easy_cleanup(curl);
+    if (!curl) return result;
 
-        if (res == CURLE_OK) {
-            auto j = json::parse(response, nullptr, false);
-            if (!j.is_discarded() && j["code"] == "200") {
-                result.fromCache = false;
-                result.timestamp = std::time(nullptr);
-                for (const auto& day : j["daily"]) {
-                    DailyForecast df;
-                    df.date = day["fxDate"];
-                    df.textDay = day["textDay"];
-                    df.textNight = day["textNight"];
-                    df.tempMax = day["tempMax"];
-                    df.tempMin = day["tempMin"];
-                    df.windDirDay = day["windDirDay"];
-                    df.windScaleDay = day["windScaleDay"];
-                    df.precip = day["precip"];
-                    df.humidity = day["humidity"];
-                    result.forecasts.push_back(df);
-                }
+    struct curl_slist* headers = nullptr;
+    headers = curl_slist_append(headers, ("X-QW-Api-Key:" + apiKey).c_str());
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
 
-                // 写入缓存
-                cache["forecast"]["timestamp"] = result.timestamp;
-                cache["forecast"]["data"] = json::array();
-                for (const auto& f : result.forecasts) {
-                    cache["forecast"]["data"].push_back({
-                        {"date", f.date},
-                        {"textDay", f.textDay},
-                        {"textNight", f.textNight},
-                        {"tempMax", f.tempMax},
-                        {"tempMin", f.tempMin},
-                        {"windDirDay", f.windDirDay},
-                        {"windScaleDay", f.windScaleDay},
-                        {"precip", f.precip},
-                        {"humidity", f.humidity}
-                    });
-                }
-                std::ofstream fout(cacheFile);
-                if (fout) fout << cache.dump(4);
-            }
-        }else {
-            std::cerr <<"结果请求失败 res状态值："<< res<< std::endl;
-            exit(1);
-        }
+    CURLcode res = curl_easy_perform(curl);
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+
+    if (res != CURLE_OK) {
+        std::cerr << "❌ 天气请求失败，状态码: " << res << std::endl;
+        return result;
     }
+
+    // 3. 解析并保存
+    try {
+        auto j = nlohmann::json::parse(response);
+        if (j.contains("code") && j["code"] == "200" && j.contains("daily")) {
+            result.fromCache = false;
+            result.timestamp = std::time(nullptr);
+
+            nlohmann::json dataJson = nlohmann::json::array();
+
+            for (const auto& day : j["daily"]) {
+                DailyForecast df;
+                df.date = day.value("fxDate", "");
+                df.textDay = day.value("textDay", "");
+                df.textNight = day.value("textNight", "");
+                df.tempMax = day.value("tempMax", "");
+                df.tempMin = day.value("tempMin", "");
+                df.windDirDay = day.value("windDirDay", "");
+                df.windScaleDay = day.value("windScaleDay", "");
+                df.precip = day.value("precip", "");
+                df.humidity = day.value("humidity", "");
+
+                result.forecasts.push_back(df);
+
+                dataJson.push_back({
+                    {"date", df.date},
+                    {"textDay", df.textDay},
+                    {"textNight", df.textNight},
+                    {"tempMax", df.tempMax},
+                    {"tempMin", df.tempMin},
+                    {"windDirDay", df.windDirDay},
+                    {"windScaleDay", df.windScaleDay},
+                    {"precip", df.precip},
+                    {"humidity", df.humidity}
+                });
+            }
+
+            cache.setCache("forecast", dataJson);  // ✅ 使用传入的 cache 保存
+        }
+    } catch (...) {
+        std::cerr << "❌ JSON解析失败: forecast 响应异常" << std::endl;
+    }
+
     return result;
 }
 
-
-LifeIndexWithMeta WeatherManager::getLifeIndices(const std::string& locationId, int expiryMinutes) {
+LifeIndexWithMeta WeatherManager::getLifeIndices(
+    const std::string& locationId,
+    int expiryMinutes,
+    CacheManager& cache  // 👈 使用外部传入的 cache
+) {
     LifeIndexWithMeta result;
-    const std::string cacheFile = "cache.json";
-    nlohmann::json cache;
-    std::ifstream fin(cacheFile);
 
-    if (fin) {
-        try {
-            fin >> cache;
-        } catch (...) {
-            cache.clear();
-        }
-        fin.close();
+    // 1. 如果缓存可用，优先读取
+    if (cache.isValid("life_index", expiryMinutes)) {
+        result.fromCache = true;
+        result.timestamp = cache.getTimestamp("life_index");
 
-        if (cache.contains("life_index") && cache["life_index"].contains("timestamp")) {
-            std::time_t now = std::time(nullptr);
-            std::time_t ts = cache["life_index"]["timestamp"].get<std::time_t>();
-            if (difftime(now, ts) < expiryMinutes * 60) {
-                result.timestamp = ts;
-                result.fromCache = true;
-                for (const auto& item : cache["life_index"]["data"]) {
-                    result.indices.push_back({
-                        item["date"],
-                        item["name"],
-                        item["level"],
-                        item["category"],
-                        item["text"]
-                    });
-                }
-                return result;
-            }
+        for (const auto& item : cache.getCache("life_index")) {
+            result.indices.push_back({
+                item.value("date", ""),
+                item.value("name", ""),
+                item.value("level", ""),
+                item.value("category", ""),
+                item.value("text", "")
+            });
         }
+        return result;
     }
 
-    // 请求网络数据
+    // 2. 否则发起网络请求
     std::string url = "https://" + host + "/v7/indices/1d?type=0&location=" + locationId + "&lang=" + lang;
-    CURL* curl = curl_easy_init();
     std::string response;
+    CURL* curl = curl_easy_init();
 
-    if (curl) {
-        struct curl_slist* headers = nullptr;
-        headers = curl_slist_append(headers, ("X-QW-Api-Key: " + apiKey).c_str());
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-        curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
+    if (!curl) return result;
 
-        CURLcode res = curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-        curl_slist_free_all(headers);
+    struct curl_slist* headers = nullptr;
+    headers = curl_slist_append(headers, ("X-QW-Api-Key: " + apiKey).c_str());
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
 
-        if (res != CURLE_OK) return result;
+    CURLcode res = curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
+    curl_slist_free_all(headers);
 
-        try {
-            auto j = nlohmann::json::parse(response);
-            if (j.contains("daily")) {
-                result.timestamp = std::time(nullptr);
-                for (const auto& item : j["daily"]) {
-                    result.indices.push_back({
-                        item.value("date", ""),
-                        item.value("name", ""),
-                        item.value("level", ""),
-                        item.value("category", ""),
-                        item.value("text", "")
-                    });
-                }
-                // 写入缓存
-                nlohmann::json cacheOut;
-                cacheOut["life_index"]["timestamp"] = result.timestamp;
-                cacheOut["life_index"]["data"] = nlohmann::json::array();
-                for (const auto& idx : result.indices) {
-                    cacheOut["life_index"]["data"].push_back({
-                        {"date", idx.date},
-                        {"name", idx.name},
-                        {"level", idx.level},
-                        {"category", idx.category},
-                        {"text", idx.text}
-                    });
-                }
-                std::ofstream fout(cacheFile);
-                if (fout) fout << cacheOut.dump(4);
+    if (res != CURLE_OK) return result;
+
+    try {
+        auto j = nlohmann::json::parse(response);
+        if (j.contains("daily")) {
+            result.fromCache = false;
+            result.timestamp = std::time(nullptr);
+
+            nlohmann::json dataJson = nlohmann::json::array();
+            for (const auto& item : j["daily"]) {
+                LifeIndex idx {
+                    item.value("date", ""),
+                    item.value("name", ""),
+                    item.value("level", ""),
+                    item.value("category", ""),
+                    item.value("text", "")
+                };
+                result.indices.push_back(idx);
+
+                dataJson.push_back({
+                    {"date", idx.date},
+                    {"name", idx.name},
+                    {"level", idx.level},
+                    {"category", idx.category},
+                    {"text", idx.text}
+                });
             }
-        } catch (...) {}
-    }
 
-    return result;
-}
-// 新增的 getCachedCurrentWeather 方法
-WeatherNow WeatherManager::getCachedCurrentWeather(const std::string& locationId) {
-    WeatherNow result;
-    const std::string cacheFile = "cache_weather.json";
-    std::ifstream fin(cacheFile);
-
-    if (fin) {
-        try {
-            json cache;
-            fin >> cache;
-            fin.close();
-
-            // 检查缓存中是否包含 current_weather 字段及其时间戳
-            if (cache.contains("current_weather") && cache["current_weather"].contains("timestamp")) {
-                std::time_t now = std::time(nullptr);
-                std::time_t ts = cache["current_weather"]["timestamp"].get<std::time_t>();
-
-                // 如果缓存未过期（1小时有效期）
-                if (difftime(now, ts) < 3600) {
-                    result.success = true;
-
-                    // 确保字段存在并获取相应的数据
-                    if (cache["current_weather"].contains("temperature")) {
-                        result.data.temp = cache["current_weather"]["temperature"];
-                    } else {
-                        result.data.temp = "未知";  // 提供默认值
-                    }
-
-                    if (cache["current_weather"].contains("text")) {
-                        result.data.text = cache["current_weather"]["text"];
-                    } else {
-                        result.data.text = "未知";  // 提供默认值
-                    }
-
-                    if (cache["current_weather"].contains("windSpeed")) {
-                        result.data.windSpeed = cache["current_weather"]["windSpeed"];
-                    } else {
-                        result.data.windSpeed = "未知";  // 提供默认值
-                    }
-
-                    if (cache["current_weather"].contains("humidity")) {
-                        result.data.humidity = cache["current_weather"]["humidity"];
-                    } else {
-                        result.data.humidity = "未知";  // 提供默认值
-                    }
-                }
-            }
-        } catch (const std::exception& e) {
-            std::cerr << "读取缓存出错: " << e.what() << std::endl;
+            cache.setCache("life_index", dataJson);  // ✅ 使用 ctx.cache 写入
         }
+    } catch (...) {
+        std::cerr << "❌ JSON解析失败: life_index 响应异常" << std::endl;
     }
 
     return result;

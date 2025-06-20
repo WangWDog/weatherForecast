@@ -15,7 +15,9 @@
     "goodbye": "👋 再见！感谢使用天气CLI系统。",
     "back_to_menu": "按 Enter 返回菜单...",
     "return_hint": "按任意键返回主菜单……",
-    "menu_loading": "⚙\uFE0F 加载预设设置 "
+    "menu_loading": "⚙\uFE0F 加载预设设置 ",
+    "current_city_pr": "（当前城市：",
+    "current_city_la": "）"
   },
   "searchCity": {
     "title": "📍 主菜单 > 设置城市",
@@ -106,8 +108,10 @@
     "current_zodiac": "当前生肖"
   },
   "ai_suggestion": {
-    "getting": "正在获取天气信息",
-    "loading": "正在生成 AI 建议",
+    "title": "📍 主菜单 > AI 建议",
+    "getting_weather_reference": "正在获取天气信息",
+    "getting_life_index_reference": "正在获取天气指数",
+    "loading": "正在生成 AI 建议，请稍等5秒",
     "back_hint": "请按Enter键返回"
   },
   "weather_view": {
@@ -141,6 +145,11 @@
   },
   "city_update": {
     "title": "更新城市"
+  },
+  "meta": {
+    "source_cache": "📦 当前数据来自缓存。",
+    "source_network": "🌐 当前数据来自网络。",
+    "updated_at": "🕒 数据更新时间："
   }
 }
 

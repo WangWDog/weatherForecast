@@ -3,14 +3,14 @@
 #include <iostream>
 
 // 构造函数实现
-BaseConfig::BaseConfig(const std::string& path) : configPath(path) {}
+BaseFile::BaseFile(const std::string& path) : filePath(path) {}
 
 // load 函数实现
-bool BaseConfig::load() {
+bool BaseFile::load() {
     // 打开配置文件
-    std::ifstream file(configPath);
+    std::ifstream file(filePath);
     if (!file.is_open()) {
-        std::cerr << "❌ 无法打开配置文件: " << configPath << std::endl;
+        std::cerr << "❌ 无法打开配置文件: " << filePath << std::endl;
         return false;
     }
 
@@ -25,11 +25,11 @@ bool BaseConfig::load() {
 }
 
 // save 函数实现
-bool BaseConfig::save() {
+bool BaseFile::save() {
     // 打开配置文件用于写入
-    std::ofstream file(configPath);
+    std::ofstream file(filePath);
     if (!file.is_open()) {
-        std::cerr << "❌ 无法写入配置文件: " << configPath << std::endl;
+        std::cerr << "❌ 无法写入配置文件: " << filePath << std::endl;
         return false;
     }
 
@@ -45,6 +45,6 @@ bool BaseConfig::save() {
 }
 
 // getConfigJson 函数实现
-nlohmann::json BaseConfig::getConfigJson() const {
+nlohmann::json BaseFile::getConfigJson() const {
     return configJson;  // 返回 configJson
 }

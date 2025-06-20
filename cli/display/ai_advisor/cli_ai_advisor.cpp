@@ -14,11 +14,11 @@
 
 void showAISuggestions(CliContext& ctx) {
     clearConsole();
-    std::cout << "\t🌟 " << ctx.i18n.tr("ai_suggestion", "getting") << "\n";
-    std::string suggestion = buildAISuggestionContent(ctx.config);
+    std::string suggestion = buildAISuggestionContent(ctx);
+    std::cout << "🤖 " <<ctx.i18n.tr("ai_suggestion", "title")<<std::endl;
     clearConsole();
-    std::cout << "\n🤖 " << suggestion << "\n";
 
+    std::cout << "🤖 " <<ctx.i18n.tr("ai_suggestion", "title")<<suggestion << "\n";
     // 仅在交互模式下提示返回
     if (ctx.mode == CliMode::Interactive) {
         std::cout << ctx.i18n.tr("ai_suggestion", "back_hint") << std::flush;
