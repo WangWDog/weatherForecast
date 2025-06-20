@@ -4,6 +4,8 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+
+#include "doubao_translator.h"
 #include "../core/doubao_manager.h"
 #include "http_client.h"
 
