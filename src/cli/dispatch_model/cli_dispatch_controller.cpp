@@ -19,6 +19,10 @@ void CliDispatchController::showCommandHelp() {
     std::cout << "  show_date        - Show current date and time\n";
     std::cout << "  show_date --all  - Show current time, date, and the Chinese Almanac\n";
     std::cout << "  show_forecast    - Show 7-day weather forecast\n";
+    std::cout << "  show_forecast --unit=<metric|imperial>\n";
+    std::cout << "                      - Override units for this command\n";
+    std::cout << "  --unit=<metric|imperial>\n";
+    std::cout << "                      - Override units for all commands\n";
     std::cout << "  show_life        - Show life indices for the city\n";
     std::cout << "  update_city      - Update the city setting\n";
     std::cout << "  update_settings  - Update user settings\n";
@@ -26,6 +30,21 @@ void CliDispatchController::showCommandHelp() {
 }
 
 void CliDispatchController::handle(int argc, char* argv[]) {
+    std::string unitOverride;
+    int writeIndex = 1;
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg.rfind("--unit=", 0) == 0) {
+            unitOverride = arg.substr(7);
+        } else {
+            argv[writeIndex++] = argv[i];
+        }
+    }
+    argc = writeIndex;
+    if (!unitOverride.empty()) {
+        cliContext.config.user().setUnits(unitOverride);
+    }
+
     if (argc < 2) {
         showCommandHelp();
         return;
