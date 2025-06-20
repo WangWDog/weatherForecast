@@ -78,6 +78,8 @@ set(WEATHER_GLOBAL
         config/config_key.h
         config/base_config.cpp
         config/base_config.h
+        utils/http_client.cpp
+        utils/http_client.h
 )
 
 

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 #include "config_context.h"
-#include "doubao_helper.h"
+#include "../core/doubao_manager.h"
 #include "weather_manager.h"
 #include "common/cli_context.h"
 
@@ -35,6 +35,7 @@ std::string buildAISuggestionContent(CliContext& cli) {
             << "------------------------\n";
     }
     std::cout << "\t🌟 " << cli.i18n.tr("ai_suggestion", "loading") << "\n";
-    auto suggestion = callDoubaoAI(configKey.getDoubaoKey(), configKey.getDoubaoEndpoint(), oss.str());
+    DoubaoManager doubao(configKey.getDoubaoKey(), configKey.getDoubaoEndpoint());
+    auto suggestion = doubao.getAdvice(oss.str());
     return suggestion;
 }
