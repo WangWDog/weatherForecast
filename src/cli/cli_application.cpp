@@ -6,7 +6,7 @@
 #include "common/cli_context.h"
 
 CliApplication::CliApplication()
-    : ctx("configUser.json", "configKey.json") {
+    : ctx("configs/configUser.json", "configs/configKey.json") {
     const std::string lang = ctx.user().getLanguage();
     if (lang != "zh" && i18n.load(lang)) {
         std::cout << "✅ 已加载语言: " << lang << std::endl;
@@ -21,7 +21,7 @@ CliApplication::CliApplication()
 
 
 void CliApplication::run(int argc, char* argv[]) {
-    CacheManager cache = CacheManager("cache.json");
+    CacheManager cache = CacheManager("configs/cache.json");
     CliContext cliCtx(ctx, i18n,cache, argc > 1 ? CliMode::Dispatcher : CliMode::Interactive);
 
     if (cliCtx.mode == CliMode::Dispatcher) {

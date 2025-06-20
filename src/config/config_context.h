@@ -5,8 +5,8 @@
 
 class ConfigContext {
 public:
-    ConfigContext(const std::string& userPath = "configUser.json",
-                  const std::string& keyPath  = "configKey.json");
+    ConfigContext(const std::string& userPath = "configs/configUser.json",
+                  const std::string& keyPath  = "configs/configKey.json");
 
     ConfigUser& user();
     ConfigKey& key();

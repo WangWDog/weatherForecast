@@ -5,7 +5,7 @@
 
 class ConfigKey : public BaseFile {
 public:
-    explicit ConfigKey(const std::string& path = "configKey.json");
+    explicit ConfigKey(const std::string& path = "configs/configKey.json");
 
     std::string getHFApiKey() const;
     std::string getFreeApiKey() const;
