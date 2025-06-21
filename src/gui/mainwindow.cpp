@@ -6,7 +6,6 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
 // 初始化主窗口
 mainwindow::mainwindow(QWidget *parent) :
     QWidget(parent), ui(new Ui::mainwindow) {

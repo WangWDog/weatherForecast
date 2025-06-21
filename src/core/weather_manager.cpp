@@ -1,6 +1,6 @@
 #include "weather_manager.h"
 #include <json.hpp>
-#include <curl/curl.h>
+#include "curl/curl.h"
 #include <sstream>
 #include <fstream>
 #include <iostream>
