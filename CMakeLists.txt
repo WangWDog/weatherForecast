@@ -83,7 +83,6 @@ set(GUI_SOURCES
         ${SRC_ROOT}/gui/main_gui.cpp
         ${SRC_ROOT}/gui/mainwindow.cpp
         ${SRC_ROOT}/gui/mainwindow.h
-        ${SRC_ROOT}/gui/mainwindow.ui
 )
 set(WEATHER_GLOBAL
         ${SRC_ROOT}/core/weather_manager.cpp          # 天气核心实现
@@ -112,9 +111,8 @@ add_executable(weather_cli ${SRC_ROOT}/main_cli.cpp)
 target_link_libraries(weather_cli PRIVATE weather_cli_core)
 
 # GUI executable
-qt6_wrap_ui(GUI_UI ${SRC_ROOT}/gui/mainwindow.ui)
 qt6_wrap_cpp(GUI_MOC ${SRC_ROOT}/gui/mainwindow.h)
-add_executable(weather_gui ${GUI_SOURCES} ${GUI_UI} ${GUI_MOC})
+add_executable(weather_gui ${GUI_SOURCES} ${GUI_MOC})
 target_include_directories(weather_gui PRIVATE ${CMAKE_BINARY_DIR})
 target_link_libraries(weather_gui PRIVATE Qt6::Widgets curl weather_cli_core)
 

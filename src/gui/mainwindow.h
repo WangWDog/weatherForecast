@@ -1,35 +1,26 @@
-//
-// Created by 13033 on 2025/6/2.
-//
+#pragma once
+#include <QMainWindow>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QPushButton>
+#include <QLabel>
+#include <QTextBrowser>
+#include <QListWidget>
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
-#include <QWidget>
-#include <vector>
-#include <string>
-
-
-QT_BEGIN_NAMESPACE
-namespace Ui { class mainwindow; }
-QT_END_NAMESPACE
-
-class mainwindow : public QWidget {
-Q_OBJECT
-
+class MainWindow : public QMainWindow {
+    Q_OBJECT
 public:
-    // explicit关键字防止隐式类型转换
-    // parent参数指定父窗口部件
-    explicit mainwindow(QWidget *parent = nullptr);
-    // override关键字确保正确覆盖基类虚函数
-    ~mainwindow() override;
-
+    explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow() override;
 private slots:
-    void runCommand();
-
+    void refreshWeather();
 private:
-    Ui::mainwindow *ui;
+    QLineEdit* cityInput;
+    QComboBox* languageBox;
+    QComboBox* unitBox;
+    QComboBox* dateFormatBox;
+    QPushButton* settingsButton;
+    QLabel* weatherLabel;
+    QTextBrowser* aiBox;
+    QListWidget* indexList;
 };
-
-
-#endif //MAINWINDOW_H
