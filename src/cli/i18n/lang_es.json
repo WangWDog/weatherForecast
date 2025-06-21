@@ -1,9 +1,158 @@
 {
-  "menu_title": "🏠 Menú del sistema del clima CLI",
-  "menu_options": ["🗓️ Mostrar fecha actual", "☁️ Mostrar pronóstico del tiempo", "📋 Ver índices de vida", "🚩 Establecer ciudad", "❌ Salir del programa", "🔧 Configuración del usuario"],
-  "prompt_input": "Por favor ingrese una opción (1-6):",
-  "invalid_option": "❌ Opción no válida, inténtelo de nuevo.",
-  "goodbye": "👋 ¡Adiós! Gracias por usar el CLI del clima.",
-  "back_to_menu": "Presione Enter para volver al menú...",
-  "setting_saved": "💾 Configuración guardada."
+  "main_cli": {
+    "menu_title": "🏠 Menú del sistema CLI de clima",
+    "menu_options": [
+      "🤖 Consejos de vida IA",
+      "🗓️ Mostrar la fecha actual",
+      "☁️ Mostrar pronóstico del tiempo",
+      "📋 Ver índices de vida",
+      "🚩 Configurar ciudad",
+      "🔧 Configuración del usuario",
+      "❌ Salir"
+    ],
+    "prompt_input": "Introduce un comando:",
+    "invalid_option": "❌ Opción no válida, inténtalo de nuevo.",
+    "goodbye": "👋 ¡Adiós! Gracias por usar el sistema CLI del clima.",
+    "back_to_menu": "Pulsa Enter para volver al menú…",
+    "return_hint": "Pulsa cualquier tecla para volver al menú principal…",
+    "menu_loading": "⚙️ Cargando ajustes predeterminados ",
+    "current_city_pr": "（Ciudad actual：",
+    "current_city_la": "）"
+  },
+  "searchCity": {
+    "title": "📍 Menú principal > Configurar ciudad",
+    "searching": "Resultados de búsqueda",
+    "not_found": "❌ No se encontró la ciudad",
+    "select_prompt": "👉 Introduce el número para elegir ciudad, o sigue escribiendo…",
+    "input_hint": "🔍 Escribe una palabra clave de la ciudad (: para volver)…",
+    "cancelled": "↩️ Configuración cancelada, volviendo al menú principal.",
+    "success": "✅ Ciudad configurada correctamente"
+  },
+  "settings": {
+    "menu_title": "Menú de configuración del usuario",
+    "date_format": "Cambiar formato de fecha/hora",
+    "cache_life_index": "Establecer duración del caché de índices de vida",
+    "cache_forecast": "Establecer duración del caché de pronóstico del clima",
+    "units": "Configurar unidades",
+    "language": "Configurar idioma",
+    "back": "Volver al menú principal",
+    "prompt_input": "Selecciona una opción (1‑6):",
+    "input_date_format": "📅 Introduce nuevo formato de fecha (ej. %Y‑%m‑%d %H:%M:%S, :q para cancelar):",
+    "input_cache_life": "🧭 Introduce duración del caché de índices (minutos, :q para cancelar):",
+    "input_cache_forecast": "🌦 Introduce duración del caché de pronóstico (minutos, :q para cancelar):",
+    "input_units": "🌡 Introduce unidades (metric/imperial, :q para cancelar):",
+    "input_language": "🈯 Introduce código de idioma (zh/en/ja/fr/es/de/ar, :q para cancelar):",
+    "updated": "✅ Configuración actualizada.",
+    "cancelled": "↩️ Cambios cancelados.",
+    "invalid_input": "❌ Entrada no válida.",
+    "language_load_fail": "❌ Error al cargar archivo de idioma, se usará el anterior.",
+    "language_load_success": "🌐 Idioma cambiado a:",
+    "saved_and_exit": "💾 Configuración guardada, volviendo al menú…",
+    "invalid_option": "❌ Opción no válida, inténtalo de nuevo.",
+    "press_enter_continue": "Pulsa Enter para continuar…",
+    "update_title": "Actualizar configuración"
+  },
+  "forecast": {
+    "from_cache": "📦 Datos obtenidos de caché.",
+    "from_network": "🌐 Datos obtenidos de la red.",
+    "updated_time": "🕒 Última actualización:",
+    "city": "📡 Ciudad:",
+    "forecast_title": "📆 Pronóstico para los próximos 7 días:",
+    "date": "📅 Fecha",
+    "text_day": "☀️ Clima diurno",
+    "text_night": "🌙 Clima nocturno",
+    "temperature": "🌡 Temperatura",
+    "temp_unit_c": "℃",
+    "temp_unit_f": "℉",
+    "wind_dir": "🍃 Dirección del viento",
+    "wind_scale": "💨 Intensidad del viento",
+    "precip": "🌧 Precipitaciones",
+    "precip_unit_mm": "mm",
+    "precip_unit_in": "pulgadas",
+    "humidity": "💧 Humedad (%)",
+    "prompt_refresh": "🔁 Pulsa R para actualizar, otra tecla para volver…",
+    "commander_prompt_refresh": "🔁 -R actualización forzada",
+    "fetch_failed": "❌ No se pudieron obtener datos meteorológicos. Revisa red/API."
+  },
+  "date": {
+    "menu_path": "Menú principal > Fecha y hora actual",
+    "prompt_back": "Pulsa cualquier tecla para volver…"
+  },
+  "lunar": {
+    "solar": "Calendario solar",
+    "week": "Día de la semana",
+    "lunar": "Calendario lunar",
+    "lunar_year": "Año lunar",
+    "zodiac": "Zodíaco",
+    "ganzhi_year": "Año Ganzhi",
+    "constellation": "Constelación",
+    "festival": "Festival",
+    "jieqi": "Período solar",
+    "yi": "Propicio",
+    "ji": "Nefasto",
+    "weiyu_short": "Frase corta",
+    "weiyu_long": "Frase larga",
+    "from_cache": "📦 Datos lunares obtenidos del caché",
+    "from_network": "🌐 Obtenidos de la red",
+    "updated_time": "⏰ Última actualización:",
+    "refresh_hint": "📌 Pulsa R para actualizar calendario lunar…",
+    "refresh_again_hint": "📌 Pulsa R de nuevo para continuar…",
+    "back_hint": "Pulsa Enter para volver"
+  },
+  "date_view": {
+    "title": "📍 Menú principal > Fecha y hora actual",
+    "solar": "📅 Solar",
+    "lunar": "🌙 Lunar",
+    "solar_term": "🌾 Período solar",
+    "zodiac": "🐉 Zodíaco",
+    "return_hint": "Pulsa para volver…"
+  },
+  "solar_term": {
+    "current_term": "Período solar actual"
+  },
+  "zodiac": {
+    "current_zodiac": "Zodíaco actual"
+  },
+  "ai_suggestion": {
+    "title": "📍 Menú principal > Consejos IA",
+    "getting_weather_reference": "Obteniendo datos del tiempo",
+    "getting_life_index_reference": "Obteniendo índices de vida",
+    "loading": "Generando consejos IA, por favor espere (~5 s)…",
+    "back_hint": "Pulsa Enter para volver"
+  },
+  "weather_view": {
+    "forecast_title": "Pronóstico del tiempo"
+  },
+  "life_index": {
+    "title": "Índices de vida de la ciudad",
+    "index_list": "Índices mostrados:",
+    "date": "Fecha",
+    "type": "Tipo",
+    "level": "Nivel",
+    "suggestion": "Sugerencia",
+    "prompt_refresh": "🔁 Pulsa R para actualizar, otra tecla para volver…",
+    "fetch_failed": "❌ No se pudieron obtener los índices de vida.",
+    "sport_index": "Índice deportivo",
+    "car_wash_index": "Índice de lavado de coche",
+    "dressing_index": "Índice de vestimenta",
+    "fishing_index": "Índice de pesca",
+    "uv_index": "Índice UV",
+    "tourism_index": "Índice de turismo",
+    "allergy_index": "Índice de alergia",
+    "comfort_index": "Índice de confort",
+    "cold_index": "Índice de resfriado",
+    "air_pollution_diffusion_index": "Índice de difusión de contaminación del aire",
+    "air_conditioner_index": "Índice de aire acondicionado",
+    "sunglasses_index": "Índice de gafas de sol",
+    "makeup_index": "Índice de maquillaje",
+    "drying_index": "Índice de secado",
+    "traffic_index": "Índice de tráfico",
+    "sunscreen_index": "Índice protector solar"
+  },
+  "city_update": { "title": "Actualizar ciudad" },
+  "meta": {
+    "source_cache": "📦 Datos obtenidos del caché.",
+    "source_network": "🌐 Datos obtenidos de la red.",
+    "updated_at": "🕒 Última actualización:"
+  }
 }

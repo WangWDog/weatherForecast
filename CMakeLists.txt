@@ -116,9 +116,6 @@ file(COPY ${CMAKE_SOURCE_DIR}/configs/cache.json
 file(COPY ${CMAKE_SOURCE_DIR}/configs/configKey.json
         DESTINATION ${CMAKE_BINARY_DIR}/configs)
 
-#语言文件
-file(COPY ${SRC_ROOT}/cli/i18n/lang_zh.json
-        DESTINATION ${CMAKE_BINARY_DIR}/i18n)
-#语言文件
-file(COPY ${SRC_ROOT}/cli/i18n/lang_en.json
+#i18n语言文件
+file(COPY ${SRC_ROOT}/cli/i18n/
         DESTINATION ${CMAKE_BINARY_DIR}/i18n)
