@@ -4,7 +4,7 @@
 #include "cli_date_display.h"
 
 #include <iostream>
-#include <conio.h>
+#include "../../common/cli_getch.h"
 
 #include "../../../core/doubao_manager.h"
 #include "lunar_api.h"
@@ -108,7 +108,7 @@ void showCurrentDate(CliContext& ctx, bool showAll) {
 
         if (ctx.mode == CliMode::Interactive) {
             std::cout << ctx.i18n.tr("life_index", "prompt_refresh") << std::flush;
-            char ch = _getch();
+            char ch = cli_getch();
             if (ch == 'R' || ch == 'r') {
                 cache.clear("lunar_info");
                 continue;

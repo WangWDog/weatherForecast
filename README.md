@@ -9,6 +9,12 @@ cmake -S . -B build
 cmake --build build
 ```
 
+Qt 6 and libcurl development packages are required. On Debian/Ubuntu you can install them with:
+
+```bash
+sudo apt-get install qt6-base-dev libcurl4-openssl-dev
+```
+
 If `configs/configKey.json` is present it will be copied to the build directory. The file is ignored by Git because it usually contains API keys.
 
 ## Running

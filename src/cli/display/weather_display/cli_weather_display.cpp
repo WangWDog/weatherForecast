@@ -4,7 +4,7 @@
 
 #include "cli_weather_display.h"
 
-#include <conio.h>
+#include "../common/cli_getch.h"
 #include <iostream>
 
 #include "config_context.h"
@@ -41,7 +41,7 @@ void showWeatherForecast(CliContext& cli, const std::string& unit) {
     while (true) {
         displayWeather(result, i18n, configUser, unit);
         std::cout << "\n" << i18n.tr("forecast", "prompt_refresh") << "\n";  // 翻译 "prompt_refresh"
-        char ch = _getch();
+        char ch = cli_getch();
         if (ch == 'R' || ch == 'r') {
             result = manager.get7DayForecast(
                 configUser.getCityId(),
