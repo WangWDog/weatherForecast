@@ -1,4 +1,4 @@
-#include <conio.h>
+#include "../../common/cli_getch.h"
 #include <iostream>
 #include <curl/curl.h>
 
@@ -51,7 +51,7 @@ void showCityChoose(CliContext& cli) {
         // 输入提示
         std::cout << i18n.tr("searchCity", "input_hint") << keyword;  // 翻译 "输入城市关键字（输入 : 返回主菜单）"
 
-        char ch = _getch();
+        char ch = cli_getch();
         if (ch == ':' || keyword == ":") {
             std::cout << "\n" << i18n.tr("searchCity", "cancelled") << std::endl;  // 翻译 "已取消设置，返回主菜单"
             delay_ms(2000);

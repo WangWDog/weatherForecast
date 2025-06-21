@@ -1,4 +1,4 @@
-#include <conio.h>
+#include "../../common/cli_getch.h"
 #include <iostream>
 
 #include "CacheManager.h"
@@ -51,7 +51,7 @@ void showLifeIndices(CliContext& cli) {
 
 
         std::cout << "\n" << i18n.tr("life_index", "prompt_refresh") << "\n";  // 翻译 "按 R 刷新数据，任意其他键返回主菜单..."
-        char ch = _getch();
+        char ch = cli_getch();
         if (ch == 'R' || ch == 'r') {
             result = manager.getLifeIndices(configUser.getCityId(), 0,cli.cache); // 设置过期时间为 0 强制刷新
         } else {

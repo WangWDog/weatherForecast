@@ -1,7 +1,13 @@
  #include "i18n_loader.h"
 #include <fstream>
 #include <iostream>
+#ifdef _WIN32
 #include <direct.h>
+#define GETCWD _getcwd
+#else
+#include <unistd.h>
+#define GETCWD getcwd
+#endif
 #include <json.hpp>
 
 using json = nlohmann::json;
@@ -16,7 +22,7 @@ bool I18n::load(const std::string& language) {
 
     if (!file.is_open()) {
         char cwd[1024];
-        _getcwd(cwd, sizeof(cwd));
+        GETCWD(cwd, sizeof(cwd));
         std::cerr << "❌ 无法打开语言文件: " << path << std::endl;
         std::cerr << "📂 当前工作目录: " << cwd << std::endl;
         return false;
