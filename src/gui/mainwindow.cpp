@@ -6,27 +6,39 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "cli_interface.h"
+#include <iostream>
+#include <sstream>
 // 初始化主窗口
 mainwindow::mainwindow(QWidget *parent) :
     QWidget(parent), ui(new Ui::mainwindow) {
     ui->setupUi(this);
-    connect(&process, &QProcess::readyReadStandardOutput, this, &mainwindow::readOutput);
     connect(ui->runButton, &QPushButton::clicked, this, &mainwindow::runCommand);
 }
 
 mainwindow::~mainwindow() {
-    process.kill();
-    process.waitForFinished();
     delete ui;
 }
 
 void mainwindow::runCommand() {
     QString cmd = ui->commandEdit->text();
     ui->outputEdit->clear();
-    QStringList args = cmd.split(' ', Qt::SkipEmptyParts);
-    process.start("./weather_cli", args);
-}
+    QStringList argList = cmd.split(' ', Qt::SkipEmptyParts);
 
-void mainwindow::readOutput() {
-    ui->outputEdit->append(QString::fromUtf8(process.readAllStandardOutput()));
+    std::vector<std::string> args;
+    args.push_back("weather_gui");
+    for (const auto& a : argList) {
+        args.push_back(a.toStdString());
+    }
+
+    std::vector<char*> argv;
+    for (auto& a : args) {
+        argv.push_back(a.data());
+    }
+
+    std::ostringstream oss;
+    auto* oldBuf = std::cout.rdbuf(oss.rdbuf());
+    run_cli(static_cast<int>(argv.size()), argv.data());
+    std::cout.rdbuf(oldBuf);
+    ui->outputEdit->append(QString::fromStdString(oss.str()));
 }

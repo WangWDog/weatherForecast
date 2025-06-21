@@ -1,5 +1,5 @@
 
-#include "cli_application.h"
+#include "cli_interface.h"
 #include "doubao_manager.h"
 
 int main(int argc, char* argv[]) {
@@ -7,7 +7,5 @@ int main(int argc, char* argv[]) {
         SetConsoleOutputCP(CP_UTF8);
         SetConsoleCP(CP_UTF8);
     #endif
-    CliApplication app;
-    app.run(argc, argv);
-    return 0;
+    return run_cli(argc, argv);
 }
