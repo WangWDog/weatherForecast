@@ -6,7 +6,8 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
-#include <QProcess>
+#include <vector>
+#include <string>
 
 
 QT_BEGIN_NAMESPACE
@@ -25,11 +26,9 @@ public:
 
 private slots:
     void runCommand();
-    void readOutput();
 
 private:
     Ui::mainwindow *ui;
-    QProcess process;
 };
 
 

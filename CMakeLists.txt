@@ -73,8 +73,12 @@ set(CLI_SOURCES
         ${SRC_ROOT}/cli/dispatch_model/cli_dispatch_controller.h
         ${SRC_ROOT}/cli/common/cli_context.cpp
         ${SRC_ROOT}/cli/common/cli_context.h
-
+        ${SRC_ROOT}/cli/cli_interface.cpp
 )
+
+# Sources for the shared CLI library (exclude the main entry)
+set(CLI_LIB_SOURCES ${CLI_SOURCES})
+list(REMOVE_ITEM CLI_LIB_SOURCES ${SRC_ROOT}/main_cli.cpp)
 set(GUI_SOURCES
         ${SRC_ROOT}/gui/main_gui.cpp
         ${SRC_ROOT}/gui/mainwindow.cpp
@@ -101,17 +105,18 @@ set(WEATHER_GLOBAL
 
 
 # CLI 可执行文件
-add_executable(weather_cli ${WEATHER_GLOBAL} ${CLI_SOURCES})
+add_library(weather_cli_core STATIC ${WEATHER_GLOBAL} ${CLI_LIB_SOURCES})
+target_link_libraries(weather_cli_core PRIVATE curl)
 
-# 链接 libcurl
-target_link_libraries(weather_cli PRIVATE curl)
+add_executable(weather_cli ${SRC_ROOT}/main_cli.cpp)
+target_link_libraries(weather_cli PRIVATE weather_cli_core)
 
 # GUI executable
 qt6_wrap_ui(GUI_UI ${SRC_ROOT}/gui/mainwindow.ui)
 qt6_wrap_cpp(GUI_MOC ${SRC_ROOT}/gui/mainwindow.h)
 add_executable(weather_gui ${GUI_SOURCES} ${GUI_UI} ${GUI_MOC})
 target_include_directories(weather_gui PRIVATE ${CMAKE_BINARY_DIR})
-target_link_libraries(weather_gui PRIVATE Qt6::Widgets curl)
+target_link_libraries(weather_gui PRIVATE Qt6::Widgets curl weather_cli_core)
 
 
 
