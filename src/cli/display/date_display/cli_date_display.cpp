@@ -89,12 +89,12 @@ void showCurrentDate(CliContext& ctx, bool showAll) {
                   << std::put_time(std::localtime(&timestamp), "%Y-%m-%d %H:%M:%S") << "\n";
 
         if (showAll) {
-            if (configUser.getLanguage() == "en") {
+            if (configUser.getLanguage() != "zh") {
                 std::cout << lunarInfo;
                 std::cout << "\nWaiting for translation..." << std::endl;
 
                 DoubaoManager doubao(configKey.getDoubaoKey(), configKey.getDoubaoEndpoint());
-                lunarInfo = doubao.translate(lunarInfo, "English");
+                lunarInfo = doubao.translate(lunarInfo, configUser.getLanguage());
 
                 clearConsole();
                 std::cout << (fromCache ? "(来自缓存)" : "(来自网络)") << std::endl;

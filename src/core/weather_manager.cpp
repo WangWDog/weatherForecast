@@ -105,9 +105,10 @@ ForecastResult WeatherManager::get7DayForecast(
 
         return result;
     }
-    char simple = unit[0];
+
     // 2. 请求网络数据
-    std::string url = "https://" + host + "/v7/weather/7d?location=" + locationId + "&lang=" + language + "&unit=" + simple;
+    char simpleChar = unit[0];
+    std::string url = "https://" + host + "/v7/weather/7d?location=" + locationId + "&lang=" + language + "&unit=" + simpleChar;
     std::string response;
     CURL* curl = curl_easy_init();
 
